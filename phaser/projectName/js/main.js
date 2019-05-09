@@ -14,6 +14,8 @@ MainMenu.prototype =
 	preload: function()
 	{
 		game.load.image('player', 'assets/img/Player_A.png');
+		game.load.image('test', 'assets/map/test.png');
+		game.load.tilemap('testmap', 'assets/map/test.json', null, Phaser.Tilemap.TILED_JSON);
 	},
 	create: function()
 	{
@@ -43,7 +45,13 @@ GamePlay.prototype =
 
 	create: function()
 	{
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+
+		map = game.add.tilemap('testmap');
+
+		map.addTilesetImage('test');
 		this.player = new player(game, 'player', 0, 100, 400);
+		
 	},
 
 	update: function()
