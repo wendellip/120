@@ -13,7 +13,7 @@ MainMenu.prototype =
 	//load all the assets before gameplay
 	preload: function()
 	{
-		
+		game.load.image('player', 'assets/img/Player_A.png');
 	},
 	create: function()
 	{
@@ -43,7 +43,7 @@ GamePlay.prototype =
 
 	create: function()
 	{
-
+		this.player = new player(game, 'player', 0, 100, 400);
 	},
 
 	update: function()
