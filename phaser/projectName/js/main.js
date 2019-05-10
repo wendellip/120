@@ -1,6 +1,6 @@
 let style = { font: '24px Helvetica', fill: '#FFF' };
 //define the game
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser');
+var game = new Phaser.Game(1440, 900, Phaser.AUTO, 'phaser');
 
 //define MainMenu state
 var MainMenu = function(game) {};
@@ -13,9 +13,9 @@ MainMenu.prototype =
 	//load all the assets before gameplay
 	preload: function()
 	{
-		game.load.image('player', 'assets/img/Player_A.png');
-		game.load.image('test', 'assets/map/test.png');
 		game.load.tilemap('testmap', 'assets/map/test.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.image('player', 'assets/img/Player_A.png');
+		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
 	},
 	create: function()
 	{
@@ -40,17 +40,23 @@ GamePlay.prototype =
 	},
 	preload: function()
 	{
-		
+		console.log('game');
 	},
 
 	create: function()
 	{
+		game.stage.setBackgroundColor('#FFFFFF');
+
 		game.physics.startSystem(Phaser.Physics.ARCADE);
+		game.physics.arcade.TILE_BIAS = 32;
 
-		map = game.add.tilemap('testmap');
+		this.map = game.add.tilemap('testmap');
+		this.map.addTilesetImage('test', 'test');
+		this.map.setCollisionByExclusion([]);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
 
-		map.addTilesetImage('test');
-		this.player = new player(game, 'player', 0, 100, 400);
 		
 	},
 
