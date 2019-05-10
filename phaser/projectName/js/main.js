@@ -53,6 +53,9 @@ tutorial1.prototype =
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
 
+		// Start the P2 physics system
+		game.physics.startSystem(Phaser.Physics.P2JS);
+
 		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
 		this.map.setCollisionByExclusion([]);
