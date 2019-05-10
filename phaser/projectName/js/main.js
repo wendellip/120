@@ -13,7 +13,9 @@ MainMenu.prototype =
 	//load all the assets before gameplay
 	preload: function()
 	{
-		game.load.tilemap('testmap', 'assets/map/test.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('tutorial1', 'assets/map/tutorial1.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('tutorial2', 'assets/map/tutorial2.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('tutorial3', 'assets/map/tutorial3.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.image('player', 'assets/img/Player_A.png');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
 	},
@@ -25,22 +27,22 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('GamePlay', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 		}
 	}
 }
 
 //define GamePlay state
-var GamePlay = function(game) {};
-GamePlay.prototype = 
+var tutorial1 = function(game) {};
+tutorial1.prototype = 
 {
 	init: function()
 	{
-		this.state = 'Gameplay';
+		this.state = 'tutorial1';
 	},
 	preload: function()
 	{
-		console.log('game');
+		console.log('tutorial1');
 	},
 
 	create: function()
@@ -50,7 +52,7 @@ GamePlay.prototype =
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
 
-		this.map = game.add.tilemap('testmap');
+		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
 		this.map.setCollisionByExclusion([]);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
@@ -66,8 +68,6 @@ GamePlay.prototype =
 	update: function()
 	{
 		game.physics.arcade.collide(this.player, this.mapLayer);
-		
-
 	}
 }
 
@@ -100,6 +100,6 @@ GameOver.prototype =
 
 
 game.state.add('MainMenu', MainMenu);
-game.state.add('GamePlay', GamePlay);
+game.state.add('tutorial1', tutorial1);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
