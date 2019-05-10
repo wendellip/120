@@ -45,7 +45,7 @@ GamePlay.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#FFFFFF');
+		game.stage.setBackgroundColor('#FFFF00');
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
@@ -56,12 +56,17 @@ GamePlay.prototype =
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
+		
+		this.player = new player(game, 'player', 0, 100, 650);
+		game.add.existing(this.player);
 
 		
 	},
 
 	update: function()
 	{
+		game.physics.arcade.collide(this.player, this.mapLayer);
+		
 
 	}
 }
