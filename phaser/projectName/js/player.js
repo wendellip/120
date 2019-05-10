@@ -8,16 +8,18 @@ Phaser.Sprite.call(this, game, x, y, key, frame);
 game.physics.enable(this);
 this.enableBody = true;
 this.scale.set(0.175);
-this.anchor.set(1);
+this.anchor.set(0);
 this.body.CollideWorldBounds = true;
 this.body.gravity.y = 500;
+
 
 }
 
 
-player.prototype.update = function(hitplatform)
+player.prototype.update = function()
 {
-	if(game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.body.blocked.down)
+	if((game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.body.blocked.down )|| 
+	(game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.body.touching.down))
 	{
 		this.body.velocity.y -= 400;
 	}
