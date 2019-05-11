@@ -5,11 +5,12 @@ function box(game, key, frame, x, y)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
 
-game.physics.enable(this);
-this.enableBody = true;
-this.scale.set(2);
-this.body.CollideWorldBounds = true;
-this.body.gravity.y = 500;
+// Enable P2 physics on the player
+// game.physics.p2.enable(this, true);
+// this.enableBody = true;
+// this.scale.set(2);
+// this.body.CollideWorldBounds = true;
+// this.body.gravity.y = 500;
 
 
 }
