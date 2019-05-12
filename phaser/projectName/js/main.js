@@ -28,7 +28,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial3', true, false, this.level);
+			game.state.start('tutorial2', true, false, this.level);
 		}
 	}
 }
@@ -50,21 +50,21 @@ tutorial1.prototype =
 	{
 		game.stage.setBackgroundColor('#FFFF00');
 
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
+		// game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		// Start the P2 physics system
-		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+		game.physics.arcade.TILE_BIAS = 32;
 
 		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
 		this.map.setCollisionByExclusion([]);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
-		
 		this.mapLayer.resizeWorld();
-		
-		this.player = new player(game, 'player', 0, 100, 650);
+
+		this.player = new player(game, 'player', 0, 50, 650);
 		game.add.existing(this.player);
+		
 
 		
 	},
