@@ -13,9 +13,14 @@ MainMenu.prototype =
 	//load all the assets before gameplay
 	preload: function()
 	{
-		game.load.tilemap('testmap', 'assets/map/test.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('tutorial1', 'assets/map/tutorial1.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('tutorial2', 'assets/map/tutorial2.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('tutorial3', 'assets/map/tutorial3.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.image('player', 'assets/img/Player_A.png');
+		game.load.image('box', 'assets/img/Box.png');
+		game.load.image('platform', 'assets/img/platform.png');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
+		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
 	},
 	create: function()
 	{
@@ -25,22 +30,69 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('GamePlay', true, false, this.level);
+			game.state.start('tutorial2', true, false, this.level);
 		}
 	}
 }
 
 //define GamePlay state
-var GamePlay = function(game) {};
-GamePlay.prototype = 
+var tutorial1 = function(game) {};
+tutorial1.prototype = 
 {
 	init: function()
 	{
-		this.state = 'Gameplay';
+		this.state = 'tutorial1';
 	},
 	preload: function()
 	{
-		console.log('game');
+		console.log('tutorial1');
+	},
+
+	create: function()
+	{
+		game.stage.setBackgroundColor('#FFFF00');
+
+		// game.physics.startSystem(Phaser.Physics.ARCADE);
+
+		// Start the P2 physics system
+		game.physics.startSystem(Phaser.Physics.P2JS);
+
+		this.map = game.add.tilemap('tutorial1');
+		this.map.addTilesetImage('test', 'test');
+		this.map.setCollisionByExclusion([]);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		this.mapLayer.resizeWorld();
+
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		game.physics.p2.setBoundsToWorld(true, true, true, true, false);
+
+		this.player = new player(game, 'player', 0, 50, 650);
+		game.add.existing(this.player);
+		
+
+		
+	},
+
+	update: function()
+	{
+		game.physics.arcade.collide(this.player, this.mapLayer);
+	},
+	render: function()
+	{
+		game.debug.body(this.player);
+	}
+}
+
+var tutorial2 = function(game) {};
+tutorial2.prototype = 
+{
+	init: function()
+	{
+		this.state = 'tutorial2';
+	},
+	preload: function()
+	{
+		console.log('tutorial2');
 	},
 
 	create: function()
@@ -50,24 +102,98 @@ GamePlay.prototype =
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
 
-		this.map = game.add.tilemap('testmap');
+		this.map = game.add.tilemap('tutorial2');
 		this.map.addTilesetImage('test', 'test');
 		this.map.setCollisionByExclusion([]);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 100, 650);
+		this.player = new player(game, 'player', 0, 150, 450);
 		game.add.existing(this.player);
-
+		
+		this.switch1 = new onswitch(game, 'switches', 0, 48, 450, 180);
+		game.add.existing(this.switch1);
+		
+		platforms = game.add.group();
+		platforms.enableBody = true;
+			
+		this.platform1 = platforms.create(192, 512, 'platform');
+	
+		this.platform1.body.immovable = true;
+	
+		this.platform2 = platforms.create( 960, 512, 'platform');
+	
+		this.platform2.body.immovable = true;
 		
 	},
 
 	update: function()
 	{
 		game.physics.arcade.collide(this.player, this.mapLayer);
-		
+		game.physics.arcade.collide(this.player, platforms);
+		game.physics.arcade.collide(platforms, platforms);
+		if(this.switch1.update(game.physics.arcade.collide(this.player, this.switch1)))
+		{
+			this.platform1.body.moveTo(2, 160, 0);
+			this.platform2.body.moveTo(2, 160, 180);
+			console.log("run");			
+		}
+	},
+	render: function()
+	{
+		game.debug.body(this.player);
+		game.debug.body(this.platform1);
+	}
+}
 
+var tutorial3 = function(game) {};
+tutorial3.prototype = 
+{
+	init: function()
+	{
+		this.state = 'tutorial3';
+	},
+	preload: function()
+	{
+		console.log('tutorial3');
+	},
+
+	create: function()
+	{
+		game.stage.setBackgroundColor('#FFFF00');
+
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+		game.physics.arcade.TILE_BIAS = 32;
+
+		this.map = game.add.tilemap('tutorial3');
+		this.map.addTilesetImage('test', 'test');
+		this.map.setCollisionByExclusion([]);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
+		
+		this.player = new player(game, 'player', 0, 150, 650);
+		game.add.existing(this.player);
+
+		
+		this.box1 = new box(game, 'box', 0, 250, 672);
+		game.add.existing(this.box1);
+		
+		this.box2 = new box(game, 'box', 0, 650, 416);
+		game.add.existing(this.box2);
+	},
+
+	update: function()
+	{
+		game.physics.arcade.collide(this.player, this.mapLayer);
+		game.physics.arcade.collide(this.box1, this.mapLayer);
+		game.physics.arcade.collide(this.box2, this.mapLayer);
+		game.physics.arcade.collide(this.box1, this.box2);
+		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
+		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
+
+		
 	}
 }
 
@@ -100,6 +226,8 @@ GameOver.prototype =
 
 
 game.state.add('MainMenu', MainMenu);
-game.state.add('GamePlay', GamePlay);
+game.state.add('tutorial1', tutorial1);
+game.state.add('tutorial2', tutorial2);
+game.state.add('tutorial3', tutorial3);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
