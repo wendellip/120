@@ -53,18 +53,35 @@ tutorial1.prototype =
 		// game.physics.startSystem(Phaser.Physics.ARCADE);
 		// game.physics.arcade.TILE_BIAS = 32;
 
+		// Using code from: https://samme.github.io/phaser-examples-mirror/p2%20physics/tilemap.html
+
 		// Start the P2 physics system
 		game.physics.startSystem(Phaser.Physics.P2JS);
 
+		// Set background color
+		game.stage.backgroundColor = "#facade";
+
+		// Add tilemap for current level
 		this.map = game.add.tilemap('tutorial1');
+
+		// Not sure what this is
 		this.map.addTilesetImage('test', 'test');
-		//this.map.setCollisionByExclusion([]);
-		this.map.setCollisionBetween(1,12);
+
+
+		// Create a map layer
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
+		// Resize the map layer?
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 50, 650);
+		// Set collision (Gotta figure out the actual range)
+		this.map.setCollisionBetween(1,12);
+
+		// Convert the tilemap layer into bodies.  
+		game.physics.p2.convertTilemap(this.map, this.mapLayer);
+
+
+		this.player = new player(game, 'player', 0, game.width - 100, 100);
 		game.add.existing(this.player);
 
 		
