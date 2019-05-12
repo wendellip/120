@@ -26,7 +26,7 @@ player.prototype.update = function()
 	{
 		this.body.velocity.x = 400;
 	}
-	if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
+	else if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
 	{
 		this.body.velocity.x = -400;
 	}
