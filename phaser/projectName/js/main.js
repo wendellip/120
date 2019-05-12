@@ -84,6 +84,11 @@ tutorial1.prototype =
 		this.player = new player(game, 'player', 0, game.width - 100, 100);
 		game.add.existing(this.player);
 
+		this.box1 = new box(game, 'box', 0, 250, 100);
+		game.add.existing(this.box1);
+
+		this.box2 = new box(game, 'box', 0, 350, 100);
+		game.add.existing(this.box2);
 		
 	},
 

@@ -6,30 +6,13 @@ function box(game, key, frame, x, y)
 Phaser.Sprite.call(this, game, x, y, key, frame);
 
 // Enable P2 physics on the player
-// game.physics.p2.enable(this, true);
-// this.enableBody = true;
-// this.scale.set(2);
-// this.body.CollideWorldBounds = true;
-// this.body.gravity.y = 500;
-
-
+game.physics.p2.enable(this, true);
+this.body.CollideWorldBounds = true;
 }
 
 
 box.prototype.update = function(hitplayer)
 {
 
-	if(hitplayer && this.body.touching.left)
-	{
-		this.body.velocity.x = 125;
-	}
-	else if(hitplayer && this.body.touching.right)
-	{
-		this.body.velocity.x = -125;
-	}
-	else
-	{
-		this.body.velocity.x = 0;
-	}
 
 }
