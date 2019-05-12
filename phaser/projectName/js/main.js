@@ -18,7 +18,9 @@ MainMenu.prototype =
 		game.load.tilemap('tutorial3', 'assets/map/tutorial3.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.image('player', 'assets/img/Player_A.png');
 		game.load.image('box', 'assets/img/Box.png');
+		game.load.image('platform', 'assets/img/platform.png');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
+		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
 	},
 	create: function()
 	{
@@ -43,24 +45,24 @@ tutorial1.prototype =
 	},
 	preload: function()
 	{
-		console.log('tutorial1');
+		
 	},
 
 	create: function()
 	{
 		game.stage.setBackgroundColor('#FFFF00');
 
-		// game.physics.startSystem(Phaser.Physics.ARCADE);
 
-		// Start the P2 physics system
 		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
 
 		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
 		this.map.setCollisionByExclusion([]);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		this.mapLayer.resizeWorld();
+
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		game.physics.p2.setBoundsToWorld(true, true, true, true, false);
 
 		this.player = new player(game, 'player', 0, 50, 650);
 		game.add.existing(this.player);
@@ -72,6 +74,10 @@ tutorial1.prototype =
 	update: function()
 	{
 		game.physics.arcade.collide(this.player, this.mapLayer);
+	},
+	render: function()
+	{
+		game.debug.body(this.player);
 	}
 }
 
@@ -101,15 +107,35 @@ tutorial2.prototype =
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 100, 450);
+		this.player = new player(game, 'player', 0, 150, 450);
 		game.add.existing(this.player);
-
+		
+		this.switch1 = new onswitch(game, 'switches', 0, 48, 450, 180);
+		game.add.existing(this.switch1);
+		
+		this.platform1 = new platform(game, 'platform', 0, 192, 512);
+		game.add.existing(this.platform1);
+		
+		this.platform2 = new platform(game, 'platform', 0, 960, 512);
+		game.add.existing(this.platform2);
 		
 	},
 
 	update: function()
 	{
 		game.physics.arcade.collide(this.player, this.mapLayer);
+		game.physics.arcade.collide(this.player, this.platform1);
+		game.physics.arcade.collide(this.player, this.platform2); 
+		if(this.switch1.update(game.physics.arcade.overlap(this.player, this.switch1)))
+		{
+			this.platform1.update(true, 448, 512);
+			this.platform2.update(true, 704, 512);		
+		}
+	},
+	
+	render: function()
+	{
+		game.debug.body(this.player);
 	}
 }
 

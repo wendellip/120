@@ -37,10 +37,7 @@ box.prototype.update = function(hitplayer)
 	}
 	else
 	{
-		if(this.body.velocity.x >= 0)
-			this.body.velocity.x -= 25;
-		else if(this.body.velocity.x <= 0)
-			this.body.velocity.x +=25;
+		this.body.velocity.x = 0.000001 * this.body.velocity.x;
 	}
 
 

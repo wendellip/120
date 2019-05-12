@@ -6,11 +6,11 @@ function player(game, key, frame, x, y)
 Phaser.Sprite.call(this, game, x, y, key, frame);
 
 game.physics.enable(this);
-this.scale.set(0.175);
 this.anchor.set(0.5);
+this.body.setCircle(32, 13, 20);
 this.body.CollideWorldBounds = true;
 this.body.gravity.y = 500;
-this.speed = 1;
+this.body.rotation = false;
 }
 
 
