@@ -132,7 +132,7 @@ tutorial2.prototype =
  	
 	update: function()
 	{
-		//this.hand.rotation = game.physics.arcade.angleToPointer(this.hand);
+		this.hand.rotation = game.physics.arcade.angleToPointer(this.player);
 		if(game.input.activePointer.isDown){
 			console.log(shotsfired);
 			if(shotsfired==0){
@@ -286,7 +286,6 @@ game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
 
 function changepickup(){
-	console.log("timer working")
 	newhand.setHealth(2);
 	console.log(newhand.health);
 }
