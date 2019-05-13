@@ -1,6 +1,9 @@
 let style = { font: '24px Helvetica', fill: '#FFF' };
 //define the game
 var game = new Phaser.Game(1440, 900, Phaser.AUTO, 'phaser');
+var playertest;
+var newhand;
+var shotsfired;
 
 //define MainMenu state
 var MainMenu = function(game) {};
@@ -21,10 +24,11 @@ MainMenu.prototype =
 		game.load.image('platform', 'assets/img/platform.png');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
 		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
+		game.load.image('hand', 'assets/img/HandPlaceholder.jpg');
 	},
 	create: function()
 	{
-
+		newhand=new hand2(game, 'hand', 0, -50, -50);
 	},
 	update: function()
 	{
@@ -118,24 +122,81 @@ tutorial2.prototype =
 		
 		this.platform2 = new platform(game, 'platform', 0, 960, 512);
 		game.add.existing(this.platform2);
+
+		this.hand = new hand(game, 'hand', 0, 50,50);
+		this.player.addChild(game.add.existing(this.hand));
+
+		shotsfired = 0;
 		
 	},
-
+ 	
 	update: function()
 	{
+		//this.hand.rotation = game.physics.arcade.angleToPointer(this.hand);
+		if(game.input.activePointer.isDown){
+			console.log(shotsfired);
+			if(shotsfired==0){
+				shotsfired+=1;
+				this.hand.destroy();
+				console.log(this.hand);
+				newhand=new hand2(game, 'hand', 0, this.hand.position.x+this.player.position.x, this.hand.position.y+this.player.position.y);
+				game.add.existing(newhand);
+				game.physics.arcade.moveToPointer(newhand, 1000);
+  				timer = game.time.create(game,true);
+  				timer.add(2000, changepickup, this, newhand);
+   				timer.start();
+   				newhand.setHealth(1);
+
+   			}
+		}
+
+
+
 		game.physics.arcade.collide(this.player, this.mapLayer);
+		game.physics.arcade.collide(this.hand, this.mapLayer);
+		game.physics.arcade.collide(newhand, this.mapLayer);
 		game.physics.arcade.collide(this.player, this.platform1);
+		game.physics.arcade.collide(this.hand, this.platform1);
+		game.physics.arcade.collide(this.hand, this.platform2);
+		game.physics.arcade.collide(newhand, this.platform1);
+		game.physics.arcade.collide(newhand, this.platform2);
 		game.physics.arcade.collide(this.player, this.platform2); 
+		
+
+		if(newhand.update(game.physics.arcade.overlap(this.player, newhand))){
+			this.hand = new hand(game, 'hand', 0, 50,50);
+			this.player.addChild(game.add.existing(this.hand));
+			newhand.destroy();
+			shotsfired-=1;
+		}
+
+
+		if(this.switch1.update(game.physics.arcade.overlap(this.hand, this.switch1)))
+		{
+			this.platform1.update(true, 448, 512);
+			this.platform2.update(true, 704, 512);		
+		}
 		if(this.switch1.update(game.physics.arcade.overlap(this.player, this.switch1)))
 		{
 			this.platform1.update(true, 448, 512);
 			this.platform2.update(true, 704, 512);		
 		}
+		if(this.switch1.update(game.physics.arcade.overlap(newhand, this.switch1)))
+		{
+			this.platform1.update(true, 448, 512);
+			this.platform2.update(true, 704, 512);		
+		}
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
+		{
+			game.state.restart(true, false);
+		}
 	},
 	
 	render: function()
 	{
+		game.debug.body(this.switch1);
 		game.debug.body(this.player);
+		game.debug.body(this.hand);
 	}
 }
 
@@ -223,3 +284,9 @@ game.state.add('tutorial2', tutorial2);
 game.state.add('tutorial3', tutorial3);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
+
+function changepickup(){
+	console.log("timer working")
+	newhand.setHealth(2);
+	console.log(newhand.health);
+}
