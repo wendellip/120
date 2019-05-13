@@ -9,18 +9,19 @@ game.physics.p2.enable(this, true);
 this.scale.set(0.175);
 this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
+this.body.fixedRotation = true;
 }
 
 
 player.prototype.update = function()
 {
-	if(game.input.keyboard.isDown(Phaser.Keyboard.UP))
-	{
-		this.body.velocity.y = -400;
-	}
 	if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN))
 	{
 		this.body.velocity.y = 400;
+	}
+	if(game.input.keyboard.isDown(Phaser.Keyboard.UP))
+	{
+		this.body.velocity.y = -400;
 	}
 	if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
 	{
