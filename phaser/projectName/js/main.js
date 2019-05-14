@@ -30,7 +30,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial2', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 		}
 	}
 }
@@ -53,7 +53,7 @@ tutorial1.prototype =
 		game.stage.setBackgroundColor('#FFFF00');
 
 
-		game.physics.startSystem(Phaser.Physics.ARCADE);
+		game.physics.startSystem(Phaser.Physics.P2JS);
 
 		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
