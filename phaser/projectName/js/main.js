@@ -25,6 +25,7 @@ MainMenu.prototype =
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
 		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
 		game.load.image('hand', 'assets/img/HandPlaceholder.jpg');
+		game.load.image('door', 'assets/img/Door.png');
 	},
 	create: function()
 	{
@@ -114,7 +115,7 @@ tutorial2.prototype =
 		this.player = new player(game, 'player', 0, 150, 450);
 		game.add.existing(this.player);
 		
-		this.switch1 = new onswitch(game, 'switches', 0, 48, 450, 180);
+		this.switch1 = new onswitch(game, 'switches', 0, 1200, 480, 90);
 		game.add.existing(this.switch1);
 		
 		this.platform1 = new platform(game, 'platform', 0, 192, 512);
@@ -125,6 +126,9 @@ tutorial2.prototype =
 
 		this.hand = new hand(game, 'hand', 0, 50,50);
 		this.player.addChild(game.add.existing(this.hand));
+
+		this.door = new exitdoor(game, 'door', 0, 1350, 300);
+		game.add.existing(this.door);
 
 		shotsfired = 0;
 		
@@ -161,6 +165,10 @@ tutorial2.prototype =
 		game.physics.arcade.collide(newhand, this.platform1);
 		game.physics.arcade.collide(newhand, this.platform2);
 		game.physics.arcade.collide(this.player, this.platform2); 
+		if(game.physics.arcade.overlap(this.player, this.door)){
+			game.state.start('tutorial3');
+		}
+
 		
 
 		if(newhand.update(game.physics.arcade.overlap(this.player, newhand))){
@@ -235,6 +243,9 @@ tutorial3.prototype =
 		
 		this.box2 = new box(game, 'box', 0, 650, 416);
 		game.add.existing(this.box2);
+
+		this.door = new exitdoor(game, 'door', 0, 1350, 200);
+		game.add.existing(this.door);
 	},
 
 	update: function()
@@ -245,6 +256,9 @@ tutorial3.prototype =
 		game.physics.arcade.collide(this.box1, this.box2);
 		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
 		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
+		if(game.physics.arcade.overlap(this.player, this.door)){
+			game.state.start('GameOver');
+		}
 
 		
 	}
@@ -265,6 +279,7 @@ GameOver.prototype =
 	},
 	create: function() 
 	{
+		console.log('gameover');
 
 	},
 	update: function()
@@ -272,7 +287,7 @@ GameOver.prototype =
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
 			//restart the game
-			game.state.start('GamePlay', true, false, this.level);
+			game.state.start('MainMenu', true, false, this.level);
 		}
 	}
 }
