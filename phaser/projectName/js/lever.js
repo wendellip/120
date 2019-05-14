@@ -18,6 +18,7 @@ lever.prototype.update = function(hitted)
 {
 	if(hitted)
 	{
+		//return true or false when lever triggered, or else return null
 		this.trigger.onDown﻿.add(change, this);
 		if(this.on != null)
 		{

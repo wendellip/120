@@ -14,6 +14,7 @@ this.moving = false;
 
 platform.prototype.update = function(hit,x, y)
 {
+	//if the lever or switch tiggered, move the platform.
 	if(hit && !this.moving)
 	{
 		this.moving = true;

@@ -14,7 +14,7 @@ this.body.gravity.y = 500;
 
 box.prototype.update = function(hitplayer)
 {
-
+	//enable player to push the boxes, and stop when player stops pushing
 	if(hitplayer && this.body.touching.left)
 	{
 		if(!this.body.blocked.right && !this.body.touching.right)

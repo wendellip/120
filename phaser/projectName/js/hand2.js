@@ -19,6 +19,7 @@ this.health=2;
 
 hand2.prototype.update = function(colliding)
 {
+	//enable picking the arm
 	if(this.health == 2 && colliding)
 	{
 		return this.health;

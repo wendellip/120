@@ -1,7 +1,7 @@
 player.prototype = Object.create(Phaser.Sprite.prototype);
 player.prototype.constructor = player;
 
-function player(game, key, frame, x, y)
+function player(game, key, frame, x, y, jumpkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
 
@@ -10,15 +10,19 @@ this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
 this.body.gravity.y = 500;
 this.body.rotation = false;
+this.jumpse = game.add.audio(jumpkey);
+this.jumpb = game.input.keyboard.addKey(Phaser.Keyboard.UP);﻿﻿
+this.jump = 1;
 }
 
 
 player.prototype.update = function()
 {
-
-	if(game.input.keyboard.isDown(Phaser.Keyboard.UP) && (this.body.blocked.down || this.body.touching.down))
+	//moving and jumping
+	this.jumpb.onDown﻿.add(jumping, this);
+	if((this.body.blocked.down || this.body.touching.down))
 	{
-		this.body.velocity.y = -375;
+		this.jump = 1;
 	}
 	if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
 	{
@@ -33,4 +37,14 @@ player.prototype.update = function()
 		this.body.velocity.x = 0;
 	}
 
+}
+
+function jumping()
+{
+	if(this.jump > 0)
+	{
+		this.jumpse.play('', 0, 1, false);
+		this.jump = this.jump - 1;
+		this.body.velocity.y -= 375;
+	}
 }

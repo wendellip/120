@@ -17,6 +17,7 @@ this.health==2;
 
 hand.prototype.update = function(player)
 {
+	//the arm rotates with player's movement
 	this.rotation = game.physics.arcade.angleToPointer(player);
 
 }

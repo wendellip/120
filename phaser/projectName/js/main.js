@@ -45,10 +45,13 @@ MainMenu.prototype =
 		game.load.atlas('blever', 'assets/img/blever.png', 'assets/img/lever.json');
 		game.load.atlas('rlever', 'assets/img/rlever.png', 'assets/img/lever.json');
 		game.load.atlas('ylever', 'assets/img/ylever.png', 'assets/img/lever.json');
+		game.load.audio('jump', 'assets/audio/jump.mp3');
 	},
 	create: function()
 	{
+		// for picking up arm.
 		newhand=new hand2(game, 'hand', 0, -50, -50);
+		//instructions
 		game.add.text(20, 20, "Arrow key moving and Up arrow for jumping\n" + 
 		"mouse for aiming and shooting arm\n" + "Press C to interact with lever\n" + "Press Spacebar to start", style);
 	},
@@ -61,7 +64,7 @@ MainMenu.prototype =
 	}
 }
 
-//define GamePlay state
+//define tutorial1 state
 var tutorial1 = function(game) {};
 tutorial1.prototype = 
 {
@@ -78,22 +81,26 @@ tutorial1.prototype =
 	{
 		game.stage.setBackgroundColor('#9ebeff');
 
-
+		// start with arcade system
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
 
+		//load tilemap
 		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
+		//all tiles have collation
 		this.map.setCollisionByExclusion([]);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
 
-		this.player = new player(game, 'player', 0, 50, 650);
+		//make a player character
+		this.player = new player(game, 'player', 0, 50, 650, 'jump');
 		game.add.existing(this.player);
 		
+		//add stage end point
 		this.door = new exitdoor(game, 'door', 0, 1280, 64);
 		game.add.existing(this.door);
 	},
@@ -102,6 +109,7 @@ tutorial1.prototype =
 	{
 		game.physics.arcade.collide(this.player, this.mapLayer);
 		
+		//enable restarting stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
 		{
 			game.state.restart(true, false);
@@ -138,12 +146,13 @@ tutorial2.prototype =
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 150, 450);
+		this.player = new player(game, 'player', 0, 150, 450, 'jump');
 		game.add.existing(this.player);
 		
 		this.switch1 = new onswitch(game, 'switches', 0, 1200, 464, 0);
 		game.add.existing(this.switch1);
 		
+		//create moving platform
 		this.platform1 = new platform(game, 'platform', 0, 192, 512);
 		game.add.existing(this.platform1);
 		
@@ -163,7 +172,8 @@ tutorial2.prototype =
 
 	update: function()
 	{
-		
+		//enable shooting arm by define another arm
+		//with motion and destroy the original one
 		this.hand.update(this.player);
 		if(game.input.activePointer.isDown)
 		{
@@ -189,6 +199,7 @@ tutorial2.prototype =
 		game.physics.arcade.collide(newhand, this.mapLayer);
 		game.physics.arcade.collide(newhand, this.platforms);
 		
+		//enable picking the arm back
 		if(newhand.update(game.physics.arcade.overlap(this.player, newhand))){
 		this.hand = new hand(game, 'hand', 0, 50,50);
 		this.player.addChild(game.add.existing(this.hand));
@@ -196,6 +207,8 @@ tutorial2.prototype =
 		shotsfired-=1;
 		}
 
+		//switch interacting with arm or player body
+		//to move the platform
 		if(this.switch1.update(game.physics.arcade.overlap(this.player, this.switch1)))
 		{
 			this.platform1.update(true, 448, 512);
@@ -242,9 +255,10 @@ tutorial3.prototype =
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 150, 650);
+		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
 
+		//making boxes for pushing
 		this.box1 = new box(game, 'box', 0, 250, 672);
 		game.add.existing(this.box1);
 		
@@ -265,6 +279,7 @@ tutorial3.prototype =
 		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
 		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
 
+		// player can interact with boxes
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
 		{
 			game.state.restart(true, false);
@@ -276,6 +291,7 @@ tutorial3.prototype =
 	}
 }
 
+//not included in first prototype
 var tutorial4 = function(game) {};
 tutorial4.prototype = 
 {
@@ -312,6 +328,7 @@ tutorial4.prototype =
 	}
 }
 
+//code same as tutorial
 var joy1 = function(game) {};
 joy1.prototype = 
 {
@@ -337,7 +354,7 @@ joy1.prototype =
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 150, 650);
+		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
 		
 		this.box1 = new box(game, 'box', 0, 512, 448);
@@ -385,6 +402,7 @@ joy1.prototype =
 	}
 }
 
+//code same as tutorial
 var joy2 = function(game) {};
 joy2.prototype = 
 {
@@ -410,7 +428,7 @@ joy2.prototype =
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 120, 450);
+		this.player = new player(game, 'player', 0, 120, 450, 'jump');
 		game.add.existing(this.player);
 
 		this.box1 = new box(game, 'box', 0, 640, 576);
@@ -476,6 +494,7 @@ joy2.prototype =
 	}
 }
 
+//code same as tutorial
 var joy3 = function(game) {};
 joy3.prototype = 
 {
@@ -501,7 +520,7 @@ joy3.prototype =
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 90, 420);
+		this.player = new player(game, 'player', 0, 90, 420, 'jump');
 		game.add.existing(this.player);
 
 		this.box1 = new box(game, 'box', 0, 704, 32);
@@ -591,6 +610,7 @@ joy3.prototype =
 	}
 }
 
+//not included in first prototype
 var fear1 = function(game) {};
 fear1.prototype = 
 {
@@ -627,6 +647,7 @@ fear1.prototype =
 	}
 }
 
+//not included in first prototype
 var fear2 = function(game) {};
 fear2.prototype = 
 {
@@ -664,12 +685,12 @@ fear2.prototype =
 }
 
 //define GameOver state
-//accepting a score argument for showing the result to player
-var GameOver = function(game, gamescore) {};
+var GameOver = function(game,) {};
 GameOver.prototype = 
 {
-	init: function(gamescore) 
+	init: function() 
 	{
+		game.stage.setBackgroundColor('#000000');
 		this.state = 'GameOver';
 	},
 	preload: function()

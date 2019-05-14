@@ -18,6 +18,7 @@ this.on = false;
 
 onswitch.prototype.update = function(hitted)
 {
+	//return true when switch triggered
 	if(this.on == false && hitted)
 	{
 		this.on = true;
