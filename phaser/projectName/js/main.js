@@ -1,3 +1,11 @@
+//github
+//https://github.com/wendellip/120/tree/first-prototype
+
+//Group 23:
+//Brenden Satake
+//Wendell Ip
+//Casey Moropoulos
+
 let style = { font: '24px Helvetica', fill: '#FFF' };
 //define the game
 var game = new Phaser.Game(1440, 900, Phaser.AUTO, 'phaser');
