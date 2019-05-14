@@ -37,6 +37,7 @@ MainMenu.prototype =
 		game.load.image('btemp', 'assets/img/btemp.png');
 		game.load.image('rtemp', 'assets/img/rtemp.png');
 		game.load.image('ytemp', 'assets/img/ytemp.png');
+		game.load.image('door', 'assets/img/door.png');
 		game.load.image('hand', 'assets/img/HandPlaceholder.jpg');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
 		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
@@ -48,12 +49,14 @@ MainMenu.prototype =
 	create: function()
 	{
 		newhand=new hand2(game, 'hand', 0, -50, -50);
+		game.add.text(20, 20, "Arrow key moving and Up arrow for jumping\n" + 
+		"mouse for aiming and shooting arm\n" + "Press C to interact with lever\n" + "Press Spacebar to start", style);
 	},
 	update: function()
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('joy3', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 		}
 	}
 }
@@ -73,23 +76,26 @@ tutorial1.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#FFFF00');
+		game.stage.setBackgroundColor('#9ebeff');
 
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
+
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+		game.physics.arcade.TILE_BIAS = 32;
 
 		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
 		this.map.setCollisionByExclusion([]);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
 		this.mapLayer.resizeWorld();
-
-		game.physics.p2.convertTilemap(this.map, this.maplayer);
-		game.physics.p2.setBoundsToWorld(true, true, true, true, false);
 
 		this.player = new player(game, 'player', 0, 50, 650);
 		game.add.existing(this.player);
 		
+		this.door = new exitdoor(game, 'door', 0, 1280, 64);
+		game.add.existing(this.door);
 	},
 
 	update: function()
@@ -100,10 +106,10 @@ tutorial1.prototype =
 		{
 			game.state.restart(true, false);
 		}
-	},
-	render: function()
-	{
-		game.debug.body(this.player);
+		if(game.physics.arcade.overlap(this.player, this.door))
+		{
+			game.state.start('tutorial2');
+		}
 	}
 }
 
@@ -121,7 +127,6 @@ tutorial2.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#FFFF00');
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
@@ -151,6 +156,9 @@ tutorial2.prototype =
 		shotsfired = 0;
 		
 		this.platforms = [this.platform1, this.platform2];
+		
+		this.door = new exitdoor(game, 'door', 0, 1248, 224);
+		game.add.existing(this.door);
 	},
 
 	update: function()
@@ -188,7 +196,6 @@ tutorial2.prototype =
 		shotsfired-=1;
 		}
 
-		var change = this.lever.update(game.physics.arcade.overlap(this.player, this.lever));
 		if(this.switch1.update(game.physics.arcade.overlap(this.player, this.switch1)))
 		{
 			this.platform1.update(true, 448, 512);
@@ -202,6 +209,10 @@ tutorial2.prototype =
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
 		{
 			game.state.restart(true, false);
+		}
+		if(game.physics.arcade.overlap(this.player, this.door))
+		{
+			game.state.start('tutorial3');
 		}
 	}
 }
@@ -220,7 +231,6 @@ tutorial3.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#FFFF00');
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
@@ -242,6 +252,9 @@ tutorial3.prototype =
 		game.add.existing(this.box2);
 		
 		this.boxes = [this.box1, this.box2];
+		
+		this.door = new exitdoor(game, 'door', 0, 1184, 128);
+		game.add.existing(this.door);
 	},
 
 	update: function()
@@ -255,6 +268,10 @@ tutorial3.prototype =
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
 		{
 			game.state.restart(true, false);
+		}
+		if(game.physics.arcade.overlap(this.player, this.door))
+		{
+			game.state.start('joy1');
 		}
 	}
 }
@@ -309,7 +326,6 @@ joy1.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#FFFF00');
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
@@ -337,6 +353,9 @@ joy1.prototype =
 		
 		this.platform = new platform(game, 'rplatform', 0, 896, 256);
 		game.add.existing(this.platform);
+		
+		this.door = new exitdoor(game, 'door', 0, 1280, 288);
+		game.add.existing(this.door);
 	},
 
 	update: function()
@@ -359,6 +378,10 @@ joy1.prototype =
 		{
 			game.state.restart(true, false);
 		}
+		if(game.physics.arcade.overlap(this.player, this.door))
+		{
+			game.state.start('joy2');
+		}
 	}
 }
 
@@ -376,7 +399,6 @@ joy2.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#FFFF00');
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
@@ -415,6 +437,9 @@ joy2.prototype =
 		game.add.existing(this.blue1);
 		
 		this.platforms = [this.red1, this.blue1];
+		
+		this.door = new exitdoor(game, 'door', 0, 1312, 224);
+		game.add.existing(this.door);
 	},
 
 	update: function()
@@ -444,6 +469,10 @@ joy2.prototype =
 		{
 			game.state.restart(true, false);
 		}
+		if(game.physics.arcade.overlap(this.player, this.door))
+		{
+			game.state.start('joy3');
+		}
 	}
 }
 
@@ -461,8 +490,7 @@ joy3.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#9ebeff');
-
+		
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
 
@@ -515,6 +543,9 @@ joy3.prototype =
 		game.add.existing(this.blue2);
 
 		this.platforms = [this.blue1, this.red1, this.yellow1, this.red2, this.blue2];
+		
+		this.door = new exitdoor(game, 'door', 0, 1312, 192);
+		game.add.existing(this.door);
 	},
 
 	update: function()
@@ -552,6 +583,10 @@ joy3.prototype =
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
 		{
 			game.state.restart(true, false);
+		}
+		if(game.physics.arcade.overlap(this.player, this.door))
+		{
+			game.state.start('GameOver');
 		}
 	}
 }
@@ -643,14 +678,15 @@ GameOver.prototype =
 	},
 	create: function() 
 	{
-
+		game.add.text(20, 20, "Prototype ended\n" + 
+		"Press Spacebar to restart\n", style);
 	},
 	update: function()
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
 			//restart the game
-			game.state.start('GamePlay', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 		}
 	}
 }
