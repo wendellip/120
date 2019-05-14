@@ -5,6 +5,8 @@ function onswitch(game, key, frame, x, y, rotation)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
 this.frameName = 'offswitch';
+this.anchor.x = 0.5;
+this.anchor.y = 0.5;
 this.angle = rotation;
 game.physics.enable(this);
 this.enableBody = true;

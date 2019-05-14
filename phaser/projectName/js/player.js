@@ -18,7 +18,7 @@ player.prototype.update = function()
 
 	if(game.input.keyboard.isDown(Phaser.Keyboard.UP))// && (this.body.blocked.down || this.body.touching.down))
 	{
-		this.body.velocity.y = -400;
+		this.body.velocity.y = -375;
 	}
 	if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
 	{
