@@ -45,6 +45,6 @@ function jumping()
 	{
 		this.jumpse.play('', 0, 1, false);
 		this.jump = this.jump - 1;
-		this.body.velocity.y -= 375;
+		this.body.velocity.y -= 390;
 	}
 }
