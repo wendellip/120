@@ -66,7 +66,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial3', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 		}
 	}
 }
