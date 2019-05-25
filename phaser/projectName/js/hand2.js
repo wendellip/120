@@ -10,20 +10,19 @@ this.anchor.set(0,1);
 this.body.CollideWorldBounds = true;
 this.body.rotation=true;
 this.body.gravity.y = 900;
-this.isconnected==0;
-this.health=2;
-
-
+this.pickup = true;
+this.newhand = undefined;
 }
 
 
 hand2.prototype.update = function(colliding)
 {
+
 	//enable picking the arm
-	if(this.health == 2 && colliding)
+	if(this.pickup && colliding)
 	{
-		return this.health;
+		this.destroy();
+		this.newhand = new hand(game, 'hand', 0, 50,50);
 	}
-	else
-		return false;
+	return this.newhand;
 }

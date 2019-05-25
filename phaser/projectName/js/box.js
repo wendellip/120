@@ -8,37 +8,60 @@ Phaser.Sprite.call(this, game, x, y, key, frame);
 game.physics.enable(this);
 this.body.CollideWorldBounds = true;
 this.scale.set(2);
+this.body.setSize(64, 64, 0, 0);
 this.body.gravity.y = 500;
+this.pushb = game.input.keyboard.addKey(Phaser.Keyboard.E);﻿﻿
+this.body.immovable = true;
+this.collide = false;
+this.ground = false;
 }
 
 
-box.prototype.update = function(hitplayer)
+box.prototype.update = function(collide, ground)
 {
-	//enable player to push the boxes, and stop when player stops pushing
-	if(hitplayer && this.body.touching.left)
+	if(collide != undefined)
+		this.collide = collide;
+	if(ground != undefined)
+		this.ground = ground;
+	if(!this.collide || !this.ground)
 	{
-		if(!this.body.blocked.right && !this.body.touching.right)
-		{
-			this.body.velocity.x = 125;
-		}
-		else
-		{
-			this.body.velocity.x = 0;
-		}
+		this.body.velocity.x = 0;
 	}
-	else if(hitplayer && this.body.touching.right)
+	if(game.input.keyboard.isDown(Phaser.Keyboard.E))
 	{
-		if(!this.body.blocked.left && !this.body.touching.left)
+		if(this.collide && this.ground)
 		{
-			this.body.velocity.x = -125;
+			if(this.body.touching.left)
+			{
+				this.body.velocity.x = 64;
+			}
+			else if(this.body.touching.right)
+			{
+				this.body.velocity.x = -64;
+			}
 		}
-		else
-			this.body.velocity.x = 0;
 	}
 	else
+		this.body.velocity.x = 0;
+}
+
+function pushing()
+{
+	if(this.collide && this.ground)
 	{
-		this.body.velocity.x = 0.000001 * this.body.velocity.x;
+		if(this.body.touching.left)
+		{
+			this.body.velocity.x = 64;
+		}
+		else if(this.body.touching.right)
+		{
+			this.body.velocity.x = -64;
+		}
+		this.body.velocity.x = 0;
 	}
+}
 
-
+function stop()
+{
+	
 }

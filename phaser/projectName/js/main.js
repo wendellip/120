@@ -57,8 +57,7 @@ MainMenu.prototype =
 	},
 	create: function()
 	{
-		// for picking up arm.
-		newhand=new hand2(game, 'hand', 0, -50, -50);
+		game.stage.setBackgroundColor('#9ebeff');
 		//instructions
 		game.add.text(20, 20, "Arrow key moving and Up arrow for jumping\n" + 
 		"mouse for aiming and shooting arm\n" + "Press C to interact with lever\n" + "Press Spacebar to start", style);
@@ -67,7 +66,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial1', true, false, this.level);
+			game.state.start('tutorial3', true, false, this.level);
 		}
 	}
 }
@@ -87,7 +86,7 @@ tutorial1.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#9ebeff');
+
 
 		// start with arcade system
 		game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -176,44 +175,38 @@ tutorial2.prototype =
 		
 		this.door = new exitdoor(game, 'door', 0, 1248, 224);
 		game.add.existing(this.door);
+		
+		this.projecthand = undefined;
 	},
 
 	update: function()
 	{
 		//enable shooting arm by define another arm
 		//with motion and destroy the original one
-		this.hand.update(this.player);
-		if(game.input.activePointer.isDown)
+		if(this.hand != undefined)
 		{
-			console.log(shotsfired);
-			if(shotsfired==0){
-				shotsfired+=1;
-				this.hand.destroy();
-				console.log(this.hand);
-				newhand=new hand2(game, 'hand', 0, this.hand.position.x+this.player.position.x, this.hand.position.y+this.player.position.y);
-				game.add.existing(newhand);
-				game.physics.arcade.moveToPointer(newhand, 1000);
-  				timer = game.time.create(game,true);
-  				timer.add(2000, changepickup, this, newhand);
-   				timer.start();
-   				newhand.setHealth(1);
-
-   			}
+			this.projecthand = this.hand.update(this.player);
+			if(this.projecthand != undefined)
+				game.add.existing(this.projecthand);
 		}
-
-
+		if(this.projecthand != undefined)
+		{
+			game.physics.arcade.collide(this.projecthand, this.mapLayer);
+			game.physics.arcade.collide(this.projecthand, this.platforms);
+			game.physics.arcade.overlap(this.player, this.projecthand);
+			this.hand = this.projecthand.update(game.physics.arcade.overlap(this.player, this.projecthand));
+			
+			if(this.switch1.update(game.physics.arcade.overlap(this.projecthand, this.switch1)))
+			{
+				this.platform1.update(true, 448, 512);
+				this.platform2.update(true, 704, 512);		
+			}
+			if(this.hand != undefined)
+				this.player.addChild(game.add.existing(this.hand));
+		}
 		game.physics.arcade.collide(this.player, this.mapLayer);
 		game.physics.arcade.collide(this.player, this.platforms);
-		game.physics.arcade.collide(newhand, this.mapLayer);
-		game.physics.arcade.collide(newhand, this.platforms);
-		
-		//enable picking the arm back
-		if(newhand.update(game.physics.arcade.overlap(this.player, newhand))){
-		this.hand = new hand(game, 'hand', 0, 50,50);
-		this.player.addChild(game.add.existing(this.hand));
-		newhand.destroy();
-		shotsfired-=1;
-		}
+
 
 		//switch interacting with arm or player body
 		//to move the platform
@@ -222,11 +215,7 @@ tutorial2.prototype =
 			this.platform1.update(true, 448, 512);
 			this.platform2.update(true, 704, 512);		
 		}
-		if(this.switch1.update(game.physics.arcade.overlap(newhand, this.switch1)))
-		{
-			this.platform1.update(true, 448, 512);
-			this.platform2.update(true, 704, 512);		
-		}
+
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
 		{
 			game.state.restart(true, false);
@@ -283,10 +272,9 @@ tutorial3.prototype =
 	{
 		game.physics.arcade.collide(this.player, this.mapLayer);
 		game.physics.arcade.collide(this.boxes, this.mapLayer);
+		this.box1.update(game.physics.arcade.collide(this.player, this.box1), this.player.update());
+		this.box2.update(game.physics.arcade.collide(this.player, this.box2), this.player.update());
 		game.physics.arcade.collide(this.boxes, this.boxes);
-		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
-
 		// player can interact with boxes
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
 		{
@@ -733,7 +721,3 @@ game.state.add('fear1', fear1);
 game.state.add('fear2', fear2);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
-
-function changepickup(){
-	newhand.setHealth(2);
-}
