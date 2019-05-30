@@ -10,44 +10,73 @@ this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
 this.body.fixedRotation = true;
 this.jumpse = game.add.audio(jumpkey);
-this.jumpb = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);﻿﻿
-this.jump = 1;
+this.jumpb = game.input.keyboard.addKey(Phaser.Keyboard.W);﻿﻿
 this.jumpTimer = 0;
+this.body.force = 5;
 
 }
 
 
-player.prototype.update = function(chara)
+player.prototype.update = function(control)
 {
-	//moving and jumping
-    if (this.jumpb.isDown && game.time.now > this.jumpTimer && checkIfCanJump(chara))
-    {
-        this.body.moveUp(300);
-        this.jumpTimer = game.time.now + 750;
-    }
-	if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
+	if(control == undefined)
+		return;
+	if(control)
 	{
-		this.body.velocity.x = 300;
-	}
-	else if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
-	{
-		this.body.velocity.x = -300;
+		if (game.time.now > this.jumpTimer && checkIfCanJump(this))
+		{
+			if(this.jumpb.isDown)
+			{
+				this.body.moveUp(400);
+				this.body.force = 0;
+				this.jumpTimer = game.time.now + 750;
+			}
+			else
+			{
+				this.body.force = 5;
+			}
+		}
+		else
+		{
+			this.body.force = 0;
+		}
+		if(game.input.keyboard.isDown(Phaser.Keyboard.D))
+		{
+			this.body.moveRight(300);
+		}
+		else if(game.input.keyboard.isDown(Phaser.Keyboard.A))
+		{
+			this.body.moveLeft(300);
+		}
+		else
+		{
+			this.body.velocity.x = 0;
+		}
 	}
 	else
 	{
 		this.body.velocity.x = 0;
 	}
 
+
 }
 
-function jumping()
+player.prototype.sprite = function()
 {
-	if(this.jump > 0)
+	return this.body.sprite;
+}
+
+player.prototype.collexception = function(body1, body2)
+{
+	if(body1 == undefined || body2 == undefined || body1.sprite == null || body2.sprite == null)
+		return true;
+	if((body1.sprite.key == "player" && body2.sprite.key == "hand") ||
+	(body2.sprite.key == "player" && body1.sprite.key == "hand"))
 	{
-		this.jumpse.play('', 0, 1, false);
-		this.jump = this.jump - 1;
-		this.body.velocity.y -= 390;
+		return false;
 	}
+	else
+		return true;
 }
 
 function checkIfCanJump(chara) {
@@ -69,6 +98,5 @@ function checkIfCanJump(chara) {
 			}
 		}
     }
-    
     return result;
 }

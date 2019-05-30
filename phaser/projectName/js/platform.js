@@ -4,10 +4,10 @@ platform.prototype.constructor = platform;
 function platform(game, key, frame, x, y)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-game.physics.enable(this);
+game.physics.p2.enable(this);
 this.enableBody = true;
 this.body.CollideWorldBounds = true;
-this.body.immovable = true;
+this.body.static = true;
 this.moving = false;
 }
 
