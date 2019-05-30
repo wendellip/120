@@ -6,17 +6,21 @@ Phaser.Sprite.call(this, game, x, y, key, frame);
 this.scale.setTo(.1);
 this.pivot.x = 100;
 this.anchor.set(2);
-this.hand2 = undefined;
 this.gothand = true;
+this.hand2 = undefined;
 }
 
 
-hand.prototype.update = function(player)
+hand.prototype.update = function()
 {
-	//the arm rotates with player's movement
+	//the arm rotates
 	this.rotation += 0.1;
-	if(game.input.activePointer.isDown && this.gothand)
-	{
+}
+
+hand.prototype.newhand = function(player)
+{
+	if(this.gothand)
+	{	
 		this.gothand = false;
 		this.destroy();
 		this.hand2 =new hand2(game, 'hand', 0, player.position.x, player.position.y);
@@ -30,19 +34,7 @@ hand.prototype.update = function(player)
 		if (game.input.y < player.position.y)
 			this.hand2.body.velocity.y = -1000 * yd / sum;
 		else
-			this.hand2.body.velocity.y = 1000 * yd / sum;
+			this.hand2.body.velocity.y = 1000 * yd / sum;	
 	}
 	return this.hand2; 
-}
-
-
-function moveHand(player, hand2)
-{
-	var dx = player.body.x - hand2.x;
-	var dy = player.body.y - hand2.y;
-	handrotation= Math.atan2(dy, dx);
-	hand2.body.rotation = handrotation + game.math.degToRad(-90);
-	var angle = hand2.body.rotation + (Math.PI / 2);
-	hand2.body.velocity.x = 300 * Math.cos(angle);
-	hand2.body.velocity.y = 300 * Math.sin(angle);
 }

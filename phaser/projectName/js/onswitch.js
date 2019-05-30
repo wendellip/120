@@ -30,8 +30,14 @@ onswitch.prototype.hitted = function()
 		this.on = true;
 		this.frameName = 'onswitch';
 		this.body.enable = false;
+		this.body.destroy();
 		return true;
 	}
 	else
 		return false;
+}
+
+onswitch.prototype.onoff = function()
+{
+	return this.on;
 }

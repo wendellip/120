@@ -15,12 +15,14 @@ this.health=2;
 }
 
 
-hand2.prototype.update = function(colliding)
+hand2.prototype.update = function()
 {
-	//enable picking the arm
-	if(this.health == 2 && colliding)
+	if(this.body == null)
+		return true;
+	if(this.body.velocity.x < 1 && this.body.velocity.y < 1)
 	{
-		return this.health;
+		this.destroy();
+		return true;
 	}
 	else
 		return false;

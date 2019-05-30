@@ -148,10 +148,10 @@ tutorial2.prototype =
 		game.add.existing(this.switch1);
 		
 		//create moving platform
-		this.platform1 = new platform(game, 'platform', 0, 192, 512);
+		this.platform1 = new platform(game, 'platform', 0, 320, 528, 0);
 		game.add.existing(this.platform1);
 		
-		this.platform2 = new platform(game, 'platform', 0, 960, 512);
+		this.platform2 = new platform(game, 'platform', 0, 1088, 528, 0);
 		game.add.existing(this.platform2);
 		
 		this.player = new player(game, 'player', 0, 150, 450, 'jump');
@@ -160,20 +160,19 @@ tutorial2.prototype =
 		this.hand = new hand(game, 'hand', 0, 0, 0);
 		this.player.addChild(game.add.existing(this.hand));
 		
-		this.platforms = [this.platform1, this.platform2];
-		
 		this.door = new exitdoor(game, 'door', 0, 1248, 224);
 		game.add.existing(this.door);
 		
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		this.projected = undefined;
 		
-		var playerCollisionGroup = game.physics.p2.createCollisionGroup();
-		var handCollisionGroup = game.physics.p2.createCollisionGroup();
-		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		
+		this.switch1on = true;
 
 	},
 
@@ -189,25 +188,29 @@ tutorial2.prototype =
 		newhand.destroy();
 		shotsfired-=1;
 		}*/
-		/*
+		
 		//switch interacting with arm or player body
 		//to move the platform
-		if(this.switch1.update(game.physics.arcade.overlap(this.player, this.switch1)))
+		if(this.switch1.onoff() && this.switch1on)
 		{
-			this.platform1.update(true, 448, 512);
-			this.platform2.update(true, 704, 512);		
+			this.switch1on = false;
+			this.platform1.moving(576, 528, 0);
+			this.platform2.moving(832, 528, 0);		
 		}
-		if(this.switch1.update(game.physics.arcade.overlap(newhand, this.switch1)))
-		{
-			this.platform1.update(true, 448, 512);
-			this.platform2.update(true, 704, 512);		
-		}*/
 		this.player.update(this.control);
-		this.projected = this.hand.update(this.player);
-		if(this.projected != undefined)
+		this.hand.update();
+		if(game.input.activePointer.isDown)
 		{
-			game.add.existing(this.projected);
+			this.projected = this.hand.newhand(this.player);
+			if(this.projected != undefined)
+			{
+				this.hand.destroy();
+				game.add.existing(this.projected);
+				this.switch1.body.createBodyCallback(this.projected, this.switch1.hitted, this.switch1);
+			}
 		}
+		if(this.projected != undefined && this.projected.update() == true)
+			this.projected.destroy();
 			//enable restarting stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{

@@ -27,7 +27,7 @@ player.prototype.update = function(control)
 		{
 			if(this.jumpb.isDown)
 			{
-				this.body.moveUp(400);
+				this.body.moveUp(300);
 				this.body.force = 0;
 				this.jumpTimer = game.time.now + 750;
 			}
@@ -42,11 +42,11 @@ player.prototype.update = function(control)
 		}
 		if(game.input.keyboard.isDown(Phaser.Keyboard.D))
 		{
-			this.body.moveRight(300);
+			this.body.moveRight(250);
 		}
 		else if(game.input.keyboard.isDown(Phaser.Keyboard.A))
 		{
-			this.body.moveLeft(300);
+			this.body.moveLeft(250);
 		}
 		else
 		{
