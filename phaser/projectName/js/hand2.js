@@ -10,7 +10,7 @@ this.body.enable = true;
 this.body.CollideWorldBounds = true;
 this.isconnected==0;
 this.health=2;
-
+this.handdestroy = false;
 
 }
 
@@ -19,9 +19,11 @@ hand2.prototype.update = function()
 {
 	if(this.body == null)
 		return true;
-	if(this.body.velocity.x < 1 && this.body.velocity.y < 1)
+	if(this.body.velocity.x < 1 && this.body.velocity.y < 1 
+	&& this.body.velocity.x > -1 && this.body.velocity.y > -1)
 	{
 		this.destroy();
+		this.handdestroy = true;
 		return true;
 	}
 	else

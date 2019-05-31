@@ -4,7 +4,7 @@ platform.prototype.constructor = platform;
 function platform(game, key, frame, x, y, rotation)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-game.physics.p2.enable(this, true);
+game.physics.p2.enable(this);
 this.body.enable = true;
 this.body.CollideWorldBounds = true;
 this.body.rotation = rotation;
@@ -34,4 +34,9 @@ platform.prototype.moving = function(x, y, rotation)
 {
 	this.body.rotation = rotation;
 	this.body.reset(x, y);
+}
+
+platform.prototype.sprite = function()
+{
+	return this.body.sprite;
 }

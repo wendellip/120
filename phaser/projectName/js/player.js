@@ -13,7 +13,6 @@ this.jumpse = game.add.audio(jumpkey);
 this.jumpb = game.input.keyboard.addKey(Phaser.Keyboard.W);﻿﻿
 this.jumpTimer = 0;
 this.body.force = 5;
-
 }
 
 
@@ -27,7 +26,7 @@ player.prototype.update = function(control)
 		{
 			if(this.jumpb.isDown)
 			{
-				this.body.moveUp(300);
+				this.body.moveUp(400);
 				this.body.force = 0;
 				this.jumpTimer = game.time.now + 750;
 			}
@@ -71,7 +70,9 @@ player.prototype.collexception = function(body1, body2)
 	if(body1 == undefined || body2 == undefined || body1.sprite == null || body2.sprite == null)
 		return true;
 	if((body1.sprite.key == "player" && body2.sprite.key == "hand") ||
-	(body2.sprite.key == "player" && body1.sprite.key == "hand"))
+	   (body2.sprite.key == "player" && body1.sprite.key == "hand") ||
+	   (body1.sprite.key == "player" && body2.sprite.key == "enplatform") ||
+	   (body2.sprite.key == "player" && body1.sprite.key == "enplatform"))
 	{
 		return false;
 	}

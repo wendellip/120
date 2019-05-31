@@ -38,3 +38,8 @@ hand.prototype.newhand = function(player)
 	}
 	return this.hand2; 
 }
+
+hand.prototype.resethand = function()
+{
+	this.gothand = true;
+}

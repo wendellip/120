@@ -22,7 +22,9 @@ MainMenu.prototype =
 		game.load.tilemap('fear1', 'assets/map/fear1.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('fear2', 'assets/map/fear2.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.image('player', 'assets/img/Snowball.png');
+		game.load.image('enemy', 'assets/img/ESnowball.png');
 		game.load.image('box', 'assets/img/Box.png');
+		game.load.image('enplatform', 'assets/img/enplatform.png');
 		game.load.image('platform', 'assets/img/platform.png');
 		game.load.image('vplatform', 'assets/img/vplatform.png');
 		game.load.image('bplatform', 'assets/img/bplatform.png');
@@ -56,7 +58,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial2', true, false, this.level);
+			game.state.start('tutorial4', true, false, this.level);
 		}
 	}
 }
@@ -157,9 +159,6 @@ tutorial2.prototype =
 		this.player = new player(game, 'player', 0, 150, 450, 'jump');
 		game.add.existing(this.player);
 		
-		this.hand = new hand(game, 'hand', 0, 0, 0);
-		this.player.addChild(game.add.existing(this.hand));
-		
 		this.door = new exitdoor(game, 'door', 0, 1248, 224);
 		game.add.existing(this.door);
 		
@@ -167,7 +166,10 @@ tutorial2.prototype =
 		game.physics.p2.gravity.y = 300;
 		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
-		this.projected = undefined;
+		this.handstation = new handstation(game, 'hand', 0, 320, 440);
+		game.add.existing(this.handstation);
+		
+		this.hand = undefined;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
@@ -180,14 +182,6 @@ tutorial2.prototype =
 	{
 
 		
-		//enable picking the arm back
-		/*if(newhand.update(game.physics.arcade.overlap(this.player, newhand)))
-		{
-		this.hand = new hand(game, 'hand', 0, 50,50);
-		this.player.addChild(game.add.existing(this.hand));
-		newhand.destroy();
-		shotsfired-=1;
-		}*/
 		
 		//switch interacting with arm or player body
 		//to move the platform
@@ -198,20 +192,30 @@ tutorial2.prototype =
 			this.platform2.moving(832, 528, 0);		
 		}
 		this.player.update(this.control);
-		this.hand.update();
-		if(game.input.activePointer.isDown)
+		if(this.door.checkoverlap(this.player.sprite(), this.handstation.sprite()))
+		{
+			if(this.hand == undefined)
+			{
+				this.hand = this.handstation.takearm();
+				this.player.addChild(game.add.existing(this.hand));
+			}
+		}
+		else if(game.input.activePointer.justReleased() && this.hand != undefined)
 		{
 			this.projected = this.hand.newhand(this.player);
 			if(this.projected != undefined)
 			{
 				this.hand.destroy();
 				game.add.existing(this.projected);
-				this.switch1.body.createBodyCallback(this.projected, this.switch1.hitted, this.switch1);
+				this.hand = undefined;
+				if(this.switch1.body != null)
+					this.switch1.body.createBodyCallback(this.projected, this.switch1.hitted, this.switch1);
+				
 			}
 		}
-		if(this.projected != undefined && this.projected.update() == true)
-			this.projected.destroy();
-			//enable restarting stage
+		if(this.hand != undefined)
+			this.hand.update();
+		//enable restarting stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
@@ -219,10 +223,160 @@ tutorial2.prototype =
 		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
-			game.state.start('tutorial2');
+			game.state.start('tutorial3');
 		}
 	},
 }
+
+var tutorial3 = function(game) {};
+tutorial3.prototype = 
+{
+	init: function()
+	{
+		this.state = 'tutorial3';
+	},
+	preload: function()
+	{
+		console.log('tutorial3');
+	},
+
+	create: function()
+	{
+
+		game.physics.startSystem(Phaser.Physics.P2JS);
+
+		this.map = game.add.tilemap('tutorial3');
+		this.map.addTilesetImage('test', 'test');
+		this.map.setCollisionBetween(1, 8);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		
+		this.player = new player(game, 'player', 0, 150, 650, 'jump');
+		game.add.existing(this.player);
+
+		//making boxes for pushing
+		this.box1 = new box(game, 'box', 0, 250, 672);
+		game.add.existing(this.box1);
+		
+		this.box2 = new box(game, 'box', 0, 650, 416);
+		game.add.existing(this.box2);
+		
+		this.door = new exitdoor(game, 'door', 0, 1184, 128);
+		game.add.existing(this.door);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+	},
+
+	update: function()
+	{
+
+		this.player.update(this.control);
+
+		// player can interact with boxes
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
+		{
+			game.state.restart(true, false);
+		}
+
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		{
+			this.control = false;
+			game.state.start('tutorial4');
+		}
+
+	}
+}
+
+var tutorial4 = function(game) {};
+tutorial4.prototype = 
+{
+	init: function()
+	{
+		this.state = 'tutorial4';
+	},
+	preload: function()
+	{
+		console.log('tutorial4');
+	},
+
+	create: function()
+	{
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		
+		this.map = game.add.tilemap('tutorial4');
+		this.map.addTilesetImage('test', 'test');
+		this.map.setCollisionBetween(1, 8);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		
+		this.player = new player(game, 'player', 0, 150, 650, 'jump');
+		game.add.existing(this.player);
+
+		this.platform1 = new platform(game, 'platform', 0, 672, 720, 0);
+		game.add.existing(this.platform1);
+
+		this.platform2 = new platform(game, 'enplatform', 0, 304, 576, 0);
+		game.add.existing(this.platform2);
+
+		this.enemy = new enemy(game, 'enemy', 0, 800, 640, true);
+		game.add.existing(this.enemy);
+		
+		this.door = new exitdoor(game, 'door', 0, 1184, 420);
+		game.add.existing(this.door);
+		
+		this.lever = new lever(game, 'rlever', 0, 272, 800);
+		game.add.existing(this.lever);
+		
+		
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+
+	},
+
+	update: function()
+	{
+		this.player.update(this.control);
+		console.log(this.enemy.update(this.player, null));
+		this.lever.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.lever.sprite()))
+		if(this.lever.update())
+		{
+			this.platform1.moving(928, 720, 0);
+		}
+		else
+		{
+			this.platform1.moving(672, 720, 0);
+		}
+		// player can interact with boxes
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
+		{
+			game.state.restart(true, false);
+		}
+
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		{
+			this.control = false;
+			game.state.start('tutorial4');
+		}
+		if(this.door.checkoverlap(this.enemy.sprite(), this.platform2.sprite()))
+		{
+			this.enemy.toggling();
+		}
+	}
+}
+
 
 //define GameOver state
 var GameOver = function(game) {};
@@ -255,5 +409,7 @@ GameOver.prototype =
 game.state.add('MainMenu', MainMenu);
 game.state.add('tutorial1', tutorial1);
 game.state.add('tutorial2', tutorial2);
+game.state.add('tutorial3', tutorial3);
+game.state.add('tutorial4', tutorial4);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
