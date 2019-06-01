@@ -10,35 +10,39 @@ this.enableBody = true;
 this.body.CollideWorldBounds = true;
 this.body.immovable = true;
 this.on = null;
-this.trigger = game.input.keyboard.addKey(Phaser.Keyboard.C);﻿﻿
+this.trigger = game.input.keyboard.addKey(Phaser.Keyboard.E);﻿﻿
+game.input.keyboard.addCallbacks(this, null, null, change);
+this.overlap = false;
 }
 
+lever.prototype.update = function()
+{ 
+	return this.on;
+}
 
-lever.prototype.update = function(hitted)
+lever.prototype.playeroverlap = function(overlapping)
 {
-	if(hitted)
+	this.overlap = overlapping;
+}
+
+function change(char)
+{
+	if(char === 'q' && this.overlap)
 	{
-		//return true or false when lever triggered, or else return null
-		this.trigger.onDown﻿.add(change, this);
-		if(this.on != null)
+		if(this.frameName == "offlever")
 		{
-			var temp = this.on
-			this.on = null;
-			return temp;
+			this.on = true;
+			this.frameName = "onlever";
+		}
+		else
+		{
+			this.on= false;
+			this.frameName  = "offlever";
 		}
 	}
 }
 
-function change()
+lever.prototype.sprite = function()
 {
-	if(this.frameName == "offlever")
-	{
-		this.on = true;
-		this.frameName = "onlever";
-	}
-	else
-	{
-		this.on= false;
-		this.frameName  = "offlever";
-	}
+	return this.body.sprite;
 }

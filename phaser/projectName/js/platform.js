@@ -1,14 +1,15 @@
 platform.prototype = Object.create(Phaser.Sprite.prototype);
 platform.prototype.constructor = platform;
 
-function platform(game, key, frame, x, y)
+function platform(game, key, frame, x, y, rotation)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-game.physics.enable(this);
-this.enableBody = true;
+game.physics.p2.enable(this);
+this.body.enable = true;
 this.body.CollideWorldBounds = true;
-this.body.immovable = true;
-this.moving = false;
+this.body.rotation = rotation;
+this.body.static = true;
+this.body.data.gravityScale = 0;
 }
 
 
@@ -27,4 +28,15 @@ platform.prototype.update = function(hit,x, y)
 		}
 		, this);
 	}
+}
+
+platform.prototype.moving = function(x, y, rotation)
+{
+	this.body.rotation = rotation;
+	this.body.reset(x, y);
+}
+
+platform.prototype.sprite = function()
+{
+	return this.body.sprite;
 }

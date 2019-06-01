@@ -1,16 +1,6 @@
-//github
-//https://github.com/wendellip/120/tree/first-prototype
-
-//Group 23:
-//Brenden Satake
-//Wendell Ip
-//Casey Moropoulos
-
 let style = { font: '24px Helvetica', fill: '#FFF' };
 //define the game
 var game = new Phaser.Game(1440, 900, Phaser.AUTO, 'phaser');
-var newhand;
-var shotsfired;
 //define MainMenu state
 var MainMenu = function(game) {};
 MainMenu.prototype = 
@@ -32,7 +22,9 @@ MainMenu.prototype =
 		game.load.tilemap('fear1', 'assets/map/fear1.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('fear2', 'assets/map/fear2.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.image('player', 'assets/img/Snowball.png');
+		game.load.image('enemy', 'assets/img/ESnowball.png');
 		game.load.image('box', 'assets/img/Box.png');
+		game.load.image('enplatform', 'assets/img/enplatform.png');
 		game.load.image('platform', 'assets/img/platform.png');
 		game.load.image('vplatform', 'assets/img/vplatform.png');
 		game.load.image('bplatform', 'assets/img/bplatform.png');
@@ -57,8 +49,7 @@ MainMenu.prototype =
 	},
 	create: function()
 	{
-		// for picking up arm.
-		newhand=new hand2(game, 'hand', 0, -50, -50);
+		game.stage.setBackgroundColor('#9ebeff');
 		//instructions
 		game.add.text(20, 20, "Arrow key moving and Up arrow for jumping\n" + 
 		"mouse for aiming and shooting arm\n" + "Press C to interact with lever\n" + "Press Spacebar to start", style);
@@ -67,12 +58,11 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial1', true, false, this.level);
+			game.state.start('tutorial4', true, false, this.level);
 		}
 	}
 }
 
-//define tutorial1 state
 var tutorial1 = function(game) {};
 tutorial1.prototype = 
 {
@@ -84,46 +74,45 @@ tutorial1.prototype =
 	{
 		
 	},
-
 	create: function()
 	{
-		game.stage.setBackgroundColor('#9ebeff');
-
-		// start with arcade system
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
+		game.physics.startSystem(Phaser.Physics.P2JS);
 
 		//load tilemap
 		this.map = game.add.tilemap('tutorial1');
 		this.map.addTilesetImage('test', 'test');
 		//all tiles have collation
-		this.map.setCollisionByExclusion([]);
+		this.map.setCollisionBetween(1, 8);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
 
 		//make a player character
-		this.player = new player(game, 'player', 0, 50, 650, 'jump');
+		this.player = new player(game, 'player', 0, 100, 600, 'jump');
 		game.add.existing(this.player);
 		
 		//add stage end point
 		this.door = new exitdoor(game, 'door', 0, 1280, 64);
 		game.add.existing(this.door);
+		
+		//add stage end point
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
 	},
 
 	update: function()
 	{
-		game.physics.arcade.collide(this.player, this.mapLayer);
-		
-		//enable restarting stage
-		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
+		this.player.update(this.control);
+			//enable restarting stage
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
-		if(game.physics.arcade.overlap(this.player, this.door))
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
+			this.control = false;
 			game.state.start('tutorial2');
 		}
 	}
@@ -138,104 +127,105 @@ tutorial2.prototype =
 	},
 	preload: function()
 	{
-		console.log('tutorial2');
+		
 	},
 
 	create: function()
 	{
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
-
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.p2.setImpactEvents(true);
+		
+		//load tilemap
 		this.map = game.add.tilemap('tutorial2');
 		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
+		//all tiles have collation
+		this.map.setCollisionBetween(1, 8);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
 		
-		this.player = new player(game, 'player', 0, 150, 450, 'jump');
-		game.add.existing(this.player);
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
 		this.switch1 = new onswitch(game, 'switches', 0, 1200, 464, 0);
 		game.add.existing(this.switch1);
 		
 		//create moving platform
-		this.platform1 = new platform(game, 'platform', 0, 192, 512);
+		this.platform1 = new platform(game, 'platform', 0, 320, 528, 0);
 		game.add.existing(this.platform1);
 		
-		this.platform2 = new platform(game, 'platform', 0, 960, 512);
+		this.platform2 = new platform(game, 'platform', 0, 1088, 528, 0);
 		game.add.existing(this.platform2);
 		
-		this.hand = new hand(game, 'hand', 0, 50, 50);
-		this.player.addChild(game.add.existing(this.hand));
-
-		shotsfired = 0;
-		
-		this.platforms = [this.platform1, this.platform2];
+		this.player = new player(game, 'player', 0, 150, 450, 'jump');
+		game.add.existing(this.player);
 		
 		this.door = new exitdoor(game, 'door', 0, 1248, 224);
 		game.add.existing(this.door);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		this.handstation = new handstation(game, 'hand', 0, 320, 440);
+		game.add.existing(this.handstation);
+		
+		this.hand = undefined;
+		
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		
+		this.switch1on = true;
+
 	},
 
 	update: function()
 	{
-		//enable shooting arm by define another arm
-		//with motion and destroy the original one
-		this.hand.update(this.player);
-		if(game.input.activePointer.isDown)
-		{
-			console.log(shotsfired);
-			if(shotsfired==0){
-				shotsfired+=1;
-				this.hand.destroy();
-				console.log(this.hand);
-				newhand=new hand2(game, 'hand', 0, this.hand.position.x+this.player.position.x, this.hand.position.y+this.player.position.y);
-				game.add.existing(newhand);
-				game.physics.arcade.moveToPointer(newhand, 1000);
-  				timer = game.time.create(game,true);
-  				timer.add(2000, changepickup, this, newhand);
-   				timer.start();
-   				newhand.setHealth(1);
 
-   			}
-		}
-
-
-		game.physics.arcade.collide(this.player, this.mapLayer);
-		game.physics.arcade.collide(this.player, this.platforms);
-		game.physics.arcade.collide(newhand, this.mapLayer);
-		game.physics.arcade.collide(newhand, this.platforms);
 		
-		//enable picking the arm back
-		if(newhand.update(game.physics.arcade.overlap(this.player, newhand))){
-		this.hand = new hand(game, 'hand', 0, 50,50);
-		this.player.addChild(game.add.existing(this.hand));
-		newhand.destroy();
-		shotsfired-=1;
-		}
-
+		
 		//switch interacting with arm or player body
 		//to move the platform
-		if(this.switch1.update(game.physics.arcade.overlap(this.player, this.switch1)))
+		if(this.switch1.onoff() && this.switch1on)
 		{
-			this.platform1.update(true, 448, 512);
-			this.platform2.update(true, 704, 512);		
+			this.switch1on = false;
+			this.platform1.moving(576, 528, 0);
+			this.platform2.moving(832, 528, 0);		
 		}
-		if(this.switch1.update(game.physics.arcade.overlap(newhand, this.switch1)))
+		this.player.update(this.control);
+		if(this.door.checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
-			this.platform1.update(true, 448, 512);
-			this.platform2.update(true, 704, 512);		
+			if(this.hand == undefined)
+			{
+				this.hand = this.handstation.takearm();
+				this.player.addChild(game.add.existing(this.hand));
+			}
 		}
-		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
+		else if(game.input.activePointer.justReleased() && this.hand != undefined)
+		{
+			this.projected = this.hand.newhand(this.player);
+			if(this.projected != undefined)
+			{
+				this.hand.destroy();
+				game.add.existing(this.projected);
+				this.hand = undefined;
+				if(this.switch1.body != null)
+					this.switch1.body.createBodyCallback(this.projected, this.switch1.hitted, this.switch1);
+				
+			}
+		}
+		if(this.hand != undefined)
+			this.hand.update();
+		//enable restarting stage
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
-		if(game.physics.arcade.overlap(this.player, this.door))
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
+			this.control = false;
 			game.state.start('tutorial3');
 		}
-	}
+	},
 }
 
 var tutorial3 = function(game) {};
@@ -253,15 +243,16 @@ tutorial3.prototype =
 	create: function()
 	{
 
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
+		game.physics.startSystem(Phaser.Physics.P2JS);
 
 		this.map = game.add.tilemap('tutorial3');
 		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
+		this.map.setCollisionBetween(1, 8);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
 		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
@@ -273,33 +264,35 @@ tutorial3.prototype =
 		this.box2 = new box(game, 'box', 0, 650, 416);
 		game.add.existing(this.box2);
 		
-		this.boxes = [this.box1, this.box2];
-		
 		this.door = new exitdoor(game, 'door', 0, 1184, 128);
 		game.add.existing(this.door);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
 	},
 
 	update: function()
 	{
-		game.physics.arcade.collide(this.player, this.mapLayer);
-		game.physics.arcade.collide(this.boxes, this.mapLayer);
-		game.physics.arcade.collide(this.boxes, this.boxes);
-		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
+
+		this.player.update(this.control);
 
 		// player can interact with boxes
-		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
-		if(game.physics.arcade.overlap(this.player, this.door))
+
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			game.state.start('joy1');
+			this.control = false;
+			game.state.start('tutorial4');
 		}
+
 	}
 }
 
-//not included in first prototype
 var tutorial4 = function(game) {};
 tutorial4.prototype = 
 {
@@ -314,29 +307,87 @@ tutorial4.prototype =
 
 	create: function()
 	{
-		game.stage.setBackgroundColor('#FFFF00');
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
-
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		
 		this.map = game.add.tilemap('tutorial4');
 		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
+		this.map.setCollisionBetween(1, 8);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
 		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		
+		this.player = new player(game, 'player', 0, 150, 650, 'jump');
+		game.add.existing(this.player);
 
+		this.platform1 = new platform(game, 'platform', 0, 672, 720, 0);
+		game.add.existing(this.platform1);
+
+		this.platform2 = new platform(game, 'enplatform', 0, 304, 576, 0);
+		game.add.existing(this.platform2);
+
+		this.enemy = new enemy(game, 'enemy', 0, 800, 640, true);
+		game.add.existing(this.enemy);
+		
+		this.door = new exitdoor(game, 'door', 0, 1184, 420);
+		game.add.existing(this.door);
+		
+		this.lever = new lever(game, 'rlever', 0, 272, 800);
+		game.add.existing(this.lever);
+		
+		this.superenemy = new superenemy(game, 'enemy', 0, 100, 800);
+		game.add.existing(this.superenemy);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 	},
 
 	update: function()
 	{
-
-	
+		this.player.update(this.control);
+		if(this.enemy.update(this.player, null))
+		{
+			this.superenemy.foundplayer();
+		}
+		this.superenemy.update(this.player);
+		this.lever.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.lever.sprite()))
+		if(this.lever.update())
+		{
+			this.platform1.moving(928, 720, 0);
+		}
+		else
+		{
+			this.platform1.moving(672, 720, 0);
+		}
+		// player can interact with boxes
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
+		{
+			game.state.restart(true, false);
+		}
+		if(this.door.checkoverlap(this.enemy.sprite(), this.platform2.sprite()))
+		{
+			this.enemy.toggling();
+		}
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		{
+			this.control = false;
+			game.state.start('joy1');
+		}
+		if(this.door.checkoverlap(this.player.sprite(), this.superenemy.sprite()))
+		{
+			if(this.control)
+			{
+				this.control = false;
+				this.player.death()
+			}
+		}
 	}
 }
 
-//code same as tutorial
 var joy1 = function(game) {};
 joy1.prototype = 
 {
@@ -352,15 +403,16 @@ joy1.prototype =
 	create: function()
 	{
 
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
-
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		
 		this.map = game.add.tilemap('joy1');
 		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
+		this.map.setCollisionBetween(1, 8);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
 		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
@@ -370,8 +422,6 @@ joy1.prototype =
 		
 		this.box2 = new box(game, 'box', 0, 1152, 128);
 		game.add.existing(this.box2);
-		
-		this.boxes = [this.box1, this.box2];
 		
 		this.lever = new lever(game, 'rlever', 0, 1344, 224);
 		game.add.existing(this.lever);
@@ -385,315 +435,12 @@ joy1.prototype =
 
 	update: function()
 	{
-		game.physics.arcade.collide(this.player, this.mapLayer);
-		game.physics.arcade.collide(this.boxes, this.mapLayer);
-		game.physics.arcade.collide(this.boxes, this.boxes);
-		game.physics.arcade.collide(this.player, this.platform);
-		game.physics.arcade.collide(this.boxes, this.platform);
-		
-		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
-		
-		if(this.lever.update(game.physics.arcade.overlap(this.player, this.lever)) == true)
-		{
-			this.platform.update(true, 1088, 256);	
-		}
 
-		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
-		{
-			game.state.restart(true, false);
-		}
-		if(game.physics.arcade.overlap(this.player, this.door))
-		{
-			game.state.start('joy2');
-		}
-	}
-}
-
-//code same as tutorial
-var joy2 = function(game) {};
-joy2.prototype = 
-{
-	init: function()
-	{
-		this.state = 'joy2';
-	},
-	preload: function()
-	{
-		console.log('joy2');
-	},
-
-	create: function()
-	{
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
-
-		this.map = game.add.tilemap('joy2');
-		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
-		this.mapLayer = this.map.createLayer('Tile Layer 1');
-		
-		this.mapLayer.resizeWorld();
-		
-		this.player = new player(game, 'player', 0, 120, 450, 'jump');
-		game.add.existing(this.player);
-
-		this.box1 = new box(game, 'box', 0, 640, 576);
-		game.add.existing(this.box1);
-		
-		this.box2 = new box(game, 'box', 0, 640, 256);
-		game.add.existing(this.box2);
-		
-		this.box3 = new box(game, 'box', 0, 1184, 96);
-		game.add.existing(this.box3);
-		
-		this.boxes = [this.box1, this.box2, this.box3];
-		
-		this.reds = new lever(game, 'rlever', 0, 64, 640);
-		game.add.existing(this.reds);
-		
-		this.blues = new lever(game, 'blever', 0, 1344, 192);
-		game.add.existing(this.blues);
-		
-		this.red1 = new platform(game, 'rvplatform', 0, 416, 608);
-		game.add.existing(this.red1);
-		
-		this.blue1 = new platform(game, 'bplatform', 0, 992, 224);
-		game.add.existing(this.blue1);
-		
-		this.platforms = [this.red1, this.blue1];
-		
-		this.door = new exitdoor(game, 'door', 0, 1312, 224);
-		game.add.existing(this.door);
-	},
-
-	update: function()
-	{
-		game.physics.arcade.collide(this.player, this.mapLayer);
-
-		game.physics.arcade.collide(this.player, this.mapLayer);
-		game.physics.arcade.collide(this.boxes, this.mapLayer);
-		game.physics.arcade.collide(this.boxes, this.boxes);
-		game.physics.arcade.collide(this.player, this.platforms);
-		game.physics.arcade.collide(this.boxes, this.platforms);
-
-		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box3));
-		
-		if(this.reds.update(game.physics.arcade.overlap(this.player, this.reds)) == true)
-		{
-			this.red1.update(true, 416, 704);	
-		}
-		
-		if(this.blues.update(game.physics.arcade.overlap(this.player, this.blues)) == true)
-		{
-			this.blue1.update(true, 1152, 224);	
-		}
-		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
-		{
-			game.state.restart(true, false);
-		}
-		if(game.physics.arcade.overlap(this.player, this.door))
-		{
-			game.state.start('joy3');
-		}
-	}
-}
-
-//code same as tutorial
-var joy3 = function(game) {};
-joy3.prototype = 
-{
-	init: function()
-	{
-		this.state = 'joy3';
-	},
-	preload: function()
-	{
-		console.log('joy3');
-	},
-
-	create: function()
-	{
-		
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
-
-		this.map = game.add.tilemap('joy3');
-		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
-		this.mapLayer = this.map.createLayer('Tile Layer 1');
-		
-		this.mapLayer.resizeWorld();
-		
-		this.player = new player(game, 'player', 0, 90, 420, 'jump');
-		game.add.existing(this.player);
-
-		this.box1 = new box(game, 'box', 0, 704, 32);
-		game.add.existing(this.box1);
-		
-		this.box2 = new box(game, 'box', 0, 896, 32);
-		game.add.existing(this.box2);
-		
-		this.box3 = new box(game, 'box', 0, 1088, 32);
-		game.add.existing(this.box3);
-		
-		this.box4 = new box(game, 'box', 0, 160, 32);
-		game.add.existing(this.box4);
-		
-		this.boxes = [this.box1, this.box2, this.box3, this.box4];
-		
-		this.yellows = new lever(game, 'ylever', 0, 64, 256);
-		game.add.existing(this.yellows);
-		
-		this.blues = new lever(game, 'blever', 0, 1216, 704);
-		game.add.existing(this.blues);
-		
-		this.reds = new lever(game, 'rlever', 0, 448, 448);
-		game.add.existing(this.reds);
-		
-		this.blue1 = new platform(game, 'btemp', 0, 704, 160);
-		game.add.existing(this.blue1);
-		
-		this.red1 = new platform(game, 'rtemp', 0, 896, 160);
-		game.add.existing(this.red1);
-		
-		this.yellow1 = new platform(game, 'ytemp', 0, 1088, 160);
-		game.add.existing(this.yellow1);
-		
-		this.red2 = new platform(game, 'rtemp', 0, 160, 160);
-		game.add.existing(this.red2);
-		
-		this.blue2 = new platform(game, 'bplatform', 0, 320, 544);
-		game.add.existing(this.blue2);
-
-		this.platforms = [this.blue1, this.red1, this.yellow1, this.red2, this.blue2];
-		
-		this.door = new exitdoor(game, 'door', 0, 1312, 192);
-		game.add.existing(this.door);
-	},
-
-	update: function()
-	{
-		game.physics.arcade.collide(this.player, this.mapLayer);
-
-		game.physics.arcade.collide(this.boxes, this.mapLayer);
-		game.physics.arcade.collide(this.boxes, this.boxes);
-		
-		game.physics.arcade.collide(this.boxes, this.platforms);		
-		game.physics.arcade.collide(this.player, this.platforms);
-		
-
-		this.box1.update(game.physics.arcade.collide(this.player, this.box1));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box2));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box3));
-		this.box2.update(game.physics.arcade.collide(this.player, this.box4));
-		
-		if(this.yellows.update(game.physics.arcade.overlap(this.player, this.yellows)) == true)
-		{
-			this.yellow1.kill();
-		}
-		
-		if(this.blues.update(game.physics.arcade.overlap(this.player, this.blues)) == true)
-		{
-			this.blue1.kill();
-			this.blue2.update(true, 128, 544);
-		}
-		
-		if(this.reds.update(game.physics.arcade.overlap(this.player, this.reds)) == true)
-		{
-			this.red1.kill();
-			this.red2.kill();
-		}
-		if(game.input.keyboard.isDown(Phaser.Keyboard.R))
-		{
-			game.state.restart(true, false);
-		}
-		if(game.physics.arcade.overlap(this.player, this.door))
-		{
-			game.state.start('GameOver');
-		}
-	}
-}
-
-//not included in first prototype
-var fear1 = function(game) {};
-fear1.prototype = 
-{
-	init: function()
-	{
-		this.state = 'fear1';
-	},
-	preload: function()
-	{
-		console.log('fear1');
-	},
-
-	create: function()
-	{
-		game.stage.setBackgroundColor('#FFFF00');
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
-
-		this.map = game.add.tilemap('fear1');
-		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
-		this.mapLayer = this.map.createLayer('Tile Layer 1');
-		
-		this.mapLayer.resizeWorld();
-		
-
-	},
-
-	update: function()
-	{
-
-	
-	}
-}
-
-//not included in first prototype
-var fear2 = function(game) {};
-fear2.prototype = 
-{
-	init: function()
-	{
-		this.state = 'fear2';
-	},
-	preload: function()
-	{
-		console.log('fear2');
-	},
-
-	create: function()
-	{
-		game.stage.setBackgroundColor('#FFFF00');
-
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.physics.arcade.TILE_BIAS = 32;
-
-		this.map = game.add.tilemap('fear2');
-		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionByExclusion([]);
-		this.mapLayer = this.map.createLayer('Tile Layer 1');
-		
-		this.mapLayer.resizeWorld();
-		
-
-	},
-
-	update: function()
-	{
-
-	
 	}
 }
 
 //define GameOver state
-var GameOver = function(game,) {};
+var GameOver = function(game) {};
 GameOver.prototype = 
 {
 	init: function() 
@@ -720,20 +467,11 @@ GameOver.prototype =
 	}
 }
 
-
 game.state.add('MainMenu', MainMenu);
 game.state.add('tutorial1', tutorial1);
 game.state.add('tutorial2', tutorial2);
 game.state.add('tutorial3', tutorial3);
 game.state.add('tutorial4', tutorial4);
 game.state.add('joy1', joy1);
-game.state.add('joy2', joy2);
-game.state.add('joy3', joy3);
-game.state.add('fear1', fear1);
-game.state.add('fear2', fear2);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
-
-function changepickup(){
-	newhand.setHealth(2);
-}

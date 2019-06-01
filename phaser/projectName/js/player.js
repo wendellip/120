@@ -4,47 +4,105 @@ player.prototype.constructor = player;
 function player(game, key, frame, x, y, jumpkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-
-game.physics.enable(this);
+game.physics.p2.enable(this);
+this.body.enable = true;
 this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
-this.body.gravity.y = 500;
-this.body.rotation = false;
+this.body.fixedRotation = true;
 this.jumpse = game.add.audio(jumpkey);
-this.jumpb = game.input.keyboard.addKey(Phaser.Keyboard.UP);﻿﻿
-this.jump = 1;
+this.jumpb = game.input.keyboard.addKey(Phaser.Keyboard.W);﻿﻿
+this.jumpTimer = 0;
+this.body.force = 5;
 }
 
 
-player.prototype.update = function()
+player.prototype.update = function(control)
 {
-	//moving and jumping
-	this.jumpb.onDown﻿.add(jumping, this);
-	if((this.body.blocked.down || this.body.touching.down))
+	if(control == undefined)
+		return;
+	if(control)
 	{
-		this.jump = 1;
-	}
-	if(game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
-	{
-		this.body.velocity.x = 300;
-	}
-	else if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
-	{
-		this.body.velocity.x = -300;
+		if (game.time.now > this.jumpTimer && checkIfCanJump(this))
+		{
+			if(this.jumpb.isDown)
+			{
+				this.body.moveUp(400);
+				this.body.force = 0;
+				this.jumpTimer = game.time.now + 750;
+			}
+			else
+			{
+				this.body.force = 5;
+			}
+		}
+		else
+		{
+			this.body.force = 0;
+		}
+		if(game.input.keyboard.isDown(Phaser.Keyboard.D))
+		{
+			this.body.moveRight(250);
+		}
+		else if(game.input.keyboard.isDown(Phaser.Keyboard.A))
+		{
+			this.body.moveLeft(250);
+		}
+		else
+		{
+			this.body.velocity.x = 0;
+		}
 	}
 	else
 	{
 		this.body.velocity.x = 0;
 	}
 
+
 }
 
-function jumping()
+player.prototype.sprite = function()
 {
-	if(this.jump > 0)
+	return this.body.sprite;
+}
+
+player.prototype.collexception = function(body1, body2)
+{
+	if(body1 == undefined || body2 == undefined || body1.sprite == null || body2.sprite == null)
+		return true;
+	if((body1.sprite.key == "player" && body2.sprite.key == "hand") ||
+	   (body2.sprite.key == "player" && body1.sprite.key == "hand") ||
+	   (body1.sprite.key == "player" && body2.sprite.key == "enplatform") ||
+	   (body2.sprite.key == "player" && body1.sprite.key == "enplatform"))
 	{
-		this.jumpse.play('', 0, 1, false);
-		this.jump = this.jump - 1;
-		this.body.velocity.y -= 375;
+		return false;
 	}
+	else
+		return true;
+}
+
+player.prototype.death = function()
+{
+	console.log("death");
+}
+
+function checkIfCanJump(chara) {
+
+    var yAxis = p2.vec2.fromValues(0, 1);
+    var result = false;
+
+    for (var i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
+    {
+        var c = game.physics.p2.world.narrowphase.contactEquations[i];
+
+		if(chara != undefined)
+		{
+			if (c.bodyA === chara.body.data || c.bodyB === chara.body.data)
+			{
+				var d = p2.vec2.dot(c.normalA, yAxis); // Normal dot Y-axis
+				if (c.bodyA === chara.body.data) d *= -1;
+				if (d > 0.5) result = true;
+			}
+		}
+    }
+    return result;
 }

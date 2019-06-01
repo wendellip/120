@@ -8,23 +8,36 @@ this.frameName = 'offswitch';
 this.anchor.x = 0.5;
 this.anchor.y = 0.5;
 this.angle = rotation;
-game.physics.enable(this);
-this.enableBody = true;
+game.physics.p2.enable(this);
+this.body.enable = true;
 this.body.CollideWorldBounds = true;
-this.body.immovable = true;
+this.body.static = true;
 this.on = false;
+
+
 }
 
 
-onswitch.prototype.update = function(hitted)
+onswitch.prototype.update = function()
 {
-	//return true when switch triggered
-	if(this.on == false && hitted)
+	
+}
+
+onswitch.prototype.hitted = function()
+{
+	if(this.on == false)
 	{
 		this.on = true;
 		this.frameName = 'onswitch';
-		return this.on;
+		this.body.enable = false;
+		this.body.destroy();
+		return true;
 	}
 	else
 		return false;
+}
+
+onswitch.prototype.onoff = function()
+{
+	return this.on;
 }
