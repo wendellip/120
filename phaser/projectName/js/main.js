@@ -2,6 +2,11 @@ let style = { font: '24px Helvetica', fill: '#FFF' };
 //define the game
 var game = new Phaser.Game(1440, 900, Phaser.AUTO, 'phaser');
 //define MainMenu state
+var restart = function(statename)
+{
+	game.state.start(statename);
+}
+
 var MainMenu = function(game) {};
 MainMenu.prototype = 
 {
@@ -383,6 +388,7 @@ tutorial4.prototype =
 			{
 				this.control = false;
 				this.player.death()
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'tutorial4');
 			}
 		}
 	}

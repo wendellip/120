@@ -83,6 +83,7 @@ player.prototype.collexception = function(body1, body2)
 player.prototype.death = function()
 {
 	console.log("death");
+	return;
 }
 
 function checkIfCanJump(chara) {
