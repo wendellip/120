@@ -63,7 +63,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial4', true, false, this.level);
+			game.state.start('joy1', true, false, this.level);
 		}
 	}
 }
@@ -329,8 +329,17 @@ tutorial4.prototype =
 		this.platform1 = new platform(game, 'platform', 0, 672, 720, 0);
 		game.add.existing(this.platform1);
 
-		this.platform2 = new platform(game, 'enplatform', 0, 304, 576, 0);
-		game.add.existing(this.platform2);
+		this.enwall1 = new platform(game, 'enplatform', 0, 304, 576, 0);
+		game.add.existing(this.enwall1);
+		
+		this.enwall2 = new platform(game, 'enplatform', 0, 1136, 576, 0);
+		game.add.existing(this.enwall2);
+		
+		this.enwall3 = new platform(game, 'enplatform', 0, 528, 864, 0);
+		game.add.existing(this.enwall3);
+		
+		this.enwall4 = new platform(game, 'enplatform', 0, 816, 864, 0);
+		game.add.existing(this.enwall4);
 
 		this.enemy = new enemy(game, 'enemy', 0, 800, 640, true);
 		game.add.existing(this.enemy);
@@ -341,8 +350,17 @@ tutorial4.prototype =
 		this.lever = new lever(game, 'rlever', 0, 272, 800);
 		game.add.existing(this.lever);
 		
-		this.superenemy = new superenemy(game, 'enemy', 0, 100, 800);
-		game.add.existing(this.superenemy);
+		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		game.add.existing(this.superenemy1);
+		
+		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		game.add.existing(this.superenemy2);
+		
+		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		game.add.existing(this.superenemy3);
+		
+		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		game.add.existing(this.superenemy4);
 		
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
@@ -356,9 +374,15 @@ tutorial4.prototype =
 		this.player.update(this.control);
 		if(this.enemy.update(this.player, null))
 		{
-			this.superenemy.foundplayer();
+			this.superenemy1.foundplayer();
+			this.superenemy2.foundplayer();
+			this.superenemy3.foundplayer();
+			this.superenemy4.foundplayer();
 		}
-		this.superenemy.update(this.player);
+		this.superenemy1.update(this.player);
+		this.superenemy2.update(this.player);
+		this.superenemy3.update(this.player);
+		this.superenemy4.update(this.player);
 		this.lever.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.lever.sprite()))
 		if(this.lever.update())
 		{
@@ -368,12 +392,15 @@ tutorial4.prototype =
 		{
 			this.platform1.moving(672, 720, 0);
 		}
-		// player can interact with boxes
+
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
-		if(this.door.checkoverlap(this.enemy.sprite(), this.platform2.sprite()))
+		if(this.door.checkoverlap(this.enemy.sprite(), this.enwall1.sprite())
+		|| this.door.checkoverlap(this.enemy.sprite(), this.enwall2.sprite())
+		|| this.door.checkoverlap(this.enemy.sprite(), this.enwall3.sprite())
+		|| this.door.checkoverlap(this.enemy.sprite(), this.enwall4.sprite()))
 		{
 			this.enemy.toggling();
 		}
@@ -382,7 +409,10 @@ tutorial4.prototype =
 			this.control = false;
 			game.state.start('joy1');
 		}
-		if(this.door.checkoverlap(this.player.sprite(), this.superenemy.sprite()))
+		if(this.door.checkoverlap(this.player.sprite(), this.superenemy1.sprite())
+		|| this.door.checkoverlap(this.player.sprite(), this.superenemy2.sprite())
+		|| this.door.checkoverlap(this.player.sprite(), this.superenemy3.sprite())
+		|| this.door.checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
 			if(this.control)
 			{
@@ -423,24 +453,52 @@ joy1.prototype =
 		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
 		
-		this.box1 = new box(game, 'box', 0, 512, 448);
+		this.box1 = new box(game, 'box', 0, 512, 512);
 		game.add.existing(this.box1);
 		
-		this.box2 = new box(game, 'box', 0, 1152, 128);
+		this.box2 = new box(game, 'box', 0, 1152, 192);
 		game.add.existing(this.box2);
 		
 		this.lever = new lever(game, 'rlever', 0, 1344, 224);
 		game.add.existing(this.lever);
 		
-		this.platform = new platform(game, 'rplatform', 0, 896, 256);
-		game.add.existing(this.platform);
+		this.platform1 = new platform(game, 'rplatform', 0, 1024, 272);
+		game.add.existing(this.platform1);
 		
 		this.door = new exitdoor(game, 'door', 0, 1280, 288);
 		game.add.existing(this.door);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 	},
 
 	update: function()
 	{
+		this.player.update(this.control);
+
+		this.lever.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.lever.sprite()))
+		if(this.lever.update())
+		{
+			this.platform1.moving(896, 272, 0);
+		}
+		else
+		{
+			this.platform1.moving(1024, 272, 0);
+		}
+
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
+		{
+			game.state.restart(true, false);
+		}
+
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		{
+			this.control = false;
+			game.state.start('joy1');
+		}
 
 	}
 }

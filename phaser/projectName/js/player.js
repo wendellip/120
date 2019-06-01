@@ -12,7 +12,7 @@ this.body.fixedRotation = true;
 this.jumpse = game.add.audio(jumpkey);
 this.jumpb = game.input.keyboard.addKey(Phaser.Keyboard.W);﻿﻿
 this.jumpTimer = 0;
-this.body.force = 5;
+this.body.force = 10000;
 }
 
 
@@ -26,7 +26,7 @@ player.prototype.update = function(control)
 		{
 			if(this.jumpb.isDown)
 			{
-				this.body.moveUp(400);
+				this.body.moveUp(325);
 				this.body.force = 0;
 				this.jumpTimer = game.time.now + 750;
 			}

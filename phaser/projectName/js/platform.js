@@ -9,25 +9,14 @@ this.body.enable = true;
 this.body.CollideWorldBounds = true;
 this.body.rotation = rotation;
 this.body.static = true;
-this.body.data.gravityScale = 0;
+this.body.mass = 0;
+
 }
 
 
-platform.prototype.update = function(hit,x, y)
+platform.prototype.update = function()
 {
-	//if the lever or switch tiggered, move the platform.
-	if(hit && !this.moving)
-	{
-		this.moving = true;
-		game.physics.arcade.moveToXY(this, x, y, 0, 2000);
-		game.time.events.add(2000, function ()
-		{
-			this.body.velocity.x = 0;
-			this.body.velocity.y = 0;
-			this.moving = false;
-		}
-		, this);
-	}
+
 }
 
 platform.prototype.moving = function(x, y, rotation)

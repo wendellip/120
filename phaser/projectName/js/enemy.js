@@ -24,7 +24,7 @@ enemy.prototype.update = function(player, box)
 	this.body.moveLeft(this.speed);
 	if(player != undefined)
 	{
-		if((this.body.y+32) >= player.body.y && (this.body.y-32) <= player.body.y)
+		if((this.body.y+64) >= player.body.y && (this.body.y-32) <= player.body.y)
 		{
 			var distance = this.body.x - player.body.x;
 			if(this.faceleft == true)
@@ -38,6 +38,7 @@ enemy.prototype.update = function(player, box)
 								if((this.body.x - player.body.x) < distance)
 									return false;
 					}
+					this.speed = 0;
 					return true;
 				}
 			}
@@ -52,6 +53,7 @@ enemy.prototype.update = function(player, box)
 								if((this.body.x - player.body.x) > distance)
 									return false;
 					}
+					this.speed = 0;
 					return true;
 				}
 			}

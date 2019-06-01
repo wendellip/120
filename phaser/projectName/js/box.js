@@ -8,13 +8,13 @@ game.physics.p2.enable(this);
 this.body.enable = true;
 this.body.CollideWorldBounds = true;
 this.body.fixedRotation = true;
-this.body.friction = 100;
+this.body.friction = 0;
 this.body.mass = 100;
+
 }
 
 
 box.prototype.update = function()
 {
-
 
 }
