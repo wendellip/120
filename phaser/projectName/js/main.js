@@ -169,7 +169,6 @@ tutorial2.prototype =
 		
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		this.handstation = new handstation(game, 'hand', 0, 320, 440);
 		game.add.existing(this.handstation);
@@ -440,6 +439,8 @@ joy1.prototype =
 	{
 
 		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.p2.setImpactEvents(true);
+
 		
 		this.map = game.add.tilemap('joy1');
 		this.map.addTilesetImage('test', 'test');
@@ -459,39 +460,73 @@ joy1.prototype =
 		this.box2 = new box(game, 'box', 0, 1152, 192);
 		game.add.existing(this.box2);
 		
-		this.lever = new lever(game, 'rlever', 0, 1344, 224);
-		game.add.existing(this.lever);
+		this.switch1 = new onswitch(game, 'switches', 0, 48, 96, Math.PI);
+		game.add.existing(this.switch1);
 		
-		this.platform1 = new platform(game, 'rplatform', 0, 1024, 272);
+		this.platform1 = new platform(game, 'rplatform', 0, 960, 272);
 		game.add.existing(this.platform1);
+		
+		this.handstation = new handstation(game, 'hand', 0, 448, 768);
+		game.add.existing(this.handstation);
+		
+		this.hand = undefined;
 		
 		this.door = new exitdoor(game, 'door', 0, 1280, 288);
 		game.add.existing(this.door);
 		
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		this.switch1on = true;
 	},
 
 	update: function()
 	{
 		this.player.update(this.control);
-
-		this.lever.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.lever.sprite()))
-		if(this.lever.update())
+		
+		if(this.switch1.onoff() && this.switch1on)
 		{
-			this.platform1.moving(896, 272, 0);
+			this.switch1on = false;
+			this.platform1.moving(1216, 272, 0);
 		}
-		else
+		
+		if(this.door.checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
-			this.platform1.moving(1024, 272, 0);
+			if(this.hand == undefined)
+			{
+				this.hand = this.handstation.takearm();
+				this.player.addChild(game.add.existing(this.hand));
+			}
 		}
+		else if(game.input.activePointer.justReleased() && this.hand != undefined)
+		{
+			this.projected = this.hand.newhand(this.player);
+			if(this.projected != undefined)
+			{
+				this.hand.destroy();
+				game.add.existing(this.projected);
+				this.hand = undefined;
+				if(this.switch1.body != null)
+					this.switch1.body.createBodyCallback(this.projected, this.switch1.hitted, this.switch1);
+				
+			}
+		}
+		if(this.hand != undefined)
+			this.hand.update();
 
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
+		}
+		if(this.door.checkoverlap(this.box1.sprite(), this.platform1.sprite()))
+		{
+			this.box1.floating();
+		}
+		if(this.door.checkoverlap(this.box2.sprite(), this.platform1.sprite()))
+		{
+			this.box2.floating();
 		}
 
 		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))

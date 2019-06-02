@@ -41,11 +41,11 @@ player.prototype.update = function(control)
 		}
 		if(game.input.keyboard.isDown(Phaser.Keyboard.D))
 		{
-			this.body.moveRight(250);
+			this.body.moveRight(200);
 		}
 		else if(game.input.keyboard.isDown(Phaser.Keyboard.A))
 		{
-			this.body.moveLeft(250);
+			this.body.moveLeft(200);
 		}
 		else
 		{
