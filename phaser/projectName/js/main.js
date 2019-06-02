@@ -7,6 +7,14 @@ var restart = function(statename)
 	game.state.start(statename);
 }
 
+var checkoverlap = function(spriteA, spriteB)
+{
+    var boundsA = spriteA.getBounds();
+    var boundsB = spriteB.getBounds();
+
+    return Phaser.Rectangle.intersects(boundsA, boundsB);
+}
+
 var MainMenu = function(game) {};
 MainMenu.prototype = 
 {
@@ -63,7 +71,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('joy2', true, false, this.level);
+			game.state.start('joy1', true, false, this.level);
 		}
 	}
 }
@@ -115,7 +123,7 @@ tutorial1.prototype =
 		{
 			game.state.restart(true, false);
 		}
-		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
 			game.state.start('tutorial2');
@@ -193,7 +201,7 @@ tutorial2.prototype =
 			this.platform2.moving(832, 528, 0);		
 		}
 		this.player.update(this.control);
-		if(this.door.checkoverlap(this.player.sprite(), this.handstation.sprite()))
+		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
 			{
@@ -221,7 +229,7 @@ tutorial2.prototype =
 		{
 			game.state.restart(true, false);
 		}
-		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
 			game.state.start('tutorial3');
@@ -285,7 +293,7 @@ tutorial3.prototype =
 			game.state.restart(true, false);
 		}
 
-		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
 			game.state.start('tutorial4');
@@ -379,7 +387,7 @@ tutorial4.prototype =
 		this.superenemy2.update(this.player);
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
-		this.lever.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.lever.sprite()))
+		this.lever.playeroverlap(checkoverlap(this.player.sprite(), this.lever.sprite()))
 		if(this.lever.update())
 		{
 			this.platform1.moving(928, 720, 0);
@@ -393,22 +401,22 @@ tutorial4.prototype =
 		{
 			game.state.restart(true, false);
 		}
-		if(this.door.checkoverlap(this.enemy.sprite(), this.enwall1.sprite())
-		|| this.door.checkoverlap(this.enemy.sprite(), this.enwall2.sprite())
-		|| this.door.checkoverlap(this.enemy.sprite(), this.enwall3.sprite())
-		|| this.door.checkoverlap(this.enemy.sprite(), this.enwall4.sprite()))
+		if(checkoverlap(this.enemy.sprite(), this.enwall1.sprite())
+		|| checkoverlap(this.enemy.sprite(), this.enwall2.sprite())
+		|| checkoverlap(this.enemy.sprite(), this.enwall3.sprite())
+		|| checkoverlap(this.enemy.sprite(), this.enwall4.sprite()))
 		{
 			this.enemy.toggling();
 		}
-		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
 			game.state.start('joy1');
 		}
-		if(this.door.checkoverlap(this.player.sprite(), this.superenemy1.sprite())
-		|| this.door.checkoverlap(this.player.sprite(), this.superenemy2.sprite())
-		|| this.door.checkoverlap(this.player.sprite(), this.superenemy3.sprite())
-		|| this.door.checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
+		if(checkoverlap(this.player.sprite(), this.superenemy1.sprite())
+		|| checkoverlap(this.player.sprite(), this.superenemy2.sprite())
+		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
+		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
 			if(this.control)
 			{
@@ -484,10 +492,11 @@ joy1.prototype =
 		if(this.switch1.onoff() && this.switch1on)
 		{
 			this.switch1on = false;
-			this.platform1.moving(1216, 272, 0);
+			this.platform1.destroy();
+			//this.platform1.moving(1216, 272, 0);
 		}
 		
-		if(this.door.checkoverlap(this.player.sprite(), this.handstation.sprite()))
+		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
 			{
@@ -515,16 +524,19 @@ joy1.prototype =
 		{
 			game.state.restart(true, false);
 		}
-		if(this.door.checkoverlap(this.box1.sprite(), this.platform1.sprite()))
+		if(this.switch1on)
 		{
-			this.box1.floating();
-		}
-		if(this.door.checkoverlap(this.box2.sprite(), this.platform1.sprite()))
-		{
-			this.box2.floating();
+			if(checkoverlap(this.box1.sprite(), this.platform1.sprite()))
+			{
+				this.box1.floating();
+			}
+			if(checkoverlap(this.box2.sprite(), this.platform1.sprite()))
+			{
+				this.box2.floating();
+			}
 		}
 
-		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
 			game.state.start('joy2');
@@ -597,8 +609,8 @@ joy2.prototype =
 	update: function()
 	{
 		this.player.update(this.control);
-		this.blues.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.blues.sprite()))
-		this.reds.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.reds.sprite()))
+		this.blues.playeroverlap(checkoverlap(this.player.sprite(), this.blues.sprite()));
+		this.reds.playeroverlap(checkoverlap(this.player.sprite(), this.reds.sprite()));
 		if(this.blues.update())
 		{
 			this.blue1.moving(1280, 240, 0);

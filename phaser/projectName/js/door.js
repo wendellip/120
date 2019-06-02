@@ -20,11 +20,3 @@ exitdoor.prototype.sprite = function()
 {
 	return this.body.sprite;
 }
-
-exitdoor.prototype.checkoverlap = function(spriteA, spriteB)
-{
-    var boundsA = spriteA.getBounds();
-    var boundsB = spriteB.getBounds();
-
-    return Phaser.Rectangle.intersects(boundsA, boundsB);
-}
