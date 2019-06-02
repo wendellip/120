@@ -63,7 +63,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('joy1', true, false, this.level);
+			game.state.start('joy2', true, false, this.level);
 		}
 	}
 }
@@ -183,10 +183,7 @@ tutorial2.prototype =
 	},
 
 	update: function()
-	{
-
-		
-		
+	{	
 		//switch interacting with arm or player body
 		//to move the platform
 		if(this.switch1.onoff() && this.switch1on)
@@ -437,11 +434,9 @@ joy1.prototype =
 
 	create: function()
 	{
-
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
-		
 		this.map = game.add.tilemap('joy1');
 		this.map.addTilesetImage('test', 'test');
 		this.map.setCollisionBetween(1, 8);
@@ -532,9 +527,118 @@ joy1.prototype =
 		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
-			game.state.start('joy1');
+			game.state.start('joy2');
 		}
 
+	}
+}
+
+var joy2 = function(game) {};
+joy2.prototype = 
+{
+	init: function()
+	{
+		this.state = 'joy2';
+	},
+	preload: function()
+	{
+		console.log('joy2');
+	},
+
+	create: function()
+	{
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.p2.setImpactEvents(true);
+
+		this.map = game.add.tilemap('joy2');
+		this.map.addTilesetImage('test', 'test');
+		this.map.setCollisionBetween(1, 8);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		
+		this.player = new player(game, 'player', 0, 120, 450, 'jump');
+		game.add.existing(this.player);
+
+		this.box1 = new box(game, 'box', 0, 640, 576);
+		game.add.existing(this.box1);
+		
+		this.box2 = new box(game, 'box', 0, 640, 256);
+		game.add.existing(this.box2);
+		
+		this.box3 = new box(game, 'box', 0, 1184, 96);
+		game.add.existing(this.box3);
+		
+		this.reds = new lever(game, 'rlever', 0, 64, 640);
+		game.add.existing(this.reds);
+		
+		this.blues = new lever(game, 'blever', 0, 1344, 192);
+		game.add.existing(this.blues);
+		
+		this.red1 = new platform(game, 'rvplatform', 0, 432, 736);
+		game.add.existing(this.red1);
+		
+		this.blue1 = new platform(game, 'bplatform', 0, 1120, 240);
+		game.add.existing(this.blue1);
+		
+		this.door = new exitdoor(game, 'door', 0, 1312, 256);
+		game.add.existing(this.door);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		
+	},
+
+	update: function()
+	{
+		this.player.update(this.control);
+		this.blues.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.blues.sprite()))
+		this.reds.playeroverlap(this.door.checkoverlap(this.player.sprite(), this.reds.sprite()))
+		if(this.blues.update())
+		{
+			this.blue1.moving(1280, 240, 0);
+		}
+		else
+		{
+			this.blue1.moving(1120, 240, 0);
+		}
+		if(this.reds.update())
+		{
+			this.red1.moving(1280, 816, 0);
+		}
+		else
+		{
+			this.red1.moving(432, 736, 0);
+		}
+
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
+		{
+			game.state.restart(true, false);
+		}
+		
+		if(this.door.checkoverlap(this.box1.sprite(), this.blue1.sprite()))
+		{
+			this.box1.floating();
+		}
+		if(this.door.checkoverlap(this.box2.sprite(), this.blue1.sprite()))
+		{
+			this.box2.floating();
+		}
+		if(this.door.checkoverlap(this.box3.sprite(), this.blue1.sprite()))
+		{
+			this.box3.floating();
+		}
+
+		if(this.door.checkoverlap(this.player.sprite(), this.door.sprite()))
+		{
+			this.control = false;
+			game.state.start('joy2');
+		}
 	}
 }
 
@@ -572,5 +676,6 @@ game.state.add('tutorial2', tutorial2);
 game.state.add('tutorial3', tutorial3);
 game.state.add('tutorial4', tutorial4);
 game.state.add('joy1', joy1);
+game.state.add('joy2', joy2);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
