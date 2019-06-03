@@ -54,6 +54,7 @@ MainMenu.prototype =
 		game.load.image('door', 'assets/img/door.png');
 		game.load.image('hand', 'assets/img/HandPlaceholder.jpg');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
+		game.load.spritesheet('joy', 'assets/map/joy.png', 32, 32);
 		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
 		game.load.atlas('lever', 'assets/img/lever.png', 'assets/img/lever.json');
 		game.load.atlas('blever', 'assets/img/blever.png', 'assets/img/lever.json');
@@ -454,7 +455,7 @@ joy1.prototype =
 		game.physics.p2.setImpactEvents(true);
 
 		this.map = game.add.tilemap('joy1');
-		this.map.addTilesetImage('test', 'test');
+		this.map.addTilesetImage('test', 'joy');
 		this.map.setCollisionBetween(1, 8);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
@@ -571,7 +572,7 @@ joy2.prototype =
 		game.physics.p2.setImpactEvents(true);
 
 		this.map = game.add.tilemap('joy2');
-		this.map.addTilesetImage('test', 'test');
+		this.map.addTilesetImage('test', 'joy');
 		this.map.setCollisionBetween(1, 8);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
