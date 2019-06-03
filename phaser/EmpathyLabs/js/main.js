@@ -34,7 +34,7 @@ MainMenu.prototype =
 		game.load.tilemap('joy3', 'assets/map/joy3.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('fear1', 'assets/map/fear1.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('fear2', 'assets/map/fear2.json', null, Phaser.Tilemap.TILED_JSON);
-		game.load.image('player', 'assets/img/Snowball.png');
+		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		game.load.image('enemy', 'assets/img/ESnowball.png');
 		game.load.image('Tbackground', 'assets/img/TutorialBackground.png');
 		game.load.image('box', 'assets/img/Box.png');
