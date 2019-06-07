@@ -30,7 +30,7 @@ player.prototype.update = function(control)
 		{
 			if(this.jumpb.isDown)
 			{
-				this.body.moveUp(325);
+				this.body.moveUp(300);
 				this.body.force = 0;
 				this.jumpTimer = game.time.now + 750;
 			}
@@ -83,8 +83,8 @@ player.prototype.collexception = function(body1, body2)
 	   (body2.sprite.key == "player" && body1.sprite.key == "enplatform")||
 	   (body1.sprite.key == "player" && body2.sprite.key == "vplatform") ||
 	   (body2.sprite.key == "player" && body1.sprite.key == "vplatform") ||
-	   (body1.sprite.key == "box" && body2.sprite.key == "vplatform") ||
-	   (body2.sprite.key == "box" && body1.sprite.key == "vplatform"))
+	   (body1.sprite.key == "box" && body2.sprite.key == "enplatform") ||
+	   (body2.sprite.key == "box" && body1.sprite.key == "enplatform"))
 	{
 		return false;
 	}
