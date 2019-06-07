@@ -80,7 +80,11 @@ player.prototype.collexception = function(body1, body2)
 	if((body1.sprite.key == "player" && body2.sprite.key == "hand") ||
 	   (body2.sprite.key == "player" && body1.sprite.key == "hand") ||
 	   (body1.sprite.key == "player" && body2.sprite.key == "enplatform") ||
-	   (body2.sprite.key == "player" && body1.sprite.key == "enplatform"))
+	   (body2.sprite.key == "player" && body1.sprite.key == "enplatform")||
+	   (body1.sprite.key == "player" && body2.sprite.key == "vplatform") ||
+	   (body2.sprite.key == "player" && body1.sprite.key == "vplatform") ||
+	   (body1.sprite.key == "box" && body2.sprite.key == "vplatform") ||
+	   (body2.sprite.key == "box" && body1.sprite.key == "vplatform"))
 	{
 		return false;
 	}

@@ -73,7 +73,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('joy3', true, false, this.level);
+			game.state.start('fear1', true, false, this.level);
 		}
 	}
 }
@@ -420,7 +420,7 @@ tutorial4.prototype =
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
-			game.state.start('joy1');
+			game.state.start('fear1');
 		}
 		if(checkoverlap(this.player.sprite(), this.superenemy1.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy2.sprite())
@@ -664,7 +664,6 @@ joy2.prototype =
 	}
 }
 
-
 var joy3 = function(game) {};
 joy3.prototype = 
 {
@@ -789,7 +788,167 @@ joy3.prototype =
 	}
 }
 
+var fear1 = function(game) {};
+fear1.prototype = 
+{
+	init: function()
+	{
+		this.state = 'fear1';
+	},
+	preload: function()
+	{
+		console.log('fear1');
+	},
 
+	create: function()
+	{
+		
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.p2.setImpactEvents(true);
+
+		this.blue1 = new platform(game, 'btemp', 0, 1072, 336, 0);
+		game.add.existing(this.blue1);
+
+		this.map = game.add.tilemap('fear1');
+		this.map.addTilesetImage('test', 'joy');
+		this.map.setCollisionBetween(1, 8);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		
+		this.player = new player(game, 'player', 0, 90, 672, 'jump');
+		game.add.existing(this.player);
+		
+		this.enwall1 = new platform(game, 'enplatform', 0, 16, 768, 0);
+		game.add.existing(this.enwall1);
+		
+		this.enwall2 = new platform(game, 'enplatform', 0, 720, 768, 0);
+		game.add.existing(this.enwall2);
+		
+		this.enemy1 = new enemy(game, 'enemy', 0, 96, 800, true);
+		game.add.existing(this.enemy1);
+		
+		this.enwall3 = new platform(game, 'enplatform', 0, 880, 448, 0);
+		game.add.existing(this.enwall3);
+		
+		this.enwall4 = new platform(game, 'enplatform', 0, 1264, 448, 0);
+		game.add.existing(this.enwall4);
+		
+		this.enemy2 = new enemy(game, 'enemy', 0, 992, 544, true);
+		game.add.existing(this.enemy2);
+
+		this.enwall5 = new platform(game, 'enplatform', 0, 368, 320, 0);
+		game.add.existing(this.enwall5);
+		
+		this.enwall6 = new platform(game, 'enplatform', 0, 752, 320, 0);
+		game.add.existing(this.enwall6);
+
+		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false);
+		game.add.existing(this.enemy3);
+		
+		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		game.add.existing(this.superenemy1);
+		
+		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		game.add.existing(this.superenemy2);
+		
+		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		game.add.existing(this.superenemy3);
+		
+		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		game.add.existing(this.superenemy4);
+		
+		this.box1 = new box(game, 'box', 0, 1152, 256);
+		game.add.existing(this.box1);
+		
+		this.boxes = [this.box1];
+		
+		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI);
+		game.add.existing(this.switch1);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		
+		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		
+		this.switch1on = true;
+
+	},
+
+	update: function()
+	{
+		this.player.update(this.control);
+
+		if(checkoverlap(this.enemy1.sprite(), this.enwall1.sprite())
+		|| checkoverlap(this.enemy1.sprite(), this.enwall2.sprite())
+		|| checkoverlap(this.enemy1.sprite(), this.box1.sprite()))
+		{
+			this.enemy1.toggling();
+		}
+		if(checkoverlap(this.enemy2.sprite(), this.enwall3.sprite())
+		|| checkoverlap(this.enemy2.sprite(), this.enwall4.sprite())
+		|| checkoverlap(this.enemy2.sprite(), this.box1.sprite()))
+		{
+			this.enemy2.toggling();
+		}
+		if(checkoverlap(this.enemy3.sprite(), this.enwall5.sprite())
+		|| checkoverlap(this.enemy3.sprite(), this.enwall6.sprite())
+		|| checkoverlap(this.enemy3.sprite(), this.box1.sprite()))
+		{
+			this.enemy3.toggling();
+		}
+		
+		if(this.switch1.onoff() && this.switch1on)
+		{
+			this.switch1on = false;
+			this.blue1.destroy();		
+		}
+
+		if(this.enemy1.update(this.player, this.boxes) ||
+		   this.enemy2.update(this.player, this.boxes) ||
+		   this.enemy3.update(this.player, this.boxes))
+		{
+			this.superenemy1.foundplayer();
+			this.superenemy2.foundplayer();
+			this.superenemy3.foundplayer();
+			this.superenemy4.foundplayer();
+		}
+		this.superenemy1.update(this.player);
+		this.superenemy2.update(this.player);
+		this.superenemy3.update(this.player);
+		this.superenemy4.update(this.player);
+		
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
+		{
+			game.state.restart(true, false);
+		}
+		
+		if(checkoverlap(this.player.sprite(), this.superenemy1.sprite())
+		|| checkoverlap(this.player.sprite(), this.superenemy2.sprite())
+		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
+		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
+		{
+			if(this.control)
+			{
+				this.control = false;
+				this.player.death()
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear1');
+			}
+		}
+		if(this.switch1on)
+		{
+			if(checkoverlap(this.box1.sprite(), this.blue1.sprite()))
+			{
+				this.box1.floating();
+			}
+		}
+	}
+}
 //define GameOver state
 var GameOver = function(game) {};
 GameOver.prototype = 
@@ -826,5 +985,6 @@ game.state.add('tutorial4', tutorial4);
 game.state.add('joy1', joy1);
 game.state.add('joy2', joy2);
 game.state.add('joy3', joy3);
+game.state.add('fear1', fear1);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');

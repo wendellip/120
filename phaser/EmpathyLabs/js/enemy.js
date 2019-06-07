@@ -22,20 +22,22 @@ if(!faceleft)
 enemy.prototype.update = function(player, box)
 {
 	this.body.moveLeft(this.speed);
-	if(player != undefined)
+	if(box != null || box != undefined)
+	if(player != undefined && box != undefined)
 	{
-		if((this.body.y+64) >= player.body.y && (this.body.y-32) <= player.body.y)
+		if((this.body.y+64) >= player.body.y && (this.body.y-64) <= player.body.y)
 		{
+			console.log("123");
 			var distance = this.body.x - player.body.x;
 			if(this.faceleft == true)
 			{
-				if(distance >= 0 && distance < 200)
+				if(distance >= -64 && distance < 250)
 				{
 					if(box != null)
 					{
-						for(var i = 0; i < box.length(); i++)
+						for(var i = 0; i < box.length; i++)
 							if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
-								if((this.body.x - player.body.x) < distance)
+								if((this.body.x - box[i].body.x) < distance)
 									return false;
 					}
 					this.speed = 0;
@@ -44,13 +46,13 @@ enemy.prototype.update = function(player, box)
 			}
 			else
 			{
-				if(distance <= 0 && distance > -200)
+				if(distance <= 64 && distance > -250)
 				{
 					if(box != null)
 					{
-						for(var i = 0; i < box.length(); i++)
+						for(i = 0; i < box.length; i++)
 							if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
-								if((this.body.x - player.body.x) > distance)
+								if((this.body.x - box[i].body.x) > distance)
 									return false;
 					}
 					this.speed = 0;

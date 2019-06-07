@@ -30,7 +30,6 @@ superenemy.prototype.update = function(player)
 			else
 				this.body.velocity.y = 0;
 			this.rotation = Math.atan2(player.body.y - this.body.y, player.body.x - this.body.x);
-			console.log(this.rotation);
 		}	
 	}
 }
