@@ -12,12 +12,12 @@ this.body.immovable = true;
 this.on = false;
 this.trigger = game.input.keyboard.addKey(Phaser.Keyboard.E);﻿﻿
 this.overlap = false;
-game.input.keyboard.addCallbacks(this, null, null, change);
 
 }
 
 lever.prototype.update = function()
 { 
+	this.trigger.onDown﻿.add(change, this);
 	return this.on;
 }
 
@@ -26,9 +26,9 @@ lever.prototype.playeroverlap = function(overlapping)
 	this.overlap = overlapping;
 }
 
-function change(char)
+function change()
 {
-	if(char === 'q' && this.overlap)
+	if(this.overlap)
 	{
 		if(this.frameName == "offlever")
 		{

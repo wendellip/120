@@ -9,7 +9,7 @@ this.body.enable = true;
 this.body.CollideWorldBounds = true;
 this.body.fixedRotation = true;
 this.body.friction = 0;
-this.body.mass = 100;
+this.body.mass = 50;
 
 }
 
