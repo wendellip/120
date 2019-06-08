@@ -20,6 +20,7 @@ this.faceleft = faceleft;
 this.speed = 128;
 this.animations.play('left');
 this.working = true;
+this.body.static = true;
 if(!faceleft)
 {
 	this.animations.play('right');
@@ -95,7 +96,6 @@ enemy.prototype.toggling = function()
 
 enemy.prototype.toggle = function(speed)
 {
-	console.log(speed);
 	this.faceleft = !this.faceleft;
 	this.speed = -speed;
 	if(this.faceleft)
@@ -109,7 +109,7 @@ enemy.prototype.disable = function()
 	this.working = false;
 	var speed = this.speed;
 	this.speed = 0;
-	game.time.events.add(Phaser.Timer.SECOND * 3, this.backtowork, this, speed);
+	game.time.events.add(Phaser.Timer.SECOND * 5, this.backtowork, this, speed);
 }
 
 enemy.prototype.alarmloop = function()
