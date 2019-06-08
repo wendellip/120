@@ -34,7 +34,9 @@ MainMenu.prototype =
 		game.load.tilemap('joy3', 'assets/map/joy3.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('fear1', 'assets/map/fear1.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('fear2', 'assets/map/fear2.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('fear3', 'assets/map/fear3.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
+		game.load.atlas('enemy', 'assets/img/enemy.png', 'assets/img/enemy.json');
 		game.load.image('enemy', 'assets/img/enemy.png');
 		game.load.image('Tbackground', 'assets/img/TutorialBackground.png');
 		game.load.image('box', 'assets/img/Box.png');
@@ -346,7 +348,7 @@ tutorial4.prototype =
 		this.enwall1 = new platform(game, 'enplatform', 0, 304, 576, 0);
 		game.add.existing(this.enwall1);
 		
-		this.enwall2 = new platform(game, 'enplatform', 0, 1136, 576, 0);
+		this.enwall2 = new platform(game, 'enplatform', 0, 1152, 576, 0);
 		game.add.existing(this.enwall2);
 		
 		this.enwall3 = new platform(game, 'enplatform', 0, 528, 864, 0);
@@ -1149,7 +1151,96 @@ fear2.prototype =
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
-			game.state.start('fear2');
+			game.state.start('fear3');
+		}
+	}
+}
+
+var fear3 = function(game) {};
+fear3.prototype = 
+{
+	init: function()
+	{
+		this.state = 'fear3';
+	},
+	preload: function()
+	{
+		console.log('fear3');
+	},
+
+	create: function()
+	{
+		
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.p2.setImpactEvents(true);
+
+		this.map = game.add.tilemap('fear3');
+		this.map.addTilesetImage('test', 'joy');
+		this.map.setCollisionBetween(1, 8);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		
+		this.player = new player(game, 'player', 0, 90, 672, 'jump');
+		game.add.existing(this.player);
+		
+		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2);
+		game.add.existing(this.switch1);
+		
+		this.switch2 = new onswitch(game, 'switches', 0, 1392, 64, 0);
+		game.add.existing(this.switch2);
+		
+		this.door = new exitdoor(game, 'door', 0, 1280, 704);
+		game.add.existing(this.door);
+
+		this.handstation = new handstation(game, 'hand', 0, 544, 800);
+		game.add.existing(this.handstation);
+		
+		this.hand = undefined;
+
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+	},
+
+	update: function()
+	{
+		this.player.update(this.control);
+
+		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
+		{
+			if(this.hand == undefined)
+			{
+				this.hand = this.handstation.takearm();
+				this.player.addChild(game.add.existing(this.hand));
+			}
+		}
+		else if(game.input.activePointer.justReleased() && this.hand != undefined)
+		{
+			this.projected = this.hand.newhand(this.player);
+			if(this.projected != undefined)
+			{
+				this.hand.destroy();
+				game.add.existing(this.projected);
+				this.hand = undefined;
+				if(this.switch1.body != null)
+					this.switch1.body.createBodyCallback(this.projected, this.switch1.hitted, this.switch1);
+				if(this.switch2.body != null)
+					this.switch2.body.createBodyCallback(this.projected, this.switch2.hitted, this.switch2);
+				
+			}
+		}
+		if(this.hand != undefined)
+			this.hand.update();
+		
+		if(checkoverlap(this.player.sprite(), this.door.sprite()))
+		{
+			this.control = false;
+			game.state.start('fear3');
 		}
 	}
 }
@@ -1192,7 +1283,7 @@ game.state.add('joy2', joy2);
 game.state.add('joy3', joy3);
 game.state.add('fear1', fear1);
 game.state.add('fear2', fear2);
-//game.state.add('fear3', fear3);
+game.state.add('fear3', fear3);
 //game.state.add('sad1', sad1);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');

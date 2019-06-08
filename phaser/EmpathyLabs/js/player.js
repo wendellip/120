@@ -6,8 +6,8 @@ function player(game, key, frame, x, y, jumpkey)
 Phaser.Sprite.call(this, game, x, y, key, frame);
 this.animations.add('left', ['Player01', 'Player02'], 15, true);
 this.animations.add('right', ['Player08', 'Player09'], 15, true);
-this.animations.add('stand', ['Player02', 'Player03', 'Player04', 'Player05', 'Player06', 'Player07', 'Player08'
-, 'Player07', 'Player06', 'Player05', 'Player04', 'Player03', 'Player02'], 15, true);
+this.animations.add('stand', ['Player03', 'Player02', 'Player04', 'Player05', 'Player06', 'Player07', 'Player08'
+, 'Player07', 'Player06', 'Player05', 'Player04', 'Player02'], 15, true);
 game.physics.p2.enable(this);
 this.body.enable = true;
 this.body.setCircle(32);

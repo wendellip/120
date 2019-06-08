@@ -4,6 +4,12 @@ enemy.prototype.constructor = enemy;
 function enemy(game, key, frame, x, y, faceleft)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
+this.animations.add('left', ['left01', 'left02'], 15, true);
+this.animations.add('right', ['righrt01', 'right02'], 15, true);
+this.animations.add('stand', ['middle01', 'middle02', 'middle03', 'middle01', 'middle04', 'middle05'], 15, true);
+this.animations.add('alarm', ['alarm01', 'alarm02', 'alarm03'], 15, false);
+this.animations.add('alarmloop', ['alarmloop01', 'alarmloop02', 'alarmloop03', 'alarmloop04', 'alarmloop05'], 15, true);
+
 game.physics.p2.enable(this);
 this.body.enable = true;
 this.body.setCircle(32);
@@ -12,18 +18,20 @@ this.body.fixedRotation = true;
 this.spot = false;
 this.faceleft = faceleft;
 this.speed = 128;
+this.animations.play('left');
 this.working = true;
 if(!faceleft)
 {
+	this.animations.play('right');
 	this.speed = -128
 }
 }
 
 enemy.prototype.update = function(player, box)
 {
+	this.body.moveLeft(this.speed);
 	if(this.working)
 	{
-		this.body.moveLeft(this.speed);
 		if(player != undefined)
 		{
 			if((this.body.y+64) >= player.body.y && (this.body.y-64) <= player.body.y)
@@ -41,6 +49,9 @@ enemy.prototype.update = function(player, box)
 										return false;
 						}
 						this.speed = 0;
+						this.animations.play('alarm');
+						this.working = false;
+						game.time.events.add(Phaser.Timer.SECOND * 2, this.alarmloop, this);
 						return true;
 					}
 				}
@@ -56,6 +67,9 @@ enemy.prototype.update = function(player, box)
 										return false;
 						}	
 						this.speed = 0;
+						this.animations.play('alarm');
+						this.working = false;
+						game.time.events.add(Phaser.Timer.SECOND * 2, this.alarmloop, this);
 						return true;
 					}
 				}
@@ -69,18 +83,43 @@ enemy.prototype.update = function(player, box)
 
 enemy.prototype.toggling = function()
 {
+	this.animations.play('stand');
+	var speed = this.speed;
+	this.speed = 0;
+	if(this.faceleft)
+		this.body.reset(this.body.x + 3, this.body.y);
+	else
+		this.body.reset(this.body.x - 3, this.body.y);
+	game.time.events.add(Phaser.Timer.SECOND * 3, this.toggle, this, speed);
+}
+
+enemy.prototype.toggle = function(speed)
+{
+	console.log(speed);
 	this.faceleft = !this.faceleft;
-	this.speed = -this.speed;
+	this.speed = -speed;
+	if(this.faceleft)
+		this.animations.play('left');
+	else
+		this.animations.play('right');
 }
 
 enemy.prototype.disable = function()
 {
 	this.working = false;
-	game.time.events.add(Phaser.Timer.SECOND * 5, this.backtowork, this);
+	var speed = this.speed;
+	this.speed = 0;
+	game.time.events.add(Phaser.Timer.SECOND * 3, this.backtowork, this, speed);
 }
 
-enemy.prototype.backtowork = function()
+enemy.prototype.alarmloop = function()
 {
+	this.animations.play('alarmloop');
+}
+
+enemy.prototype.backtowork = function(speed)
+{
+	this.speed = speed;
 	this.working = true;
 }
 enemy.prototype.sprite = function()
