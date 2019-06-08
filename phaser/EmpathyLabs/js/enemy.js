@@ -12,55 +12,59 @@ this.body.fixedRotation = true;
 this.spot = false;
 this.faceleft = faceleft;
 this.speed = 128;
+this.working = true;
 if(!faceleft)
 {
 	this.speed = -128
 }
-
 }
 
 enemy.prototype.update = function(player, box)
 {
-	this.body.moveLeft(this.speed);
-	if(player != undefined)
+	if(this.working)
 	{
-		if((this.body.y+64) >= player.body.y && (this.body.y-64) <= player.body.y)
+		this.body.moveLeft(this.speed);
+		if(player != undefined)
 		{
-			console.log("123");
-			var distance = this.body.x - player.body.x;
-			if(this.faceleft == true)
+			if((this.body.y+64) >= player.body.y && (this.body.y-64) <= player.body.y)
 			{
-				if(distance >= -64 && distance < 250)
+				var distance = this.body.x - player.body.x;
+				if(this.faceleft == true)
 				{
-					if(box != undefined)
+					if(distance >= -64 && distance < 250)
 					{
-						for(var i = 0; i < box.length; i++)
-							if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
-								if((this.body.x - box[i].body.x) < distance)
-									return false;
+						if(box != undefined)
+						{
+							for(var i = 0; i < box.length; i++)
+								if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
+									if((this.body.x - box[i].body.x) < distance)
+										return false;
+						}
+						this.speed = 0;
+						return true;
 					}
-					this.speed = 0;
-					return true;
 				}
-			}
-			else
-			{
-				if(distance <= 64 && distance > -250)
+				else
 				{
-					if(box != undefined)
+					if(distance <= 64 && distance > -250)
 					{
-						for(i = 0; i < box.length; i++)
-							if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
-								if((this.body.x - box[i].body.x) > distance)
-									return false;
+						if(box != undefined)
+						{
+							for(i = 0; i < box.length; i++)
+								if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
+									if((this.body.x - box[i].body.x) > distance)
+										return false;
+						}	
+						this.speed = 0;
+						return true;
 					}
-					this.speed = 0;
-					return true;
 				}
 			}
 		}
+		return false;
 	}
-	return false;
+	else
+		return false;
 }
 
 enemy.prototype.toggling = function()
@@ -69,6 +73,16 @@ enemy.prototype.toggling = function()
 	this.speed = -this.speed;
 }
 
+enemy.prototype.disable = function()
+{
+	this.working = false;
+	game.time.events.add(Phaser.Timer.SECOND * 5, this.backtowork, this);
+}
+
+enemy.prototype.backtowork = function()
+{
+	this.working = true;
+}
 enemy.prototype.sprite = function()
 {
 	return this.body.sprite;

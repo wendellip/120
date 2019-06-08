@@ -73,7 +73,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('fear2', true, false, this.level);
+			game.state.start('tutorial4', true, false, this.level);
 		}
 	}
 }
@@ -326,6 +326,7 @@ tutorial4.prototype =
 		game.add.sprite(0, 0, 'Tbackground');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.p2.setImpactEvents(true);
 		
 		this.map = game.add.tilemap('tutorial4');
 		this.map.addTilesetImage('test', 'test');
@@ -375,6 +376,11 @@ tutorial4.prototype =
 		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
+		this.handstation = new handstation(game, 'hand', 0, 96, 800);
+		game.add.existing(this.handstation);
+		
+		this.hand = undefined;		
+
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
@@ -385,6 +391,28 @@ tutorial4.prototype =
 	update: function()
 	{
 		this.player.update(this.control);
+		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
+		{
+			if(this.hand == undefined)
+			{
+				this.hand = this.handstation.takearm();
+				this.player.addChild(game.add.existing(this.hand));
+			}
+		}
+		else if(game.input.activePointer.justReleased() && this.hand != undefined)
+		{
+			this.projected = this.hand.newhand(this.player);
+			if(this.projected != undefined)
+			{
+				this.hand.destroy();
+				game.add.existing(this.projected);
+				this.hand = undefined;
+				this.enemy.body.createBodyCallback(this.projected, this.enemy.disable, this.enemy);
+				
+			}
+		}
+		if(this.hand != undefined)
+			this.hand.update();
 		if(this.enemy.update(this.player, null))
 		{
 			this.superenemy1.foundplayer();
