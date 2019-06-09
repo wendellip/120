@@ -68,6 +68,7 @@ MainMenu.prototype =
 		//items
 		game.load.image('box', 'assets/img/Box.png');
 		game.load.image('missile', 'assets/img/missile.png');
+		game.load.physics("missilephy", "assets/img/missile.json");
 		game.load.image('enplatform', 'assets/img/enplatform.png');
 		game.load.image('platform', 'assets/img/platform.png');
 		game.load.image('vplatform', 'assets/img/vplatform.png');
@@ -118,7 +119,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('angerboss', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 		}
 	}
 }
@@ -307,7 +308,7 @@ tutorial2.prototype =
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
-			game.state.start('angerboss');
+			game.state.start('tutorial3');
 		}
 	},
 }
@@ -2362,6 +2363,11 @@ angerboss.prototype =
 		{
 			game.state.restart(true, false);
 		}
+	},
+	
+	render: function()
+	{
+		game.debug.body(this.missile1);
 	}
 }
 
