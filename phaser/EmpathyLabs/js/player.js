@@ -6,8 +6,8 @@ function player(game, key, frame, x, y, jumpkey)
 Phaser.Sprite.call(this, game, x, y, key, frame);
 this.animations.add('left', ['Player01', 'Player02'], 15, true);
 this.animations.add('right', ['Player08', 'Player09'], 15, true);
-this.animations.add('stand', ['Player02', 'Player03', 'Player04', 'Player05', 'Player06', 'Player07', 'Player08'
-, 'Player07', 'Player06', 'Player05', 'Player04', 'Player03', 'Player02'], 15, true);
+this.animations.add('stand', ['Player03', 'Player02', 'Player04', 'Player05', 'Player06', 'Player07', 'Player08'
+, 'Player07', 'Player06', 'Player05', 'Player04', 'Player02'], 15, true);
 game.physics.p2.enable(this);
 this.body.enable = true;
 this.body.setCircle(32);
@@ -30,7 +30,7 @@ player.prototype.update = function(control)
 		{
 			if(this.jumpb.isDown)
 			{
-				this.body.moveUp(325);
+				this.body.moveUp(300);
 				this.body.force = 0;
 				this.jumpTimer = game.time.now + 750;
 			}
@@ -81,10 +81,10 @@ player.prototype.collexception = function(body1, body2)
 	   (body2.sprite.key == "player" && body1.sprite.key == "hand") ||
 	   (body1.sprite.key == "player" && body2.sprite.key == "enplatform") ||
 	   (body2.sprite.key == "player" && body1.sprite.key == "enplatform")||
-	   (body1.sprite.key == "player" && body2.sprite.key == "vplatform") ||
-	   (body2.sprite.key == "player" && body1.sprite.key == "vplatform") ||
-	   (body1.sprite.key == "box" && body2.sprite.key == "vplatform") ||
-	   (body2.sprite.key == "box" && body1.sprite.key == "vplatform"))
+	   (body1.sprite.key == "hand" && body2.sprite.key == "enplatform") ||
+	   (body2.sprite.key == "hand" && body1.sprite.key == "enplatform") ||
+	   (body1.sprite.key == "box" && body2.sprite.key == "enplatform") ||
+	   (body2.sprite.key == "box" && body1.sprite.key == "enplatform"))
 	{
 		return false;
 	}
