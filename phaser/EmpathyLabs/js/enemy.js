@@ -4,8 +4,9 @@ enemy.prototype.constructor = enemy;
 function enemy(game, key, frame, x, y, faceleft)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-this.animations.add('left', ['left01', 'left02'], 15, true);
-this.animations.add('right', ['righrt01', 'right02'], 15, true);
+//create animation
+this.animations.add('left', ['left01', 'left02'], 5, true);
+this.animations.add('right', ['righrt01', 'right02'], 5, true);
 this.animations.add('stand', ['middle01', 'middle02', 'middle03', 'middle01', 'middle04', 'middle05'], 15, true);
 this.animations.add('alarm', ['alarm01', 'alarm02', 'alarm03'], 15, false);
 this.animations.add('alarmloop', ['alarmloop01', 'alarmloop02', 'alarmloop03', 'alarmloop04', 'alarmloop05'], 15, true);
@@ -15,12 +16,13 @@ this.body.enable = true;
 this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
 this.body.fixedRotation = true;
-this.spot = false;
 this.faceleft = faceleft;
 this.speed = 128;
 this.animations.play('left');
 this.working = true;
+this.found = false;
 this.body.static = false;
+//choosing its walking direction
 if(!faceleft)
 {
 	this.animations.play('right');
@@ -35,20 +37,24 @@ enemy.prototype.update = function(player, box)
 	{
 		if(player != undefined)
 		{
+			//check player and watcher y position, if it's close check x position
 			if((this.body.y+64) >= player.body.y && (this.body.y-64) <= player.body.y)
 			{
 				var distance = this.body.x - player.body.x;
 				if(this.faceleft == true)
 				{
+					//if player is close enough
 					if(distance >= -64 && distance < 250)
 					{
+						//check if there's any box between
 						if(box != undefined)
 						{
 							for(var i = 0; i < box.length; i++)
 								if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
 									if((this.body.x - box[i].body.x) < distance)
-										return false;
+										return this.found;
 						}
+						//if all true, player is spot
 						this.speed = 0;
 						this.animations.play('alarm');
 						this.working = false;
@@ -58,6 +64,7 @@ enemy.prototype.update = function(player, box)
 				}
 				else
 				{
+					//same function but facing another direction
 					if(distance <= 64 && distance > -250)
 					{
 						if(box != undefined)
@@ -65,7 +72,7 @@ enemy.prototype.update = function(player, box)
 							for(i = 0; i < box.length; i++)
 								if((this.body.y+32) >= box[i].body.y && (this.body.y-32) <= box[i].body.y)
 									if((this.body.x - box[i].body.x) > distance)
-										return false;
+										return this.found;
 						}	
 						this.speed = 0;
 						this.animations.play('alarm');
@@ -76,27 +83,30 @@ enemy.prototype.update = function(player, box)
 				}
 			}
 		}
-		return false;
+		return this.found;
 	}
 	else
-		return false;
+		return this.found;
 }
 
 enemy.prototype.toggling = function()
 {
+	//allow watcher change its direction
 	this.animations.play('stand');
 	var speed = this.speed;
 	this.speed = 0;
 	this.working = false;
+	//back off a little bit and wait for 2 seconds
 	if(this.faceleft)
 		this.body.reset(this.body.x + 3, this.body.y);
 	else
 		this.body.reset(this.body.x - 3, this.body.y);
-	game.time.events.add(Phaser.Timer.SECOND * 3, this.toggle, this, speed);
+	game.time.events.add(Phaser.Timer.SECOND * 2, this.toggle, this, speed);
 }
 
 enemy.prototype.toggle = function(speed)
 {
+	//change watcher direction according its original direction
 	this.faceleft = !this.faceleft;
 	this.speed = -speed;
 	this.working = true;
@@ -108,6 +118,7 @@ enemy.prototype.toggle = function(speed)
 
 enemy.prototype.disable = function()
 {
+	//if watcher gets hit by projectile arm, disable it for 5 seconds
 	this.working = false;
 	var speed = this.speed;
 	this.speed = 0;
@@ -121,10 +132,23 @@ enemy.prototype.alarmloop = function()
 
 enemy.prototype.backtowork = function(speed)
 {
-	this.speed = speed;
-	this.working = true;
+	//back to normal work after 5 seconds
+	if(!this.found)
+	{
+		this.speed = speed;
+		this.working = true;
+	}
 }
 enemy.prototype.sprite = function()
 {
 	return this.body.sprite;
+}
+
+enemy.prototype.collide = function()
+{
+	//if player touch watchers, player is spot
+	this.found = true;
+	this.animations.play('alarm');
+	this.working = false;
+	game.time.events.add(Phaser.Timer.SECOND * 2, this.alarmloop, this);
 }

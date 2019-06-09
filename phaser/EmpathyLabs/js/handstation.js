@@ -17,6 +17,7 @@ handstation.prototype.update = function()
 
 handstation.prototype.takearm = function()
 {
+	// if player interacting the station, create a new arm
 	this.hand = new hand(game, 'hand', 0, 0, 0);
 	return this.hand;
 }

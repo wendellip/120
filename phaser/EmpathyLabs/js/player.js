@@ -24,8 +24,10 @@ player.prototype.update = function(control)
 {
 	if(control == undefined)
 		return;
+	//if control is allowed
 	if(control)
 	{
+		//check if player can jump
 		if (game.time.now > this.jumpTimer && checkIfCanJump(this))
 		{
 			if(this.jumpb.isDown)
@@ -44,22 +46,26 @@ player.prototype.update = function(control)
 		{
 			this.body.force = 0;
 		}
+		//allow walking to right 
 		if(game.input.keyboard.isDown(Phaser.Keyboard.D))
 		{
 			this.body.moveRight(200);
 			this.animations.play('right');
 		}
+		//to left
 		else if(game.input.keyboard.isDown(Phaser.Keyboard.A))
 		{
 			this.body.moveLeft(200);
 			this.animations.play('left');
 		}
+		//standing
 		else
 		{
 			this.body.velocity.x = 0;
 			this.animations.play('stand');
 		}
 	}
+	//if no control
 	else
 	{
 		this.body.velocity.x = 0;
@@ -74,6 +80,7 @@ player.prototype.sprite = function()
 	return this.body.sprite;
 }
 
+//all the collision exception in the game
 player.prototype.collexception = function(body1, body2)
 {
 	if(body1 == undefined || body2 == undefined || body1.sprite == null || body2.sprite == null)
@@ -85,7 +92,9 @@ player.prototype.collexception = function(body1, body2)
 	   (body1.sprite.key == "hand" && body2.sprite.key == "enplatform") ||
 	   (body2.sprite.key == "hand" && body1.sprite.key == "enplatform") ||
 	   (body1.sprite.key == "box" && body2.sprite.key == "enplatform") ||
-	   (body2.sprite.key == "box" && body1.sprite.key == "enplatform"))
+	   (body2.sprite.key == "box" && body1.sprite.key == "enplatform") ||
+	   (body1.sprite.key == "player" && body2.sprite.key == "boss") ||
+	   (body2.sprite.key == "player" && body1.sprite.key == "boss"))
 	{
 		return false;
 	}
@@ -93,12 +102,14 @@ player.prototype.collexception = function(body1, body2)
 		return true;
 }
 
+//create player death animation
 player.prototype.death = function()
 {
 	console.log("death");
-	return;
 }
 
+//code from
+//https://phaser.io/examples/v2/p2-physics/platformer-material
 function checkIfCanJump(chara) {
 
     var yAxis = p2.vec2.fromValues(0, 1);

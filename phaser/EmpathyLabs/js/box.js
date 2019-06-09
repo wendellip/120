@@ -21,9 +21,11 @@ box.prototype.update = function()
 
 box.prototype.floating = function()
 {
+	//allow box floating on static platforms for pushing
+	//by preventing touching and disable gravity
 	this.body.reset(this.body.x, this.body.y-0.5);
 	this.body.data.gravityScale = 0;
-	game.time.events.add(Phaser.Timer.SECOND * 1, recover, this,);
+	game.time.events.add(Phaser.Timer.SECOND * 1, recover, this);
 }
 
 box.prototype.sprite = function()
@@ -33,5 +35,6 @@ box.prototype.sprite = function()
 
 function recover()
 {
+	//reset its gravity
 	this.body.data.gravityScale = 1;
 }

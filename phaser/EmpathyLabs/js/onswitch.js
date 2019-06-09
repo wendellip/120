@@ -10,6 +10,7 @@ this.body.rotation = rotation;
 this.body.CollideWorldBounds = true;
 this.body.static = true;
 this.soundeffect=SoundyBoi;
+//set its state from constructing
 if(onoff == false)
 {
 	this.on = false;
@@ -31,6 +32,7 @@ onswitch.prototype.update = function()
 
 onswitch.prototype.hitted = function()
 {
+	//if the switch gets hit, change it to on
 	if(this.on == false)
 	{
 		this.soundeffect.play();
@@ -42,13 +44,13 @@ onswitch.prototype.hitted = function()
 
 onswitch.prototype.onoff = function()
 {
+	//return its state
 	return this.on;
 }
 
 onswitch.prototype.turnoff = function()
 {
-		this.on = false;
-		this.frameName = 'offswitch';
-		this.body.enable = true;
-
+	this.on = false;
+	this.frameName = 'offswitch';
+	this.body.enable = true;
 }

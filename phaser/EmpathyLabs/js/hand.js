@@ -19,10 +19,13 @@ hand.prototype.update = function()
 
 hand.prototype.newhand = function(player)
 {
+	//if player click and shoot an arm
 	if(this.gothand)
 	{	
 		this.gothand = false;
 		this.destroy();
+		//destroy the rotating arm and create a arm interacting with the environment
+		//calculation its projectile direction according to player and pointer
 		this.hand2 =new hand2(game, 'hand', 0, player.position.x, player.position.y);
 		var xd = (game.input.x - player.position.x) * (game.input.x - player.position.x);
 		var yd = (game.input.y - player.position.y) * (game.input.y - player.position.y);

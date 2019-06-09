@@ -8,13 +8,16 @@ game.physics.enable(this);
 this.body.enable = true;
 this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
+//default player is not found
 this.found = false;
 }
 
 superenemy.prototype.update = function(player)
 {
+	//if player is spot by the watchers
 	if(this.found)
 	{
+		//look for player position and chase player
 		if(player != undefined)
 		{
 			if(player.body.x > this.body.x)
@@ -36,10 +39,17 @@ superenemy.prototype.update = function(player)
 
 superenemy.prototype.foundplayer = function()
 {
+	//call when player is found
 	this.found = true;
 }
 
 superenemy.prototype.sprite = function()
 {
 	return this.body.sprite;
+}
+
+superenemy.prototype.invisible = function()
+{
+	//player gets hit, missile disappear
+	this.alpha = 0;
 }
