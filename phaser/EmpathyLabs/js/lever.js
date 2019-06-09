@@ -44,6 +44,7 @@ function change()
 		//toggling the state if player is standing next to it
 		if(this.frameName == "offlever")
 		{
+			
 			this.on = true;
 			this.frameName = "onlever";
 		}
@@ -52,7 +53,6 @@ function change()
 			this.on= false;
 			this.frameName  = "offlever";
 		}
-		console.log('switched');
 		this.soundEffect.play();
 	}
 }

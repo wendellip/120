@@ -218,7 +218,7 @@ tutorial2.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
-		this.switch1 = new onswitch(game, 'switches', 0, 1200, 464, 0, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 1200, 464, 0, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
 		//create moving platform
@@ -415,8 +415,6 @@ tutorial4.prototype =
 		this.player = new player(game, 'player', 0, 150, 650, 'jumpSound');
 		game.add.existing(this.player);
 		//create a player character
-		this.platform1 = new platform(game, 'platform', 0, 672, 720, 0);
-		game.add.existing(this.platform1);
 
 		this.enwall1 = new platform(game, 'enplatform', 0, 304, 576, 0);
 		game.add.existing(this.enwall1);
@@ -430,8 +428,6 @@ tutorial4.prototype =
 		
 		this.door = new exitdoor(game, 'door', 0, 1184, 420);
 		game.add.existing(this.door);
-		this.lever = new lever(game, 'rlever', 0, 272, 800, 'LeverSound');
-		game.add.existing(this.lever);
 		
 		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
 
@@ -503,15 +499,7 @@ tutorial4.prototype =
 		this.superenemy2.update(this.player);
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
-		this.lever.playeroverlap(checkoverlap(this.player.sprite(), this.lever.sprite()))
-		if(this.lever.update())
-		{
-			this.platform1.moving(928, 720, 0);
-		}
-		else
-		{
-			this.platform1.moving(672, 720, 0);
-		}
+
 
 		//enable restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
@@ -1389,13 +1377,13 @@ fear3.prototype =
 		this.blue1 = new platform(game, 'btemp', 0, 1328, 550, 0);
 		game.add.existing(this.blue1);
 
-		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
 		this.red1 = new platform(game, 'rtemp', 0, 1328, 368, 0);
 		game.add.existing(this.red1);
 		
-		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, 'buttonSound');
+		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
 		this.door = new exitdoor(game, 'door', 0, 1280, 704);
@@ -1785,16 +1773,16 @@ sad2.prototype =
 		game.add.existing(this.superenemy4);
 		
 		//create switches and their interaction with the platforms
-		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI, false);
+		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
-		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false);
+		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
-		this.switch3 = new onswitch(game, 'switches', 0, 432, 48, 3 * Math.PI / 2, false);
+		this.switch3 = new onswitch(game, 'switches', 0, 432, 48, 3 * Math.PI / 2, false, 'buttonSound');
 		game.add.existing(this.switch3);
 		
-		this.switch4 = new onswitch(game, 'switches', 0, 1040, 48, 3 * Math.PI / 2, false);
+		this.switch4 = new onswitch(game, 'switches', 0, 1040, 48, 3 * Math.PI / 2, false, 'buttonSound');
 		game.add.existing(this.switch4);
 		
 		this.door = new exitdoor(game, 'door', 0, 1328, 416);
@@ -1981,10 +1969,10 @@ sad3.prototype =
 		game.add.existing(this.player);
 		
 		//creates switches and interaction with the platforms
-		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2, true);
+		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2, true, 'buttonSound');
 		game.add.existing(this.switch1);
 		
-		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false);
+		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
 		this.door = new exitdoor(game, 'door', 0, 1280, 704);
@@ -2109,7 +2097,10 @@ sad3.prototype =
 			this.superenemy3.foundplayer();
 			this.superenemy4.foundplayer();
 		}
-
+		this.superenemy1.update(this.player);
+		this.superenemy2.update(this.player);
+		this.superenemy3.update(this.player);
+		this.superenemy4.update(this.player);
 
 
 		//allow projeectile arm
@@ -2216,13 +2207,13 @@ angerboss.prototype =
 		game.add.existing(this.player);
 		
 		//create levers and platform interaction
-		this.blues = new lever(game, 'blever', 0, 912, 704);
+		this.blues = new lever(game, 'blever', 0, 912, 704, 'LeverSound');
 		game.add.existing(this.blues);
 		
-		this.reds = new lever(game, 'rlever', 0, 912, 512);
+		this.reds = new lever(game, 'rlever', 0, 912, 512, 'LeverSound');
 		game.add.existing(this.reds);
 		
-		this.yellows = new lever(game, 'ylever', 0, 912, 320);
+		this.yellows = new lever(game, 'ylever', 0, 912, 320, 'LeverSound');
 		game.add.existing(this.yellows);
 		
 		//enable projectile arm

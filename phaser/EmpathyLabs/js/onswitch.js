@@ -9,7 +9,7 @@ this.body.enable = true;
 this.body.rotation = rotation;
 this.body.CollideWorldBounds = true;
 this.body.static = true;
-this.soundeffect=SoundyBoi;
+this.soundeffect = game.add.audio(SoundyBoi);
 //set its state from constructing
 if(onoff == false)
 {
