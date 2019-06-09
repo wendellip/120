@@ -20,7 +20,7 @@ this.faceleft = faceleft;
 this.speed = 128;
 this.animations.play('left');
 this.working = true;
-this.body.static = true;
+this.body.static = false;
 if(!faceleft)
 {
 	this.animations.play('right');
@@ -87,6 +87,7 @@ enemy.prototype.toggling = function()
 	this.animations.play('stand');
 	var speed = this.speed;
 	this.speed = 0;
+	this.working = false;
 	if(this.faceleft)
 		this.body.reset(this.body.x + 3, this.body.y);
 	else
@@ -98,6 +99,7 @@ enemy.prototype.toggle = function(speed)
 {
 	this.faceleft = !this.faceleft;
 	this.speed = -speed;
+	this.working = true;
 	if(this.faceleft)
 		this.animations.play('left');
 	else
