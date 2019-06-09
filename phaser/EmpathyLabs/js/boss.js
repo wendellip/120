@@ -26,6 +26,7 @@ boss.prototype.update = function()
 	else if(!this.attacking && this.health > 0)
 	{
 		this.attacking = true;
+		//time event for the boss to attack
 		game.time.events.add(game.rnd.integerInRange(4, 8) * 1000, this.attack, this);
 	}
 	return false;
@@ -38,7 +39,9 @@ boss.prototype.hitted = function(hand, boss, lever1, lever2, lever3)
 		this.health = this.health - 1;
 		if(this.health > 0)
 		{
+			//make the boss invincible for a while if it gets hit
 			this.invincible = true;
+			//force all levers to be off
 			this.reds.forceoff();
 			this.blues.forceoff();
 			this.yellows.forceoff();
@@ -67,6 +70,7 @@ boss.prototype.attack = function()
 	{
 		this.invincible = true;
 		this.speed = 84;
+		//time event for boss charge attack
 		game.time.events.add(Phaser.Timer.SECOND * 2, this.gofront, this);
 		game.time.events.add(Phaser.Timer.SECOND * 5, this.goback, this);
 		game.time.events.add(Phaser.Timer.SECOND * 9, this.backtonormal, this);

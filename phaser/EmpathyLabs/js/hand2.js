@@ -8,8 +8,6 @@ this.scale.setTo(.1);
 game.physics.p2.enable(this);
 this.body.enable = true;
 this.body.CollideWorldBounds = true;
-this.isconnected==0;
-this.health=2;
 this.handdestroy = false;
 
 }
@@ -17,6 +15,7 @@ this.handdestroy = false;
 
 hand2.prototype.update = function()
 {
+	//if the arm slows down and hit almost zero, destroy the projectile arm
 	if(this.body == null)
 		return true;
 	if(this.body.velocity.x < 1 && this.body.velocity.y < 1 

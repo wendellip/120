@@ -1,12 +1,12 @@
 let style = { font: '24px Helvetica', fill: '#FFF' };
 //define the game
 var game = new Phaser.Game(1440, 900, Phaser.AUTO, 'phaser');
-//define MainMenu state
+// a function restarting the stage
 var restart = function(statename)
 {
 	game.state.start(statename);
 }
-
+// a function for checking sprite overlapping
 var checkoverlap = function(spriteA, spriteB)
 {
     var boundsA = spriteA.getBounds();
@@ -14,7 +14,7 @@ var checkoverlap = function(spriteA, spriteB)
 
     return Phaser.Rectangle.intersects(boundsA, boundsB);
 }
-
+//define MainMenu state
 var MainMenu = function(game) {};
 MainMenu.prototype = 
 {
@@ -25,6 +25,7 @@ MainMenu.prototype =
 	//load all the assets before gameplay
 	preload: function()
 	{
+		//tilemaps
 		game.load.tilemap('tutorial1', 'assets/map/tutorial1.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('tutorial2', 'assets/map/tutorial2.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('tutorial3', 'assets/map/tutorial3.json', null, Phaser.Tilemap.TILED_JSON);
@@ -39,12 +40,18 @@ MainMenu.prototype =
 		game.load.tilemap('sad2', 'assets/map/sad2.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('sad3', 'assets/map/sad3.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('angerboss', 'assets/map/angerboss.json', null, Phaser.Tilemap.TILED_JSON);
+		
+		//character
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		game.load.atlas('enemy', 'assets/img/enemy.png', 'assets/img/enemy.json');
 		game.load.image('enemy', 'assets/img/enemy.png');
 		game.load.atlas('boss', 'assets/img/enemy.png', 'assets/img/enemy.json');
 		game.load.image('boss', 'assets/img/enemy.png');
+		
+		//background
 		game.load.image('Tbackground', 'assets/img/TutorialBackground.png');
+		
+		//items
 		game.load.image('box', 'assets/img/Box.png');
 		game.load.image('missile', 'assets/img/missile.png');
 		game.load.image('enplatform', 'assets/img/enplatform.png');
@@ -87,6 +94,7 @@ MainMenu.prototype =
 	}
 }
 
+//tutorial 1 state
 var tutorial1 = function(game) {};
 tutorial1.prototype = 
 {
@@ -100,6 +108,7 @@ tutorial1.prototype =
 	},
 	create: function()
 	{
+		//start P2 physics
 		game.add.sprite(0, 0, 'Tbackground');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
@@ -123,7 +132,7 @@ tutorial1.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1280, 64);
 		game.add.existing(this.door);
 		
-		//add stage end point
+		//enable controlling and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 	},
@@ -131,11 +140,13 @@ tutorial1.prototype =
 	update: function()
 	{
 		this.player.update(this.control);
-			//enable restarting stage
+		
+		//enable restarting stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
+		//reach end point and change state to next stage
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
@@ -144,6 +155,7 @@ tutorial1.prototype =
 	}
 }
 
+//tutorial 2 state
 var tutorial2 = function(game) {};
 tutorial2.prototype = 
 {
@@ -158,6 +170,7 @@ tutorial2.prototype =
 
 	create: function()
 	{
+		//enable P2 physics
 		game.add.sprite(0, 0, 'Tbackground');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
@@ -184,23 +197,32 @@ tutorial2.prototype =
 		this.platform2 = new platform(game, 'platform', 0, 1088, 528, 0);
 		game.add.existing(this.platform2);
 		
+		//create player character
 		this.player = new player(game, 'player', 0, 150, 450, 'jump');
 		game.add.existing(this.player);
 		
+		//create end point
 		this.door = new exitdoor(game, 'door', 0, 1248, 224);
 		game.add.existing(this.door);
 		
+		//enable end point and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		
+		//create projectile arm station for player
 		this.handstation = new handstation(game, 'hand', 0, 320, 440);
 		game.add.existing(this.handstation);
 		
+		//a variable storing projectile arm
 		this.hand = undefined;
 		
+		//allow collision exception which player doesn't interact with projectile arm
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		
+		//function call when switch gets hit
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		
+		//preventing infinity calls
 		this.switch1on = true;
 	},
 
@@ -215,6 +237,8 @@ tutorial2.prototype =
 			this.platform2.moving(832, 528, 0);		
 		}
 		this.player.update(this.control);
+		
+		//player pick up arm
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -223,11 +247,14 @@ tutorial2.prototype =
 				this.player.addChild(game.add.existing(this.hand));
 			}
 		}
+		// if player has arm, he can shoot
 		else if(game.input.activePointer.justReleased() && this.hand != undefined)
 		{
+			//create a projectile arm shoot from player's position
 			this.projected = this.hand.newhand(this.player);
 			if(this.projected != undefined)
 			{
+				//define a projectile arm and enable it interacting with switch
 				this.hand.destroy();
 				game.add.existing(this.projected);
 				this.hand = undefined;
@@ -236,6 +263,7 @@ tutorial2.prototype =
 				
 			}
 		}
+		//if player has arm, it keeps rotating
 		if(this.hand != undefined)
 			this.hand.update();
 		//enable restarting stage
@@ -251,6 +279,7 @@ tutorial2.prototype =
 	},
 }
 
+//tutorial 3 state
 var tutorial3 = function(game) {};
 tutorial3.prototype = 
 {
@@ -260,11 +289,12 @@ tutorial3.prototype =
 	},
 	preload: function()
 	{
-		console.log('tutorial3');
+
 	},
 
 	create: function()
 	{
+		// enable P2 physics and load tilemap
 		game.add.sprite(0, 0, 'Tbackground');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
@@ -278,6 +308,7 @@ tutorial3.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create a player character
 		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
 
@@ -288,12 +319,13 @@ tutorial3.prototype =
 		this.box2 = new box(game, 'box', 0, 650, 416);
 		game.add.existing(this.box2);
 		
+		//making end point
 		this.door = new exitdoor(game, 'door', 0, 1184, 128);
 		game.add.existing(this.door);
 		
+		//enable player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 	},
 
@@ -302,12 +334,11 @@ tutorial3.prototype =
 
 		this.player.update(this.control);
 
-		// player can interact with boxes
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
-
+		
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
@@ -317,6 +348,7 @@ tutorial3.prototype =
 	}
 }
 
+//tutorial 4 state
 var tutorial4 = function(game) {};
 tutorial4.prototype = 
 {
@@ -326,11 +358,12 @@ tutorial4.prototype =
 	},
 	preload: function()
 	{
-		console.log('tutorial4');
+
 	},
 
 	create: function()
 	{
+		//ebable P2 physics and load tilemap
 		game.add.sprite(0, 0, 'Tbackground');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
@@ -345,27 +378,25 @@ tutorial4.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create a player character
 		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
 
+		//create invisible wall interacting with watcher
 		this.enwall1 = new platform(game, 'enplatform', 0, 304, 576, 0);
 		game.add.existing(this.enwall1);
 		
 		this.enwall2 = new platform(game, 'enplatform', 0, 1152, 576, 0);
 		game.add.existing(this.enwall2);
 		
-		this.enwall3 = new platform(game, 'enplatform', 0, 528, 864, 0);
-		game.add.existing(this.enwall3);
-		
-		this.enwall4 = new platform(game, 'enplatform', 0, 816, 864, 0);
-		game.add.existing(this.enwall4);
-
+		//create enemy for stealth gameplay
 		this.enemy = new enemy(game, 'enemy', 0, 800, 672, true);
 		game.add.existing(this.enemy);
 		
 		this.door = new exitdoor(game, 'door', 0, 1184, 420);
 		game.add.existing(this.door);
 		
+		//missiles that destroy player when player fails
 		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
@@ -378,6 +409,7 @@ tutorial4.prototype =
 		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
+		//enable projectile arm
 		this.handstation = new handstation(game, 'hand', 0, 96, 800);
 		game.add.existing(this.handstation);
 		
@@ -385,14 +417,19 @@ tutorial4.prototype =
 
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
+		// collision exception player and arm, player and invisible wall
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		
+		//now allow player to touch the watcher
+		this.enemy.body.createBodyCallback(this.player, this.enemy.collide, this.enemy);
 	},
 
 	update: function()
 	{
 		this.player.update(this.control);
+		
+		//enable player picking up arm from arm station
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -416,6 +453,7 @@ tutorial4.prototype =
 		if(this.hand != undefined)
 			this.hand.update();
 
+		//if player is spot, the missiles will chase the player
 		if(this.enemy.update(this.player, null))
 		{
 			this.superenemy1.foundplayer();
@@ -428,14 +466,15 @@ tutorial4.prototype =
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
 
+		//enable restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
+		
+		//enemy changes its direction when it hits the invisible wall
 		if(checkoverlap(this.enemy.sprite(), this.enwall1.sprite())
-		|| checkoverlap(this.enemy.sprite(), this.enwall2.sprite())
-		|| checkoverlap(this.enemy.sprite(), this.enwall3.sprite())
-		|| checkoverlap(this.enemy.sprite(), this.enwall4.sprite()))
+		|| checkoverlap(this.enemy.sprite(), this.enwall2.sprite()))
 		{
 			this.enemy.toggling();
 		}
@@ -444,6 +483,8 @@ tutorial4.prototype =
 			this.control = false;
 			game.state.start('fear1');
 		}
+		
+		//if player gets hit, game over and restart the stage
 		if(checkoverlap(this.player.sprite(), this.superenemy1.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy2.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
@@ -463,6 +504,7 @@ tutorial4.prototype =
 	}
 }
 
+//joy 1 state
 var joy1 = function(game) {};
 joy1.prototype = 
 {
@@ -472,16 +514,18 @@ joy1.prototype =
 	},
 	preload: function()
 	{
-		console.log('joy1');
+
 	},
 
 	create: function()
 	{
+		//enable P2 physics and tilemap
 		game.add.sprite(0, 0, 'Tbackground');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
+		// create a moving platform
 		this.platform1 = new platform(game, 'rplatform', 0, 960, 272, 0);
 		game.add.existing(this.platform1);
 
@@ -494,18 +538,22 @@ joy1.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create a player character
 		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
 		
+		//create boxes for player to push
 		this.box1 = new box(game, 'box', 0, 512, 512);
 		game.add.existing(this.box1);
 		
 		this.box2 = new box(game, 'box', 0, 1152, 192);
 		game.add.existing(this.box2);
 		
+		//create a switch to interact with the platform
 		this.switch1 = new onswitch(game, 'switches', 0, 48, 96, Math.PI, false);
 		game.add.existing(this.switch1);
 		
+		//create a projectile arm station for player to pick up and shoot
 		this.handstation = new handstation(game, 'hand', 0, 448, 768);
 		game.add.existing(this.handstation);
 		
@@ -517,8 +565,11 @@ joy1.prototype =
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		
+		//collision exception, player and hands
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		//player can interact with the switch, although it's impossible
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		//boolean preventing repeating calls
 		this.switch1on = true;
 	},
 
@@ -526,12 +577,14 @@ joy1.prototype =
 	{
 		this.player.update(this.control);
 		
+		//activate the switch and destroy the platform
 		if(this.switch1.onoff() && this.switch1on)
 		{
 			this.switch1on = false;
 			this.platform1.destroy();
 		}
 		
+		//allow player to pick up a projectile arm
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -542,6 +595,7 @@ joy1.prototype =
 		}
 		else if(game.input.activePointer.justReleased() && this.hand != undefined)
 		{
+			//if a projectile arm is created, it can interact with the switch
 			this.projected = this.hand.newhand(this.player);
 			if(this.projected != undefined)
 			{
@@ -556,10 +610,13 @@ joy1.prototype =
 		if(this.hand != undefined)
 			this.hand.update();
 
+		//allow player to restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
+		
+		//box on static platform can't be pushed, disable the boxes' gravity for a while
 		if(this.switch1on)
 		{
 			if(checkoverlap(this.box1.sprite(), this.platform1.sprite()))
@@ -581,6 +638,7 @@ joy1.prototype =
 	}
 }
 
+//joy 2 state
 var joy2 = function(game) {};
 joy2.prototype = 
 {
@@ -595,9 +653,11 @@ joy2.prototype =
 
 	create: function()
 	{
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 		
+		//creates two moving platforms
 		this.red1 = new platform(game, 'rvplatform', 0, 432, 736, 0);
 		game.add.existing(this.red1);
 		
@@ -613,9 +673,11 @@ joy2.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create a player character
 		this.player = new player(game, 'player', 0, 120, 450, 'jump');
 		game.add.existing(this.player);
 
+		//create boxes for player to push
 		this.box1 = new box(game, 'box', 0, 640, 576);
 		game.add.existing(this.box1);
 		
@@ -625,6 +687,7 @@ joy2.prototype =
 		this.box3 = new box(game, 'box', 0, 1184, 96);
 		game.add.existing(this.box3);
 		
+		//create two levers interacting with the platforms
 		this.reds = new lever(game, 'rlever', 0, 64, 640);
 		game.add.existing(this.reds);	
 
@@ -634,10 +697,11 @@ joy2.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1312, 256);
 		game.add.existing(this.door);
 		
+		//allow player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
+		//collision exception
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		
 	},
@@ -645,6 +709,8 @@ joy2.prototype =
 	update: function()
 	{
 		this.player.update(this.control);
+		
+		//allow player to interact with the lever and its interaction with the platform
 		this.blues.playeroverlap(checkoverlap(this.player.sprite(), this.blues.sprite()));
 		if(this.blues.update())
 		{
@@ -664,11 +730,13 @@ joy2.prototype =
 			this.red1.moving(432, 736, 0);
 		}
 
+		//allow player to restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
 		
+		//disable gravity for certain time when it's on a static platform
 		if(checkoverlap(this.box1.sprite(), this.blue1.sprite()))
 		{
 			this.box1.floating();
@@ -690,6 +758,7 @@ joy2.prototype =
 	}
 }
 
+//joy 3 state
 var joy3 = function(game) {};
 joy3.prototype = 
 {
@@ -699,15 +768,16 @@ joy3.prototype =
 	},
 	preload: function()
 	{
-		console.log('joy3');
+
 	},
 
 	create: function()
 	{
-		
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
+		//create platforms and moving platforms
 		this.blue1 = new platform(game, 'btemp', 0, 784, 176, 0);
 		game.add.existing(this.blue1);
 		
@@ -732,9 +802,11 @@ joy3.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create a player character
 		this.player = new player(game, 'player', 0, 90, 420, 'jump');
 		game.add.existing(this.player);
 
+		//create boxes for player to push
 		this.box1 = new box(game, 'box', 0, 784, 96);
 		game.add.existing(this.box1);
 		
@@ -747,6 +819,7 @@ joy3.prototype =
 		this.box4 = new box(game, 'box', 0, 240, 96);
 		game.add.existing(this.box4);
 		
+		//create three levers interacting with the platforms
 		this.yellows = new lever(game, 'ylever', 0, 64, 256);
 		game.add.existing(this.yellows);
 		
@@ -759,12 +832,13 @@ joy3.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1312, 192);
 		game.add.existing(this.door);
 		
+		//enable player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		
+		//boolean preventing repeating destroy call
 		this.blueon = true;
 		this.yellowon = true;
 		this.redon = true;
@@ -774,6 +848,7 @@ joy3.prototype =
 	{
 		this.player.update(this.control);
 
+		//allow player interact with the lever and it interaction with the platforms
 		this.reds.playeroverlap(checkoverlap(this.player.sprite(), this.reds.sprite()));
 		if(this.reds.update() && this.redon)
 		{
@@ -802,6 +877,7 @@ joy3.prototype =
 			this.yellow1.destroy();
 		}			
 
+		//allow player to restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
@@ -814,6 +890,7 @@ joy3.prototype =
 	}
 }
 
+//fear 1 state
 var fear1 = function(game) {};
 fear1.prototype = 
 {
@@ -823,15 +900,16 @@ fear1.prototype =
 	},
 	preload: function()
 	{
-		console.log('fear1');
+		
 	},
 
 	create: function()
 	{
-		
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
+		//create a moving platform
 		this.blue1 = new platform(game, 'btemp', 0, 1072, 336, 0);
 		game.add.existing(this.blue1);
 
@@ -844,9 +922,11 @@ fear1.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create player character
 		this.player = new player(game, 'player', 0, 90, 672, 'jump');
 		game.add.existing(this.player);
 		
+		//create invisible walls and enemies
 		this.enwall1 = new platform(game, 'enplatform', 0, 16, 768, 0);
 		game.add.existing(this.enwall1);
 		
@@ -874,6 +954,7 @@ fear1.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false);
 		game.add.existing(this.enemy3);
 		
+		//create missiles to destroy player
 		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
@@ -886,28 +967,34 @@ fear1.prototype =
 		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
+		//create box for player to push
 		this.box1 = new box(game, 'box', 0, 1152, 256);
 		game.add.existing(this.box1);
 		
 		this.boxes = [this.box1];
 		
+		//create a switch interacting with the platform
 		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI, false);
 		game.add.existing(this.switch1);
 		
 		this.door = new exitdoor(game, 'door', 0, 1328, 416);
 		game.add.existing(this.door);
 		
+		//enable player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		
+		//allow player to interact with the switch
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		
+		//not allow player to interact with the watchers
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
 		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
 		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
 		
+		//boolean preventing the repeating destroy call
 		this.switch1on = true;
 
 	},
@@ -916,6 +1003,7 @@ fear1.prototype =
 	{
 		this.player.update(this.control);
 
+		//allow watcher change its direction when it hits the wall
 		if(checkoverlap(this.enemy1.sprite(), this.enwall1.sprite())
 		|| checkoverlap(this.enemy1.sprite(), this.enwall2.sprite())
 		|| checkoverlap(this.enemy1.sprite(), this.box1.sprite()))
@@ -935,12 +1023,14 @@ fear1.prototype =
 			this.enemy3.toggling();
 		}
 		
+		//allow interaction with the switch and the platform
 		if(this.switch1.onoff() && this.switch1on)
 		{
 			this.switch1on = false;
 			this.blue1.destroy();		
 		}
 
+		//allow watcher scan the distance between player and the watcher
 		if(this.enemy1.update(this.player, this.boxes) ||
 		   this.enemy2.update(this.player, this.boxes) ||
 		   this.enemy3.update(this.player, this.boxes))
@@ -950,11 +1040,13 @@ fear1.prototype =
 			this.superenemy3.foundplayer();
 			this.superenemy4.foundplayer();
 		}
+		//if player is found, the missiles will chase the player
 		this.superenemy1.update(this.player);
 		this.superenemy2.update(this.player);
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
 		
+		//allow player to restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
@@ -991,6 +1083,7 @@ fear1.prototype =
 	}
 }
 
+//fear 2 state
 var fear2 = function(game) {};
 fear2.prototype = 
 {
@@ -1000,12 +1093,12 @@ fear2.prototype =
 	},
 	preload: function()
 	{
-		console.log('fear2');
+		
 	},
 
 	create: function()
 	{
-		
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
@@ -1018,12 +1111,14 @@ fear2.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create player character
 		this.player = new player(game, 'player', 0, 90, 672, 'jump');
 		game.add.existing(this.player);
 		
 		this.door = new exitdoor(game, 'door', 0, 1328, 220);
 		game.add.existing(this.door);
 		
+		//create invisible walls and enemies
 		this.enwall1 = new platform(game, 'enplatform', 0, 176, 896, 0);
 		game.add.existing(this.enwall1);
 		
@@ -1060,6 +1155,7 @@ fear2.prototype =
 		this.enemy4 = new enemy(game, 'enemy', 0, 160, 352, false);
 		game.add.existing(this.enemy4);
 		
+		//create missiles 
 		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
@@ -1072,21 +1168,25 @@ fear2.prototype =
 		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
+		//create switch and lever for interacting with the platforms
 		this.switch1 = new onswitch(game, 'switches', 0, 80, 560, Math.PI / 2, false);
 		game.add.existing(this.switch1);
 
 		this.blue1 = new platform(game, 'btemp', 0, 1168, 304, Math.PI / 2);
 		game.add.existing(this.blue1);
 
+		//allow player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		
 		this.switch1on = true;
 		
+		//allow player interact with the switch
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		
+		//not allow player to touch the watchers
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
 		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
 		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
@@ -1096,12 +1196,15 @@ fear2.prototype =
 	update: function()
 	{
 		this.player.update(this.control);
+		
+		//enable switch interaction with the platforms
 		if(this.switch1.onoff() && this.switch1on)
 		{
 			this.switch1on = false;
 			this.blue1.destroy();	
 		}
 		
+		//allow watchers change their walking direction
 		if(checkoverlap(this.enemy1.sprite(), this.enwall1.sprite())
 		|| checkoverlap(this.enemy1.sprite(), this.enwall2.sprite()))
 		{
@@ -1123,6 +1226,7 @@ fear2.prototype =
 			this.enemy4.toggling();
 		}
 
+		//allow watchers to scan for player
 		if(this.enemy1.update(this.player, null) ||
 		   this.enemy2.update(this.player, null) ||
 		   this.enemy3.update(this.player, null) ||
@@ -1138,11 +1242,13 @@ fear2.prototype =
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
 		
+		//allow player to restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
 		
+		//missiles chase and destroy player
 		if(checkoverlap(this.player.sprite(), this.superenemy1.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy2.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
@@ -1167,6 +1273,7 @@ fear2.prototype =
 	}
 }
 
+//fear 3 state
 var fear3 = function(game) {};
 fear3.prototype = 
 {
@@ -1176,12 +1283,12 @@ fear3.prototype =
 	},
 	preload: function()
 	{
-		console.log('fear3');
+		
 	},
 
 	create: function()
 	{
-		
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
@@ -1194,9 +1301,11 @@ fear3.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create player characher
 		this.player = new player(game, 'player', 0, 90, 832, 'jump');
 		game.add.existing(this.player);
 		
+		//create platforms and switches
 		this.blue1 = new platform(game, 'btemp', 0, 1328, 550, 0);
 		game.add.existing(this.blue1);
 
@@ -1212,9 +1321,11 @@ fear3.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1280, 704);
 		game.add.existing(this.door);
 
+		//allow player to use projectile arm
 		this.handstation = new handstation(game, 'hand', 0, 544, 800);
 		game.add.existing(this.handstation);
 		
+		//create watchers and invisible walls
 		this.enwall1 = new platform(game, 'enplatform', 0, 464, 896, 0);
 		game.add.existing(this.enwall1);
 		
@@ -1242,6 +1353,7 @@ fear3.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false);
 		game.add.existing(this.enemy3);
 		
+		//create missiles
 		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
@@ -1256,17 +1368,19 @@ fear3.prototype =
 		
 		this.hand = undefined;
 
+		//sllow player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		this.switch1on = true;
 		this.switch2on = true;
 		
+		//allow player to interact with the switch
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
 		
+		//not allow player touch the watchers
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
 		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
 		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
@@ -1276,6 +1390,7 @@ fear3.prototype =
 	{
 		this.player.update(this.control);
 		
+		//allow watcher to change its direction
 		if(checkoverlap(this.enemy1.sprite(), this.enwall1.sprite())
 		|| checkoverlap(this.enemy1.sprite(), this.enwall2.sprite()))
 		{
@@ -1292,6 +1407,7 @@ fear3.prototype =
 			this.enemy3.toggling();
 		}
 
+		//switches interaction with the platforms
 		if(this.switch1.onoff() && this.switch1on)
 		{
 			this.switch1on = false;
@@ -1303,6 +1419,7 @@ fear3.prototype =
 			this.red1.destroy();	
 		}
 
+		//allow watchers scan for player
 		if(this.enemy1.update(this.player, null) ||
 		   this.enemy2.update(this.player, null) ||
 		   this.enemy3.update(this.player, null))
@@ -1312,11 +1429,13 @@ fear3.prototype =
 			this.superenemy3.foundplayer();
 			this.superenemy4.foundplayer();
 		}
+		//if player is found, the missiles will chase the player
 		this.superenemy1.update(this.player);
 		this.superenemy2.update(this.player);
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
 
+		//allow projectile arm
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -1346,6 +1465,7 @@ fear3.prototype =
 		if(this.hand != undefined)
 			this.hand.update();
 		
+		//allow player restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
@@ -1376,6 +1496,7 @@ fear3.prototype =
 	}
 }
 
+//sad 1 state
 var sad1 = function(game) {};
 sad1.prototype = 
 {
@@ -1385,11 +1506,12 @@ sad1.prototype =
 	},
 	preload: function()
 	{
-		console.log('sad1');
+
 	},
 
 	create: function()
 	{
+		//enable P2 physics and tilemap
 		game.add.sprite(0, 0, 'Tbackground');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
@@ -1407,18 +1529,22 @@ sad1.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create player character
 		this.player = new player(game, 'player', 0, 150, 650, 'jump');
 		game.add.existing(this.player);
 		
+		//create boxes for player to push
 		this.box1 = new box(game, 'box', 0, 512, 512);
 		game.add.existing(this.box1);
 		
 		this.box2 = new box(game, 'box', 0, 992, 192);
 		game.add.existing(this.box2);
 		
+		//create switch and platform for interaction
 		this.switch1 = new onswitch(game, 'switches', 0, 48, 224, Math.PI, false);
 		game.add.existing(this.switch1);
 		
+		//enable projectile arm
 		this.handstation = new handstation(game, 'hand', 0, 448, 768);
 		game.add.existing(this.handstation);
 		
@@ -1427,6 +1553,7 @@ sad1.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1280, 288);
 		game.add.existing(this.door);
 		
+		//enable player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		
@@ -1439,12 +1566,14 @@ sad1.prototype =
 	{
 		this.player.update(this.control);
 		
+		//switch and platform interaction
 		if(this.switch1.onoff() && this.switch1on)
 		{
 			this.switch1on = false;
 			this.platform1.destroy();
 		}
 		
+		//allow player to use projectile arm
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -1469,6 +1598,7 @@ sad1.prototype =
 		if(this.hand != undefined)
 			this.hand.update();
 
+		//allow player to restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
@@ -1483,6 +1613,7 @@ sad1.prototype =
 	}
 }
 
+//sad 2 state
 var sad2 = function(game) {};
 sad2.prototype = 
 {
@@ -1492,12 +1623,12 @@ sad2.prototype =
 	},
 	preload: function()
 	{
-		console.log('sad2');
+
 	},
 
 	create: function()
 	{
-		
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
@@ -1513,9 +1644,11 @@ sad2.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create player character
 		this.player = new player(game, 'player', 0, 90, 672, 'jump');
 		game.add.existing(this.player);
 		
+		//create watchers and invisible walls
 		this.enwall1 = new platform(game, 'enplatform', 0, 16, 768, 0);
 		game.add.existing(this.enwall1);
 		
@@ -1543,6 +1676,7 @@ sad2.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false);
 		game.add.existing(this.enemy3);
 		
+		//create missiles
 		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
@@ -1555,6 +1689,7 @@ sad2.prototype =
 		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
+		//create switches and their interaction with the platforms
 		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI, false);
 		game.add.existing(this.switch1);
 		
@@ -1570,21 +1705,25 @@ sad2.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1328, 416);
 		game.add.existing(this.door);
 		
+		//allow projectile arm
 		this.handstation = new handstation(game, 'hand', 0, 112, 784);
 		game.add.existing(this.handstation);
 		
 		this.hand = undefined;
 		
+		//allow player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		
+		//allow player interacting with the switches
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
 		this.switch3.body.createBodyCallback(this.player, this.switch3.hitted, this.switch3);
 		this.switch4.body.createBodyCallback(this.player, this.switch4.hitted, this.switch4);
+		
+		//not allow player to touch the watchers
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
 		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
 		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
@@ -1599,6 +1738,7 @@ sad2.prototype =
 	{
 		this.player.update(this.control);
 
+		//allow watchers to change its direction
 		if(checkoverlap(this.enemy1.sprite(), this.enwall1.sprite())
 		|| checkoverlap(this.enemy1.sprite(), this.enwall2.sprite()))
 		{
@@ -1627,6 +1767,7 @@ sad2.prototype =
 			this.blue1.destroy();		
 		}
 
+		//allow player use projectile arm
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -1659,6 +1800,7 @@ sad2.prototype =
 		if(this.hand != undefined)
 			this.hand.update();
 		
+		//allow watchers scan for player
 		if(this.enemy1.update(this.player, null) ||
 		   this.enemy2.update(this.player, null) ||
 		   this.enemy3.update(this.player, null))
@@ -1673,11 +1815,13 @@ sad2.prototype =
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
 		
+		//allow player to restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
 		}
 		
+		//allow missiles destroy the player
 		if(checkoverlap(this.player.sprite(), this.superenemy1.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy2.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
@@ -1702,6 +1846,7 @@ sad2.prototype =
 	}
 }
 
+//sad 3 state
 var sad3 = function(game) {};
 sad3.prototype = 
 {
@@ -1711,15 +1856,16 @@ sad3.prototype =
 	},
 	preload: function()
 	{
-		console.log('sad3');
+		
 	},
 
 	create: function()
 	{
-		
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
+		// create platforms
 		this.blue1 = new platform(game, 'btemp', 0, 1328, 550, 0);
 		game.add.existing(this.blue1);
 
@@ -1735,9 +1881,11 @@ sad3.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create player character
 		this.player = new player(game, 'player', 0, 90, 832, 'jump');
 		game.add.existing(this.player);
 		
+		//creates switches and interaction with the platforms
 		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2, true);
 		game.add.existing(this.switch1);
 		
@@ -1747,9 +1895,11 @@ sad3.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1280, 704);
 		game.add.existing(this.door);
 
+		//allow projectile arm
 		this.handstation = new handstation(game, 'hand', 0, 544, 800);
 		game.add.existing(this.handstation);
 		
+		//create watches and invisible walls
 		this.enwall1 = new platform(game, 'enplatform', 0, 464, 896, 0);
 		game.add.existing(this.enwall1);
 		
@@ -1777,6 +1927,7 @@ sad3.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false);
 		game.add.existing(this.enemy3);
 		
+		//create missiles
 		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
@@ -1791,16 +1942,18 @@ sad3.prototype =
 		
 		this.hand = undefined;
 
+		//allow player control and gravity
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		this.switch1on = true;
 		this.switch2on = false;
 		
+		//enable player interacting with the switches
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
+		//not allow player touch the watchers
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
 		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
 		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
@@ -1811,6 +1964,7 @@ sad3.prototype =
 	{
 		this.player.update(this.control);
 		
+		//allow watchers change their direction
 		if(checkoverlap(this.enemy1.sprite(), this.enwall1.sprite())
 		|| checkoverlap(this.enemy1.sprite(), this.enwall2.sprite()))
 		{
@@ -1826,6 +1980,7 @@ sad3.prototype =
 		{
 			this.enemy3.toggling();
 		}
+		//allow platforms and switches interaction
 		if(this.switch1.onoff()&& this.switch1on)
 		{
 			this.switch1on = false;
@@ -1864,6 +2019,7 @@ sad3.prototype =
 		this.superenemy3.update(this.player);
 		this.superenemy4.update(this.player);
 
+		//allow projeectile arm
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -1893,6 +2049,7 @@ sad3.prototype =
 		if(this.hand != undefined)
 			this.hand.update();
 		
+		//allow player restart the stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
@@ -1923,6 +2080,7 @@ sad3.prototype =
 	}
 }
 
+//boss fight state
 var angerboss = function(game) {};
 angerboss.prototype = 
 {
@@ -1932,15 +2090,16 @@ angerboss.prototype =
 	},
 	preload: function()
 	{
-		console.log('angerboss');
+
 	},
 
 	create: function()
 	{
-		
+		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 
+		//create platforms
 		this.blue1 = new platform(game, 'bplatform', 0, -94, 688, 0);
 		game.add.existing(this.blue1);
 
@@ -1959,9 +2118,11 @@ angerboss.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		//create player character
 		this.player = new player(game, 'player', 0, 90, 600, 'jump');
 		game.add.existing(this.player);
 		
+		//create levers and platform interaction
 		this.blues = new lever(game, 'blever', 0, 912, 704);
 		game.add.existing(this.blues);
 		
@@ -1971,6 +2132,7 @@ angerboss.prototype =
 		this.yellows = new lever(game, 'ylever', 0, 912, 320);
 		game.add.existing(this.yellows);
 		
+		//enable projectile arm
 		this.handstation = new handstation(game, 'hand', 0, 944, 816);
 		game.add.existing(this.handstation);
 		
@@ -1978,8 +2140,8 @@ angerboss.prototype =
 		
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
-		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
+		//create boss
 		this.boss = new boss(game, 'boss', 0, 1232, 112, this.reds, this.blues, this.yellows);
 		game.add.existing(this.boss);
 
@@ -1990,6 +2152,7 @@ angerboss.prototype =
 	{
 		this.player.update(this.control);
 		
+		//enable platforms and levers interaction
 		this.blues.playeroverlap(checkoverlap(this.player.sprite(), this.blues.sprite()));
 		if(this.blues.update())
 		{
@@ -2018,6 +2181,7 @@ angerboss.prototype =
 			this.yellow1.moving(-94, 304, 0);
 		}
 
+		//enable projectile arm
 		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
 		{
 			if(this.hand == undefined)
@@ -2041,6 +2205,7 @@ angerboss.prototype =
 		if(this.hand != undefined)
 			this.hand.update();
 		
+		//allow boss destroy the player
 		if(checkoverlap(this.player.sprite(), this.boss.sprite()))
 		{
 			if(this.control)
@@ -2082,6 +2247,7 @@ GameOver.prototype =
 	}
 }
 
+//adding states for calling
 game.state.add('MainMenu', MainMenu);
 game.state.add('tutorial1', tutorial1);
 game.state.add('tutorial2', tutorial2);

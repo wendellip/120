@@ -4,6 +4,7 @@ enemy.prototype.constructor = enemy;
 function enemy(game, key, frame, x, y, faceleft)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
+//create animation
 this.animations.add('left', ['left01', 'left02'], 5, true);
 this.animations.add('right', ['righrt01', 'right02'], 5, true);
 this.animations.add('stand', ['middle01', 'middle02', 'middle03', 'middle01', 'middle04', 'middle05'], 15, true);
@@ -21,6 +22,7 @@ this.animations.play('left');
 this.working = true;
 this.found = false;
 this.body.static = false;
+//choosing its walking direction
 if(!faceleft)
 {
 	this.animations.play('right');
@@ -35,13 +37,16 @@ enemy.prototype.update = function(player, box)
 	{
 		if(player != undefined)
 		{
+			//check player and watcher y position, if it's close check x position
 			if((this.body.y+64) >= player.body.y && (this.body.y-64) <= player.body.y)
 			{
 				var distance = this.body.x - player.body.x;
 				if(this.faceleft == true)
 				{
+					//if player is close enough
 					if(distance >= -64 && distance < 250)
 					{
+						//check if there's any box between
 						if(box != undefined)
 						{
 							for(var i = 0; i < box.length; i++)
@@ -49,6 +54,7 @@ enemy.prototype.update = function(player, box)
 									if((this.body.x - box[i].body.x) < distance)
 										return this.found;
 						}
+						//if all true, player is spot
 						this.speed = 0;
 						this.animations.play('alarm');
 						this.working = false;
@@ -58,6 +64,7 @@ enemy.prototype.update = function(player, box)
 				}
 				else
 				{
+					//same function but facing another direction
 					if(distance <= 64 && distance > -250)
 					{
 						if(box != undefined)
@@ -84,10 +91,12 @@ enemy.prototype.update = function(player, box)
 
 enemy.prototype.toggling = function()
 {
+	//allow watcher change its direction
 	this.animations.play('stand');
 	var speed = this.speed;
 	this.speed = 0;
 	this.working = false;
+	//back off a little bit and wait for 2 seconds
 	if(this.faceleft)
 		this.body.reset(this.body.x + 3, this.body.y);
 	else
@@ -97,6 +106,7 @@ enemy.prototype.toggling = function()
 
 enemy.prototype.toggle = function(speed)
 {
+	//change watcher direction according its original direction
 	this.faceleft = !this.faceleft;
 	this.speed = -speed;
 	this.working = true;
@@ -108,6 +118,7 @@ enemy.prototype.toggle = function(speed)
 
 enemy.prototype.disable = function()
 {
+	//if watcher gets hit by projectile arm, disable it for 5 seconds
 	this.working = false;
 	var speed = this.speed;
 	this.speed = 0;
@@ -121,6 +132,7 @@ enemy.prototype.alarmloop = function()
 
 enemy.prototype.backtowork = function(speed)
 {
+	//back to normal work after 5 seconds
 	if(!this.found)
 	{
 		this.speed = speed;
@@ -134,6 +146,7 @@ enemy.prototype.sprite = function()
 
 enemy.prototype.collide = function()
 {
+	//if player touch watchers, player is spot
 	this.found = true;
 	this.animations.play('alarm');
 	this.working = false;
