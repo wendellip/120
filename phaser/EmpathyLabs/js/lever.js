@@ -26,6 +26,12 @@ lever.prototype.playeroverlap = function(overlapping)
 	this.overlap = overlapping;
 }
 
+lever.prototype.forceoff = function()
+{
+	this.on= false;
+	this.frameName  = "offlever";
+}
+
 function change()
 {
 	if(this.overlap)

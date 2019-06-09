@@ -6,7 +6,6 @@ var restart = function(statename)
 {
 	game.state.start(statename);
 }
-var music;
 
 var checkoverlap = function(spriteA, spriteB)
 {
@@ -39,6 +38,7 @@ MainMenu.prototype =
 		game.load.tilemap('sad1', 'assets/map/sad1.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('sad2', 'assets/map/sad2.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.tilemap('sad3', 'assets/map/sad3.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.tilemap('angerboss', 'assets/map/angerboss.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		game.load.atlas('enemy', 'assets/img/enemy.png', 'assets/img/enemy.json');
 		game.load.image('enemy', 'assets/img/enemy.png');
@@ -67,13 +67,6 @@ MainMenu.prototype =
 		game.load.atlas('rlever', 'assets/img/rlever.png', 'assets/img/lever.json');
 		game.load.atlas('ylever', 'assets/img/ylever.png', 'assets/img/lever.json');
 		game.load.audio('jump', 'assets/audio/jump.mp3');
-		game.load.audio('joymusic', 'assets/Sound/Almost New.mp3');
-		game.load.audio('Button', 'assets/Sound/Button_Press_5-Marianne_Gagnon-1212299245.mp3');
-		game.load.audio('JumpThrusters', 'assets/Sound/JumpThrusters.mp3');
-		game.load.audio('FearAnger', 'assets/Sound/Obliteration.mp3');
-		game.load.audio('thump', 'assets/Sound/WoodThump.mp3');
-		game.load.audio('whoosh', 'assets/Sound/Woosh.mp3');
-		
 	},
 	create: function()
 	{
@@ -86,7 +79,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('sad3', true, false, this.level);
+			game.state.start('fear1', true, false, this.level);
 		}
 	}
 }
@@ -903,6 +896,9 @@ fear1.prototype =
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
+		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
+		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
 		
 		this.switch1on = true;
 
@@ -1879,8 +1875,97 @@ sad3.prototype =
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
 			this.control = false;
-			game.state.start('GameOver');
+			game.state.start('angerboss');
 		}
+	}
+}
+
+var angerboss = function(game) {};
+angerboss.prototype = 
+{
+	init: function()
+	{
+		this.state = 'angerboss';
+	},
+	preload: function()
+	{
+		console.log('angerboss');
+	},
+
+	create: function()
+	{
+		
+		game.physics.startSystem(Phaser.Physics.P2JS);
+		game.physics.p2.setImpactEvents(true);
+
+		this.blue1 = new platform(game, 'bplatform', 0, -94, 688, 0);
+		game.add.existing(this.blue1);
+
+		this.red1 = new platform(game, 'rplatform', 0, -94, 496, 0);
+		game.add.existing(this.red1);
+
+		this.yellow1 = new platform(game, 'yplatform', 0, -94, 304, 0);
+		game.add.existing(this.yellow1);
+		
+		this.map = game.add.tilemap('angerboss');
+		this.map.addTilesetImage('test', 'joy');
+		this.map.setCollisionBetween(1, 8);
+		this.mapLayer = this.map.createLayer('Tile Layer 1');
+		
+		this.mapLayer.resizeWorld();
+		
+		game.physics.p2.convertTilemap(this.map, this.maplayer);
+		
+		this.player = new player(game, 'player', 0, 90, 600, 'jump');
+		game.add.existing(this.player);
+		
+		this.blues = new lever(game, 'blever', 0, 912, 704);
+		game.add.existing(this.blues);
+		
+		this.reds = new lever(game, 'rlever', 0, 912, 512);
+		game.add.existing(this.reds);
+		
+		this.yellows = new lever(game, 'ylever', 0, 912, 320);
+		game.add.existing(this.yellows);
+		
+		this.control = true;
+		game.physics.p2.gravity.y = 300;
+		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+
+	},
+
+	update: function()
+	{
+		this.player.update(this.control);
+		
+		this.blues.playeroverlap(checkoverlap(this.player.sprite(), this.blues.sprite()));
+		if(this.blues.update())
+		{
+			this.blue1.moving(160, 688, 0);
+		}
+		else
+		{
+			this.blue1.moving(-94, 688, 0);
+		}
+		this.reds.playeroverlap(checkoverlap(this.player.sprite(), this.reds.sprite()));
+		if(this.reds.update())
+		{
+			this.red1.moving(160, 496, 0);
+		}
+		else
+		{
+			this.red1.moving(-94, 496, 0);
+		}
+		this.yellows.playeroverlap(checkoverlap(this.player.sprite(), this.yellows.sprite()));
+		if(this.yellows.update())
+		{
+			this.yellow1.moving(160, 304, 0);
+		}
+		else
+		{
+			this.yellow1.moving(-94, 304, 0);
+		}
+
 	}
 }
 
@@ -1926,5 +2011,6 @@ game.state.add('fear3', fear3);
 game.state.add('sad1', sad1);
 game.state.add('sad2', sad2);
 game.state.add('sad3', sad3);
+game.state.add('angerboss', angerboss);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
