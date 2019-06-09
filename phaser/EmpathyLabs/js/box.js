@@ -23,7 +23,7 @@ box.prototype.floating = function()
 {
 	this.body.reset(this.body.x, this.body.y-0.5);
 	this.body.data.gravityScale = 0;
-	game.time.events.add(Phaser.Timer.SECOND * 1, recover, this,);
+	game.time.events.add(Phaser.Timer.SECOND * 1, recover, this);
 }
 
 box.prototype.sprite = function()

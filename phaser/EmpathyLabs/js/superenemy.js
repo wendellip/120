@@ -43,3 +43,8 @@ superenemy.prototype.sprite = function()
 {
 	return this.body.sprite;
 }
+
+superenemy.prototype.invisible = function()
+{
+	this.alpha = 0;
+}

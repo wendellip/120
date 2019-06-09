@@ -42,8 +42,11 @@ MainMenu.prototype =
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		game.load.atlas('enemy', 'assets/img/enemy.png', 'assets/img/enemy.json');
 		game.load.image('enemy', 'assets/img/enemy.png');
+		game.load.atlas('boss', 'assets/img/enemy.png', 'assets/img/enemy.json');
+		game.load.image('boss', 'assets/img/enemy.png');
 		game.load.image('Tbackground', 'assets/img/TutorialBackground.png');
 		game.load.image('box', 'assets/img/Box.png');
+		game.load.image('missile', 'assets/img/missile.png');
 		game.load.image('enplatform', 'assets/img/enplatform.png');
 		game.load.image('platform', 'assets/img/platform.png');
 		game.load.image('vplatform', 'assets/img/vplatform.png');
@@ -79,7 +82,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('angerboss', true, false, this.level);
+			game.state.start('tutorial4', true, false, this.level);
 		}
 	}
 }
@@ -363,16 +366,16 @@ tutorial4.prototype =
 		this.door = new exitdoor(game, 'door', 0, 1184, 420);
 		game.add.existing(this.door);
 		
-		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
 		this.handstation = new handstation(game, 'hand', 0, 96, 800);
@@ -412,6 +415,7 @@ tutorial4.prototype =
 		}
 		if(this.hand != undefined)
 			this.hand.update();
+
 		if(this.enemy.update(this.player, null))
 		{
 			this.superenemy1.foundplayer();
@@ -445,6 +449,10 @@ tutorial4.prototype =
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
+			this.superenemy1.invisible();
+			this.superenemy2.invisible();
+			this.superenemy3.invisible();
+			this.superenemy4.invisible();
 			if(this.control)
 			{
 				this.control = false;
@@ -866,16 +874,16 @@ fear1.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false);
 		game.add.existing(this.enemy3);
 		
-		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
 		this.box1 = new box(game, 'box', 0, 1152, 256);
@@ -957,6 +965,10 @@ fear1.prototype =
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
+			this.superenemy1.invisible();
+			this.superenemy2.invisible();
+			this.superenemy3.invisible();
+			this.superenemy4.invisible();
 			if(this.control)
 			{
 				this.control = false;
@@ -1048,16 +1060,16 @@ fear2.prototype =
 		this.enemy4 = new enemy(game, 'enemy', 0, 160, 352, false);
 		game.add.existing(this.enemy4);
 		
-		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
 		this.switch1 = new onswitch(game, 'switches', 0, 80, 560, Math.PI / 2, false);
@@ -1136,6 +1148,10 @@ fear2.prototype =
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
+			this.superenemy1.invisible();
+			this.superenemy2.invisible();
+			this.superenemy3.invisible();
+			this.superenemy4.invisible();
 			if(this.control)
 			{
 				this.control = false;
@@ -1226,16 +1242,16 @@ fear3.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false);
 		game.add.existing(this.enemy3);
 		
-		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
 		this.hand = undefined;
@@ -1340,6 +1356,10 @@ fear3.prototype =
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
+			this.superenemy1.invisible();
+			this.superenemy2.invisible();
+			this.superenemy3.invisible();
+			this.superenemy4.invisible();
 			if(this.control)
 			{
 				this.control = false;
@@ -1523,16 +1543,16 @@ sad2.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false);
 		game.add.existing(this.enemy3);
 		
-		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
 		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI, false);
@@ -1663,6 +1683,10 @@ sad2.prototype =
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
+			this.superenemy1.invisible();
+			this.superenemy2.invisible();
+			this.superenemy3.invisible();
+			this.superenemy4.invisible();
 			if(this.control)
 			{
 				this.control = false;
@@ -1753,16 +1777,16 @@ sad3.prototype =
 		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false);
 		game.add.existing(this.enemy3);
 		
-		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'enemy', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'enemy', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'enemy', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
 		game.add.existing(this.superenemy4);
 		
 		this.hand = undefined;
@@ -1879,6 +1903,10 @@ sad3.prototype =
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
+			this.superenemy1.invisible();
+			this.superenemy2.invisible();
+			this.superenemy3.invisible();
+			this.superenemy4.invisible();
 			if(this.control)
 			{
 				this.control = false;
@@ -1952,9 +1980,10 @@ angerboss.prototype =
 		game.physics.p2.gravity.y = 300;
 		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		
-		this.boss = new boss(game, 'enemy', 0, 1232, 112);
+		this.boss = new boss(game, 'boss', 0, 1232, 112, this.reds, this.blues, this.yellows);
 		game.add.existing(this.boss);
 
+		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 	},
 
 	update: function()
@@ -2011,7 +2040,17 @@ angerboss.prototype =
 		}
 		if(this.hand != undefined)
 			this.hand.update();
-
+		
+		if(checkoverlap(this.player.sprite(), this.boss.sprite()))
+		{
+			if(this.control)
+			{
+				this.control = false;
+				this.player.death()
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
+			}
+		}
+		
 	}
 }
 
