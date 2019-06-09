@@ -6,6 +6,7 @@ var restart = function(statename)
 {
 	game.state.start(statename);
 }
+var music;
 
 var checkoverlap = function(spriteA, spriteB)
 {
@@ -66,6 +67,13 @@ MainMenu.prototype =
 		game.load.atlas('rlever', 'assets/img/rlever.png', 'assets/img/lever.json');
 		game.load.atlas('ylever', 'assets/img/ylever.png', 'assets/img/lever.json');
 		game.load.audio('jump', 'assets/audio/jump.mp3');
+		game.load.audio('joymusic', 'assets/Sound/Almost New.mp3');
+		game.load.audio('Button', 'assets/Sound/Button_Press_5-Marianne_Gagnon-1212299245.mp3');
+		game.load.audio('JumpThrusters', 'assets/Sound/JumpThrusters.mp3');
+		game.load.audio('FearAnger', 'assets/Sound/Obliteration.mp3');
+		game.load.audio('thump', 'assets/Sound/WoodThump.mp3');
+		game.load.audio('whoosh', 'assets/Sound/Woosh.mp3');
+		
 	},
 	create: function()
 	{
