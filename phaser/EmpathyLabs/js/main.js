@@ -79,7 +79,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('fear1', true, false, this.level);
+			game.state.start('angerboss', true, false, this.level);
 		}
 	}
 }
@@ -1075,6 +1075,10 @@ fear2.prototype =
 		this.switch1on = true;
 		
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
+		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
+		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
+		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
+		this.enemy4.body.createBodyCallback(this.player, this.enemy4.collide, this.enemy4);
 	},
 
 	update: function()
@@ -1246,6 +1250,10 @@ fear3.prototype =
 		
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
+		
+		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
+		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
+		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
 	},
 
 	update: function()
@@ -1557,6 +1565,9 @@ sad2.prototype =
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
 		this.switch3.body.createBodyCallback(this.player, this.switch3.hitted, this.switch3);
 		this.switch4.body.createBodyCallback(this.player, this.switch4.hitted, this.switch4);
+		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
+		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
+		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
 		this.switch1on = true;
 		this.switch2on = true;
 		this.switch3on = true;
@@ -1766,6 +1777,10 @@ sad3.prototype =
 		
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
+		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
+		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
+		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
+
 	},
 
 	update: function()
@@ -1928,9 +1943,17 @@ angerboss.prototype =
 		this.yellows = new lever(game, 'ylever', 0, 912, 320);
 		game.add.existing(this.yellows);
 		
+		this.handstation = new handstation(game, 'hand', 0, 944, 816);
+		game.add.existing(this.handstation);
+		
+		this.hand = undefined;
+		
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+		
+		this.boss = new boss(game, 'enemy', 0, 1232, 112);
+		game.add.existing(this.boss);
 
 	},
 
@@ -1965,6 +1988,29 @@ angerboss.prototype =
 		{
 			this.yellow1.moving(-94, 304, 0);
 		}
+
+		if(checkoverlap(this.player.sprite(), this.handstation.sprite()))
+		{
+			if(this.hand == undefined)
+			{
+				this.hand = this.handstation.takearm();
+				this.player.addChild(game.add.existing(this.hand));
+			}
+		}
+		else if(game.input.activePointer.justReleased() && this.hand != undefined)
+		{
+			this.projected = this.hand.newhand(this.player);
+			if(this.projected != undefined)
+			{
+				this.hand.destroy();
+				game.add.existing(this.projected);
+				this.hand = undefined;
+					this.boss.body.createBodyCallback(this.projected, this.boss.hitted, this.boss);
+				
+			}
+		}
+		if(this.hand != undefined)
+			this.hand.update();
 
 	}
 }

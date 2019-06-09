@@ -15,7 +15,6 @@ this.body.enable = true;
 this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
 this.body.fixedRotation = true;
-this.spot = false;
 this.faceleft = faceleft;
 this.speed = 128;
 this.animations.play('left');
@@ -93,7 +92,7 @@ enemy.prototype.toggling = function()
 		this.body.reset(this.body.x + 3, this.body.y);
 	else
 		this.body.reset(this.body.x - 3, this.body.y);
-	game.time.events.add(Phaser.Timer.SECOND * 1, this.toggle, this, speed);
+	game.time.events.add(Phaser.Timer.SECOND * 2, this.toggle, this, speed);
 }
 
 enemy.prototype.toggle = function(speed)
