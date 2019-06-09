@@ -1,7 +1,7 @@
 lever.prototype = Object.create(Phaser.Sprite.prototype);
 lever.prototype.constructor = lever;
 
-function lever(game, key, frame, x, y)
+function lever(game, key, frame, x, y,soundkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
 this.frameName = 'offlever';
@@ -12,7 +12,7 @@ this.body.immovable = true;
 this.on = false;
 this.trigger = game.input.keyboard.addKey(Phaser.Keyboard.E);﻿﻿
 this.overlap = false;
-
+this.soundEffect = game.add.audio(soundkey);
 }
 
 lever.prototype.update = function()
@@ -40,6 +40,8 @@ function change()
 			this.on= false;
 			this.frameName  = "offlever";
 		}
+		console.log('switched');
+		this.soundEffect.play();
 	}
 }
 

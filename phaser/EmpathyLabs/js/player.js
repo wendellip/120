@@ -30,6 +30,7 @@ player.prototype.update = function(control)
 		{
 			if(this.jumpb.isDown)
 			{
+				this.jumpse.play();
 				this.body.moveUp(300);
 				this.body.force = 0;
 				this.jumpTimer = game.time.now + 750;
