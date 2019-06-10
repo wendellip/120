@@ -91,8 +91,10 @@ Loading.prototype =
 		game.load.image('mutebutton', 'assets/img/mutebutton.png');
 		game.load.image('menubutton', 'assets/img/MenuButton.png');
 		game.load.image('hand', 'assets/img/hand.png');
-		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
-		game.load.spritesheet('joy', 'assets/map/joy.png', 32, 32);
+		game.load.spritesheet('Map_Tutorial', 'assets/map/Map_Tutorial.png', 32, 32);
+		game.load.spritesheet('Map_Fear', 'assets/map/Map_Fear.png', 32, 32);
+		game.load.spritesheet('Map_Joy', 'assets/map/Map_Joy.png', 32, 32);
+		game.load.spritesheet('Map_Sadness', 'assets/map/Map_Sadness.png', 32, 32);
 		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
 		game.load.atlas('lever', 'assets/img/lever.png', 'assets/img/lever.json');
 		game.load.atlas('blever', 'assets/img/blever.png', 'assets/img/lever.json');
@@ -182,9 +184,9 @@ tutorial1.prototype =
 
 		//load tilemap
 		this.map = game.add.tilemap('tutorial1');
-		this.map.addTilesetImage('test', 'test');
+		this.map.addTilesetImage('Map_Tutorial', 'Map_Tutorial');
 		//all tiles have collation
-		this.map.setCollisionBetween(1, 8);
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -251,11 +253,18 @@ tutorial2.prototype =
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
 		
+		//create moving platform
+		this.platform1 = new platform(game, 'platform', 0, 320, 528, 0);
+		game.add.existing(this.platform1);
+		
+		this.platform2 = new platform(game, 'platform', 0, 1088, 528, 0);
+		game.add.existing(this.platform2);
+		
 		//load tilemap
 		this.map = game.add.tilemap('tutorial2');
-		this.map.addTilesetImage('test', 'test');
+		this.map.addTilesetImage('Map_Tutorial', 'Map_Tutorial');
 		//all tiles have collation
-		this.map.setCollisionBetween(1, 8);
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -265,12 +274,6 @@ tutorial2.prototype =
 		this.switch1 = new onswitch(game, 'switches', 0, 1184, 448, 0, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
-		//create moving platform
-		this.platform1 = new platform(game, 'platform', 0, 320, 528, 0);
-		game.add.existing(this.platform1);
-		
-		this.platform2 = new platform(game, 'platform', 0, 1088, 528, 0);
-		game.add.existing(this.platform2);
 		
 		this.player = new player(game, 'player', 0, 150, 450, 'jumpSound');
 		//create player character
@@ -384,8 +387,8 @@ tutorial3.prototype =
 		game.physics.startSystem(Phaser.Physics.P2JS);
 
 		this.map = game.add.tilemap('tutorial3');
-		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Tutorial', 'Map_Tutorial');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -460,8 +463,8 @@ tutorial4.prototype =
 		game.physics.p2.setImpactEvents(true);
 		
 		this.map = game.add.tilemap('tutorial4');
-		this.map.addTilesetImage('test', 'test');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Tutorial', 'Map_Tutorial');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -640,8 +643,8 @@ joy1.prototype =
 		game.add.existing(this.platform1);
 
 		this.map = game.add.tilemap('joy1');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Joy', 'Map_Joy');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -779,8 +782,8 @@ joy2.prototype =
 		game.add.existing(this.blue1);
 
 		this.map = game.add.tilemap('joy2');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Joy', 'Map_Joy');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -915,8 +918,8 @@ joy3.prototype =
 		game.add.existing(this.blue2);
 
 		this.map = game.add.tilemap('joy3');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Joy', 'Map_Joy');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -1051,8 +1054,8 @@ fear1.prototype =
 		game.add.existing(this.blue1);
 
 		this.map = game.add.tilemap('fear1');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Fear', 'Map_Fear');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -1194,7 +1197,6 @@ fear1.prototype =
 			this.enemy1.stopsound();
 			this.enemy2.stopsound();
 			this.enemy3.stopsound();
-			this.enemy4.stopsound();
 			game.state.restart(true, false);
 		}
 		
@@ -1214,7 +1216,6 @@ fear1.prototype =
 				this.enemy1.stopsound();
 				this.enemy2.stopsound();
 				this.enemy3.stopsound();
-				this.enemy4.stopsound();
 				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear1');
 			}
 		}
@@ -1235,7 +1236,6 @@ fear1.prototype =
 				this.enemy1.stopsound();
 				this.enemy2.stopsound();
 				this.enemy3.stopsound();
-				this.enemy4.stopsound();
 				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear2');
 			}
 		}
@@ -1263,8 +1263,8 @@ fear2.prototype =
 		game.physics.p2.setImpactEvents(true);
 
 		this.map = game.add.tilemap('fear2');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Fear', 'Map_Fear');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -1477,8 +1477,8 @@ fear3.prototype =
 		game.physics.p2.setImpactEvents(true);
 
 		this.map = game.add.tilemap('fear3');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Fear', 'Map_Fear');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -1731,8 +1731,8 @@ sad1.prototype =
 		game.add.existing(this.platform1);
 
 		this.map = game.add.tilemap('sad1');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Sadness', 'Map_Sadness');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -1859,8 +1859,8 @@ sad2.prototype =
 		game.add.existing(this.blue1);
 
 		this.map = game.add.tilemap('sad2');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Sadness', 'Map_Sadness');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -2115,8 +2115,8 @@ sad3.prototype =
 		game.add.existing(this.red1);
 
 		this.map = game.add.tilemap('sad3');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Sadness', 'Map_Sadness');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
@@ -2377,8 +2377,8 @@ angerboss.prototype =
 		game.add.existing(this.yellow1);
 		
 		this.map = game.add.tilemap('angerboss');
-		this.map.addTilesetImage('test', 'joy');
-		this.map.setCollisionBetween(1, 8);
+		this.map.addTilesetImage('Map_Fear', 'Map_Fear');
+		this.map.setCollisionBetween(1, 26);
 		this.mapLayer = this.map.createLayer('Tile Layer 1');
 		
 		this.mapLayer.resizeWorld();
