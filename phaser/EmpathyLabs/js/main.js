@@ -18,7 +18,6 @@ var MeunuButtonFunction = function(){
 	game.state.start('Mainmenu', true, false, this.level);
 }
 var decidetomute = function(mute){
-	console.log(mute);
 	if(game.sound.mute==true){
 		mute.setFrames(0, 1, 0, 0);
 	unmutemusic();}
