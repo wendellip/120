@@ -149,7 +149,7 @@ Mainmenu.prototype =
 		music.play();
 		game.stage.setBackgroundColor('#9ebeff');
 		//instructions
-		game.add.text(20, 20, "A or D for moving, W arrow for jumping\n" + 
+		game.add.text(20, 20, "A or D for moving, W for jumping\n" + 
 		"mouse for aiming and shooting arm\n" + "Press E to interact with lever\n" + "Press Spacebar to start", style);
 	},
 	update: function()
