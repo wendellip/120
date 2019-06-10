@@ -98,14 +98,15 @@ Loading.prototype =
 		game.load.atlas('blever', 'assets/img/blever.png', 'assets/img/lever.json');
 		game.load.atlas('rlever', 'assets/img/rlever.png', 'assets/img/lever.json');
 		game.load.atlas('ylever', 'assets/img/ylever.png', 'assets/img/lever.json');
+		//audio
 		game.load.audio('jump', 'assets/audio/jump.mp3');
 		game.load.audio('joymusic', 'assets/Sound/Almost New.mp3');
 		game.load.audio('LeverSound', 'assets/Sound/Button_Press_5-Marianne_Gagnon-1212299245.wav');
-		game.load.audio('sadnessMusic', 'assets/Sound/LostTime.mp3');
+		game.load.audio('sadnessMusic', 'assets/Sound/LostTime.mp3'); //music used under creative commons Attribution liscence: created by kevin mcleod incomutech.com
 		game.load.audio('enemyAlarm', 'assets/Sound/Fire_pager.mp3');
 		game.load.audio('JumpThrusters', 'assets/Sound/JumpThrusters.wav');
-		game.load.audio('FearAnger', 'assets/Sound/Obliteration.wav');
-		game.load.audio('tutorialMusic', 'assets/Sound/Improbable.mp3');
+		game.load.audio('FearAnger', 'assets/Sound/Obliteration.wav'); //music used under creative commons Attribution liscence: created by kevin mcleod incomutech.com
+		game.load.audio('tutorialMusic', 'assets/Sound/Improbable.mp3'); //music used under creative commons Attribution liscence: created by kevin mcleod incomutech.com
 		game.load.audio('thump', 'assets/Sound/WoodThump.wav');
 		game.load.audio('whoosh', 'assets/Sound/Woosh.wav');
 		game.load.audio('explosion', 'assets/Sound/explosion.wav');
@@ -148,8 +149,8 @@ Mainmenu.prototype =
 		music.play();
 		game.stage.setBackgroundColor('#9ebeff');
 		//instructions
-		game.add.text(20, 20, "Arrow key moving and Up arrow for jumping\n" + 
-		"mouse for aiming and shooting arm\n" + "Press C to interact with lever\n" + "Press Spacebar to start", style);
+		game.add.text(20, 20, "A or D for moving, W arrow for jumping\n" + 
+		"mouse for aiming and shooting arm\n" + "Press E to interact with lever\n" + "Press Spacebar to start", style);
 	},
 	update: function()
 	{
@@ -2596,7 +2597,6 @@ game.state.add('fear1', fear1);
 game.state.add('fear2', fear2);
 game.state.add('fear3', fear3);
 game.state.add('sad1', sad1);
-
 game.state.add('sad2', sad2);
 game.state.add('sad3', sad3);
 game.state.add('angerboss', angerboss);
