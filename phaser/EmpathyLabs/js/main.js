@@ -8,10 +8,6 @@ var restart = function(statename)
 }
 
 var music;
-var returntomain = function(){
-	music.destroy();
-	game.state.start('MainMenu', true, false, this.level);
-}
 var mutemusic= function(){
 		game.sound.mute=true;
 		}
@@ -89,8 +85,7 @@ MainMenu.prototype =
 		game.load.atlas('door', 'assets/img/door.png', 'assets/img/door.json');
 		game.load.image('door', 'assets/img/door.png');
 		game.load.image('mutebutton', 'assets/img/mutebutton.png');
-		game.load.image('hand', 'assets/img/HandPlaceholder.jpg');
-		game.load.image('menubutton', 'assets/img/MenuButton.png');
+		game.load.image('hand', 'assets/img/hand.png');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
 		game.load.spritesheet('joy', 'assets/map/joy.png', 32, 32);
 		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
@@ -102,7 +97,7 @@ MainMenu.prototype =
 		game.load.audio('joymusic', 'assets/Sound/Almost New.mp3');
 		game.load.audio('LeverSound', 'assets/Sound/Button_Press_5-Marianne_Gagnon-1212299245.wav');
 		game.load.audio('sadnessMusic', 'assets/Sound/LostTime.mp3');
-		game.load.audio('enemyAlarm', 'assets/Sound/Fire_pager.wav');
+		game.load.audio('enemyAlarm', 'assets/Sound/Fire_pager.mp3');
 		game.load.audio('JumpThrusters', 'assets/Sound/JumpThrusters.wav');
 		game.load.audio('FearAnger', 'assets/Sound/Obliteration.wav');
 		game.load.audio('tutorialMusic', 'assets/Sound/Improbable.mp3');
@@ -130,6 +125,7 @@ MainMenu.prototype =
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
 			game.state.start('sad3', true, false, this.level);
+
 		}
 	}
 }
@@ -177,7 +173,6 @@ tutorial1.prototype =
 		game.physics.p2.gravity.y = 300;
 		
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -195,7 +190,7 @@ tutorial1.prototype =
 			if(this.control)
 			{
 				this.control = false;
-				this.player.alpha=0;
+				this.player.invisible();
 				this.door.teleport();
 				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'tutorial2');
 			}
@@ -235,7 +230,7 @@ tutorial2.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
-		this.switch1 = new onswitch(game, 'switches', 0, 1200, 464, 0, false, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 1184, 448, 0, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
 		//create moving platform
@@ -273,7 +268,6 @@ tutorial2.prototype =
 		//preventing infinity calls
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 
 	},
 
@@ -385,7 +379,6 @@ tutorial3.prototype =
 		game.physics.p2.gravity.y = 300;
 		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -482,8 +475,7 @@ tutorial4.prototype =
 		
 		// collision exception player and arm, player and invisible wall
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);	
 		//now allow player to touch the watcher
 		this.enemy.body.createBodyCallback(this.player, this.enemy.collide, this.enemy);
 
@@ -627,7 +619,7 @@ joy1.prototype =
 		this.box2 = new box(game, 'box', 0, 1152, 192);
 		game.add.existing(this.box2);
 		
-		this.switch1 = new onswitch(game, 'switches', 0, 48, 96, Math.PI, false, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 64, 80, Math.PI, false, 'buttonSound');
 		//create a switch to interact with the platform
 		game.add.existing(this.switch1);
 		
@@ -649,8 +641,6 @@ joy1.prototype =
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		//boolean preventing repeating calls
 		this.switch1on = true;
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -790,7 +780,6 @@ joy2.prototype =
 		//collision exception
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -936,7 +925,6 @@ joy3.prototype =
 		this.yellowon = true;
 		this.redon = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -1082,7 +1070,7 @@ fear1.prototype =
 		
 		this.boxes = [this.box1];
 		
-		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI, false, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 64, 128, Math.PI, false, 'buttonSound');
 
 		//create a switch interacting with the platform
 
@@ -1108,7 +1096,6 @@ fear1.prototype =
 		//boolean preventing the repeating destroy call
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 
 	},
 
@@ -1289,7 +1276,7 @@ fear2.prototype =
 		game.add.existing(this.superenemy4);
 		
 
-		this.switch1 = new onswitch(game, 'switches', 0, 80, 560, Math.PI / 2, false, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 64, 544, Math.PI / 2, false, 'buttonSound');
 
 		//create switch and lever for interacting with the platforms
 
@@ -1310,7 +1297,6 @@ fear2.prototype =
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 		
 		//not allow player to touch the watchers
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
@@ -1443,13 +1429,13 @@ fear3.prototype =
 		this.blue1 = new platform(game, 'btemp', 0, 1328, 550, 0);
 		game.add.existing(this.blue1);
 
-		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2, false, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 64, 320, Math.PI / 2, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
 		this.red1 = new platform(game, 'rtemp', 0, 1328, 368, 0);
 		game.add.existing(this.red1);
 		
-		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
+		this.switch2 = new onswitch(game, 'switches', 0, 1376, 112, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
 		this.door = new exitdoor(game, 'door', 0, 1312, 736);
@@ -1515,8 +1501,6 @@ fear3.prototype =
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
 
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
-		
 
 		
 		//not allow player touch the watchers
@@ -1693,7 +1677,7 @@ sad1.prototype =
 		game.add.existing(this.box2);
 		
 
-		this.switch1 = new onswitch(game, 'switches', 0, 48, 224, Math.PI, false, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 64, 208, Math.PI, false, 'buttonSound');
 
 		//create switch and platform for interaction
 
@@ -1716,7 +1700,6 @@ sad1.prototype =
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -1852,16 +1835,16 @@ sad2.prototype =
 		game.add.existing(this.superenemy4);
 		
 		//create switches and their interaction with the platforms
-		this.switch1 = new onswitch(game, 'switches', 0, 48, 128, Math.PI, false, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 64, 160, Math.PI, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
-		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
+		this.switch2 = new onswitch(game, 'switches', 0, 1376, 160, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
-		this.switch3 = new onswitch(game, 'switches', 0, 432, 48, 3 * Math.PI / 2, false, 'buttonSound');
+		this.switch3 = new onswitch(game, 'switches', 0, 416, 64, 3 * Math.PI / 2, false, 'buttonSound');
 		game.add.existing(this.switch3);
 		
-		this.switch4 = new onswitch(game, 'switches', 0, 1040, 48, 3 * Math.PI / 2, false, 'buttonSound');
+		this.switch4 = new onswitch(game, 'switches', 0, 1024, 64, 3 * Math.PI / 2, false, 'buttonSound');
 		game.add.existing(this.switch4);
 		
 		this.door = new exitdoor(game, 'door', 0, 1312, 448);
@@ -1893,9 +1876,6 @@ sad2.prototype =
 		this.switch2on = true;
 		this.switch3on = true;
 		this.switch4on = true;
-		
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 
 	},
 
@@ -2056,10 +2036,10 @@ sad3.prototype =
 		game.add.existing(this.player);
 		
 		//creates switches and interaction with the platforms
-		this.switch1 = new onswitch(game, 'switches', 0, 80, 336, Math.PI / 2, true, 'buttonSound');
+		this.switch1 = new onswitch(game, 'switches', 0, 64, 320, Math.PI / 2, true, 'buttonSound');
 		game.add.existing(this.switch1);
 		
-		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
+		this.switch2 = new onswitch(game, 'switches', 0, 1376, 112, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
 		this.door = new exitdoor(game, 'door', 0, 1312, 736);
@@ -2127,8 +2107,7 @@ sad3.prototype =
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
 		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
 		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
+
 	},
 
 	update: function()
@@ -2341,9 +2320,6 @@ angerboss.prototype =
 		game.add.existing(this.boss);
 
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
-		
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
-		this.restartbutton = game.add.button(1300,800,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()

@@ -3,7 +3,6 @@ handstation.prototype.constructor = handstation;
 function handstation(game, key, frame, x, y,jumpkey, staticsound)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-this.scale.setTo(.1);
 game.physics.enable(this);
 this.body.CollideWorldBounds = true;
 this.hand = undefined;

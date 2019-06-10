@@ -3,9 +3,8 @@ hand.prototype.constructor = hand;
 function hand(game, key, frame, x, y, jumpkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-this.scale.setTo(.1);
-this.pivot.x = 100;
-this.anchor.set(2);
+this.pivot.x = 1;
+this.anchor.set(1);
 this.gothand = true;
 this.hand2 = undefined;
 this.soundwhoosh=game.add.audio(jumpkey);
@@ -32,13 +31,13 @@ hand.prototype.newhand = function(player)
 		var yd = (game.input.y - player.position.y) * (game.input.y - player.position.y);
 		var sum = xd + yd;
 		if (game.input.x < player.position.x)
-			this.hand2.body.velocity.x = -1000 * xd / sum;
+			this.hand2.body.velocity.x = -1000 * Math.sqrt(xd) / Math.sqrt(sum);
 		else
-			this.hand2.body.velocity.x = 1000 * xd / sum;
+			this.hand2.body.velocity.x = 1000 * Math.sqrt(xd) / Math.sqrt(sum);
 		if (game.input.y < player.position.y)
-			this.hand2.body.velocity.y = -1000 * yd / sum;
+			this.hand2.body.velocity.y = -1000 * Math.sqrt(yd) / Math.sqrt(sum);
 		else
-			this.hand2.body.velocity.y = 1000 * yd / sum;	
+			this.hand2.body.velocity.y = 1000 * Math.sqrt(yd) / Math.sqrt(sum);	
 	}
 	this.soundwhoosh.play();
 	return this.hand2; 

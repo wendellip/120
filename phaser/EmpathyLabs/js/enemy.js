@@ -135,6 +135,7 @@ enemy.prototype.stopsound = function()
 	console.log('should pause alarm');
 	this.alarmse.destroy();
 }
+
 enemy.prototype.alarmloop = function()
 {
 	this.animations.play('alarmloop');
