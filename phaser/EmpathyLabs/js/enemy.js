@@ -132,7 +132,8 @@ enemy.prototype.disable = function()
 }
 enemy.prototype.stopsound = function()
 {
-	this.alarmse.pause();
+	console.log('should pause alarm');
+	this.alarmse.destroy();
 }
 enemy.prototype.alarmloop = function()
 {
@@ -157,7 +158,9 @@ enemy.prototype.collide = function()
 {
 	//if player touch watchers, player is spotted
 	this.found = true;
+	this.alarmse.loop=true;
 	this.alarmse.play();
+
 	this.animations.play('alarm');
 	this.working = false;
 	game.time.events.add(Phaser.Timer.SECOND * 2, this.alarmloop, this);

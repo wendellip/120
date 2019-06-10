@@ -129,7 +129,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial1', true, false, this.level);
+			game.state.start('sad3', true, false, this.level);
 		}
 	}
 }
@@ -2225,6 +2225,9 @@ sad3.prototype =
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
 			game.state.restart(true, false);
+			this.enemy1.stopsound();
+			this.enemy2.stopsound();
+			this.enemy3.stopsound();
 		}
 		
 		if(checkoverlap(this.player.sprite(), this.superenemy1.sprite())
@@ -2232,6 +2235,9 @@ sad3.prototype =
 		|| checkoverlap(this.player.sprite(), this.superenemy3.sprite())
 		|| checkoverlap(this.player.sprite(), this.superenemy4.sprite()))
 		{
+			this.enemy1.stopsound();
+			this.enemy2.stopsound();
+			this.enemy3.stopsound();	
 			this.superenemy1.invisible();
 			this.superenemy2.invisible();
 			this.superenemy3.invisible();
@@ -2239,7 +2245,7 @@ sad3.prototype =
 			if(this.control)
 			{
 				this.control = false;
-				this.player.death()
+				this.player.death();
 				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear3');
 			}
 		}
