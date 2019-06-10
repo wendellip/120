@@ -6,7 +6,7 @@ Phaser.Sprite.call(this, game, x, y, key, frame);
 game.physics.enable(this);
 this.body.CollideWorldBounds = true;
 this.animations.add('teleport', ['door02', 'door03', 'door04', 'door05', 'door06'], 5, false);
-this.frameName  = "door01";
+//this.frameName  = "door01";
 
 }
 

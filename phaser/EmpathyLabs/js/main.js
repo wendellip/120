@@ -217,7 +217,7 @@ tutorial1.prototype =
 		//enable restarting stage
 		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
 		{
-			game.state.restart(true, false);
+			game.state.start(this.state);
 		}
 		//reach end point and change state to next stage
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
