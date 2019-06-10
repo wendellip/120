@@ -129,7 +129,6 @@ enemy.prototype.disable = function()
 {
 	//if watcher gets hit by projectile arm, disable it for 5 seconds
 	this.working = false;
-	console.log('disabled robot, should play sound');
 	var speed = this.speed;
 	this.speed = 0;
 	this.jumpse.play();
@@ -137,7 +136,6 @@ enemy.prototype.disable = function()
 }
 enemy.prototype.stopsound = function()
 {
-	console.log('should pause alarm');
 	this.alarmse.pause();
 }
 

@@ -66,7 +66,10 @@ Loading.prototype =
 		game.load.image('boss', 'assets/img/enemy.png');
 		
 		//background
-		game.load.image('Tbackground', 'assets/img/TutorialBackground.png');
+		game.load.image('Background_Tutorial', 'assets/img/Background_Tutorial.png');
+		game.load.image('Background_Sadness', 'assets/img/Background_Sadness.png');
+		game.load.image('Background_Joy', 'assets/img/Background_Joy.png');
+		game.load.image('Background_Fear', 'assets/img/Background_Fear.png');
 		
 		//items
 		game.load.image('box', 'assets/img/Box.png');
@@ -179,7 +182,7 @@ tutorial1.prototype =
 	create: function()
 	{
 		//start P2 physics
-		game.add.sprite(0, 0, 'Tbackground');
+		game.add.sprite(0, 0, 'Background_Tutorial');
 		
 		game.physics.startSystem(Phaser.Physics.P2JS);
 
@@ -248,6 +251,8 @@ tutorial2.prototype =
 
 	create: function()
 	{
+		
+		game.add.sprite(0, 0, 'Background_Tutorial');
 		//enable P2 physics
 		game.add.sprite(0, 0, 'Tbackground');
 		
@@ -382,6 +387,8 @@ tutorial3.prototype =
 
 	create: function()
 	{
+		
+		game.add.sprite(0, 0, 'Background_Tutorial');
 		// enable P2 physics and load tilemap
 		game.add.sprite(0, 0, 'Tbackground');
 		
@@ -457,6 +464,15 @@ tutorial4.prototype =
 
 	create: function()
 	{
+		
+		game.add.sprite(0, 0, 'Background_Tutorial');
+		if(music!=undefined){
+		music.destroy();
+		}
+		music=game.add.audio('FearAnger');
+		music.loop=true;
+		music.play();
+		
 		//ebable P2 physics and load tilemap
 		game.add.sprite(0, 0, 'Tbackground');
 		
@@ -623,12 +639,13 @@ joy1.prototype =
 		music=game.add.audio('joymusic');
 		music.loop=true;
 		music.play();
-		console.log('joy1');
 	},
 
 	create: function()
 	{
 
+		game.add.sprite(0, 0, 'Background_Joy');
+		
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 
@@ -771,6 +788,9 @@ joy2.prototype =
 
 	create: function()
 	{
+		
+		game.add.sprite(0, 0, 'Background_Joy');
+		
 		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
@@ -898,6 +918,8 @@ joy3.prototype =
 
 	create: function()
 	{
+		game.add.sprite(0, 0, 'Background_Joy');
+		
 		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
@@ -1038,14 +1060,9 @@ fear1.prototype =
 
 	create: function()
 	{
-		if(music!=undefined){
-		music.destroy();
-		}
-		music=game.add.audio('FearAnger');
-		music.loop=true;
-		music.play();
 		
-
+		game.add.sprite(0, 0, 'Background_Fear');
+		
 		//enable P2 physics and tilemap
 
 		game.physics.startSystem(Phaser.Physics.P2JS);
@@ -1260,6 +1277,8 @@ fear2.prototype =
 
 	create: function()
 	{
+		game.add.sprite(0, 0, 'Background_Fear');
+		
 		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
@@ -1474,6 +1493,8 @@ fear3.prototype =
 
 	create: function()
 	{
+		game.add.sprite(0, 0, 'Background_Fear');
+		
 		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
@@ -1717,12 +1738,14 @@ sad1.prototype =
 		music=game.add.audio('sadnessMusic');
 		music.loop=true;
 		music.play();
-		console.log('sad1');
 
 	},
 
 	create: function()
 	{
+		
+		game.add.sprite(0, 0, 'Background_Sadness');
+		
 		//enable P2 physics and tilemap
 		game.add.sprite(0, 0, 'Tbackground');
 		
@@ -1853,6 +1876,8 @@ sad2.prototype =
 
 	create: function()
 	{
+		game.add.sprite(0, 0, 'Background_Sadness');
+		
 		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
@@ -2105,6 +2130,8 @@ sad3.prototype =
 
 	create: function()
 	{
+		game.add.sprite(0, 0, 'Background_Sadness');
+		
 		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
@@ -2364,6 +2391,8 @@ angerboss.prototype =
 
 	create: function()
 	{
+		game.add.sprite(0, 0, 'Background_Fear');
+		
 		//enable P2 physics and tilemap
 		game.physics.startSystem(Phaser.Physics.P2JS);
 		game.physics.p2.setImpactEvents(true);
