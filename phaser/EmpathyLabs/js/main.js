@@ -82,6 +82,7 @@ MainMenu.prototype =
 		game.load.image('btemp', 'assets/img/btemp.png');
 		game.load.image('rtemp', 'assets/img/rtemp.png');
 		game.load.image('ytemp', 'assets/img/ytemp.png');
+		game.load.atlas('door', 'assets/img/door.png', 'assets/img/door.json');
 		game.load.image('door', 'assets/img/door.png');
 		game.load.image('mutebutton', 'assets/img/mutebutton.png');
 		game.load.image('hand', 'assets/img/HandPlaceholder.jpg');
@@ -119,7 +120,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial1', true, false, this.level);
+			game.state.start('sad2', true, false, this.level);
 		}
 	}
 }
@@ -159,7 +160,7 @@ tutorial1.prototype =
 		game.add.existing(this.player);
 		
 		//add stage end point
-		this.door = new exitdoor(game, 'door', 0, 1280, 64);
+		this.door = new exitdoor(game, 'door', 1, 1312, 96);
 		game.add.existing(this.door);
 		
 		//enable controlling and gravity
@@ -181,8 +182,13 @@ tutorial1.prototype =
 		//reach end point and change state to next stage
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('tutorial2');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'tutorial2');
+			}
 		}
 	}
 }
@@ -234,7 +240,7 @@ tutorial2.prototype =
 		game.add.existing(this.player);
 		
 		//create end point
-		this.door = new exitdoor(game, 'door', 0, 1248, 224);
+		this.door = new exitdoor(game, 'door', 0, 1280, 256);
 		game.add.existing(this.door);
 		
 		//enable end point and gravity
@@ -307,8 +313,13 @@ tutorial2.prototype =
 		}
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('tutorial3');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'tutorial3');
+			}
 		}
 	},
 }
@@ -354,7 +365,7 @@ tutorial3.prototype =
 		game.add.existing(this.box2);
 		
 		//making end point
-		this.door = new exitdoor(game, 'door', 0, 1184, 128);
+		this.door = new exitdoor(game, 'door', 0, 1248, 160);
 		game.add.existing(this.door);
 		
 		//enable player control and gravity
@@ -376,10 +387,14 @@ tutorial3.prototype =
 		
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('joy1');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'joy1');
+			}
 		}
-
 	}
 }
 
@@ -427,7 +442,7 @@ tutorial4.prototype =
 		this.enemy = new enemy(game, 'enemy', 0, 800, 672, true);
 		game.add.existing(this.enemy);
 		
-		this.door = new exitdoor(game, 'door', 0, 1184, 420);
+		this.door = new exitdoor(game, 'door', 0, 1248, 448);
 		game.add.existing(this.door);
 		
 		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
@@ -516,8 +531,13 @@ tutorial4.prototype =
 		}
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('fear1');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear1');
+			}
 		}
 		
 		//if player gets hit, game over and restart the stage
@@ -603,7 +623,7 @@ joy1.prototype =
 		
 		this.hand = undefined;
 		
-		this.door = new exitdoor(game, 'door', 0, 1280, 288);
+		this.door = new exitdoor(game, 'door', 0, 1280, 320);
 		game.add.existing(this.door);
 		
 		this.control = true;
@@ -675,8 +695,13 @@ joy1.prototype =
 
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('joy2');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'joy2');
+			}
 		}
 
 	}
@@ -797,8 +822,13 @@ joy2.prototype =
 
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('joy3');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'joy3');
+			}
 		}
 	}
 }
@@ -875,7 +905,7 @@ joy3.prototype =
 		this.reds = new lever(game, 'rlever', 0, 448, 448, 'LeverSound');
 		game.add.existing(this.reds);
 		
-		this.door = new exitdoor(game, 'door', 0, 1312, 192);
+		this.door = new exitdoor(game, 'door', 0, 1312, 224);
 		game.add.existing(this.door);
 		
 		//enable player control and gravity
@@ -931,8 +961,13 @@ joy3.prototype =
 		}
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('tutorial4');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'tutorial4');
+			}
 		}
 	}
 }
@@ -1035,7 +1070,7 @@ fear1.prototype =
 
 		game.add.existing(this.switch1);
 		
-		this.door = new exitdoor(game, 'door', 0, 1328, 416);
+		this.door = new exitdoor(game, 'door', 0, 1312, 448);
 		game.add.existing(this.door);
 		
 		//enable player control and gravity
@@ -1136,8 +1171,13 @@ fear1.prototype =
 		}
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('fear2');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear2');
+			}
 		}
 	}
 	
@@ -1176,7 +1216,7 @@ fear2.prototype =
 
 		game.add.existing(this.player);
 		
-		this.door = new exitdoor(game, 'door', 0, 1328, 220);
+		this.door = new exitdoor(game, 'door', 0, 1280, 256);
 		game.add.existing(this.door);
 		
 		//create invisible walls and enemies
@@ -1333,8 +1373,13 @@ fear2.prototype =
 		}
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('fear3');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear3');
+			}
 		}
 	}
 }
@@ -1387,7 +1432,7 @@ fear3.prototype =
 		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
-		this.door = new exitdoor(game, 'door', 0, 1280, 704);
+		this.door = new exitdoor(game, 'door', 0, 1312, 736);
 		game.add.existing(this.door);
 
 		//allow player to use projectile arm
@@ -1562,8 +1607,13 @@ fear3.prototype =
 		
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('sad1');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'sad1');
+			}
 		}
 	}
 }
@@ -1633,7 +1683,7 @@ sad1.prototype =
 		
 		this.hand = undefined;
 		
-		this.door = new exitdoor(game, 'door', 0, 1280, 288);
+		this.door = new exitdoor(game, 'door', 0, 1280, 352);
 		game.add.existing(this.door);
 		
 		//enable player control and gravity
@@ -1690,8 +1740,13 @@ sad1.prototype =
 
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('sad2');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'sad2');
+			}
 		}
 
 	}
@@ -1786,7 +1841,7 @@ sad2.prototype =
 		this.switch4 = new onswitch(game, 'switches', 0, 1040, 48, 3 * Math.PI / 2, false, 'buttonSound');
 		game.add.existing(this.switch4);
 		
-		this.door = new exitdoor(game, 'door', 0, 1328, 416);
+		this.door = new exitdoor(game, 'door', 0, 1312, 448);
 		game.add.existing(this.door);
 		
 		//allow projectile arm
@@ -1919,13 +1974,18 @@ sad2.prototype =
 			{
 				this.control = false;
 				this.player.death()
-				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear1');
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'sad2');
 			}
 		}
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('sad3');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'sad3');
+			}
 		}
 	}
 }
@@ -1976,7 +2036,7 @@ sad3.prototype =
 		this.switch2 = new onswitch(game, 'switches', 0, 1392, 128, 0, false, 'buttonSound');
 		game.add.existing(this.switch2);
 		
-		this.door = new exitdoor(game, 'door', 0, 1280, 704);
+		this.door = new exitdoor(game, 'door', 0, 1312, 736);
 		game.add.existing(this.door);
 
 		//allow projectile arm
@@ -2159,8 +2219,13 @@ sad3.prototype =
 		
 		if(checkoverlap(this.player.sprite(), this.door.sprite()))
 		{
-			this.control = false;
-			game.state.start('angerboss');
+			if(this.control)
+			{
+				this.control = false;
+				this.player.invisible();
+				this.door.teleport();
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
+			}
 		}
 	}
 }
