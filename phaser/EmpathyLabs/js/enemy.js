@@ -130,7 +130,10 @@ enemy.prototype.disable = function()
 	this.jumpse.play();
 	game.time.events.add(Phaser.Timer.SECOND * 5, this.backtowork, this, speed);
 }
-
+enemy.prototype.stopsound = function()
+{
+	this.alarmse.pause();
+}
 enemy.prototype.alarmloop = function()
 {
 	this.animations.play('alarmloop');
