@@ -108,6 +108,11 @@ player.prototype.death = function()
 	console.log("death");
 }
 
+player.prototype.invisible = function()
+{
+	this.alpha = 0;
+}
+
 //code from
 //https://phaser.io/examples/v2/p2-physics/platformer-material
 function checkIfCanJump(chara) {
