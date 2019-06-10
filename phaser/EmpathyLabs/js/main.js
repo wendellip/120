@@ -68,6 +68,7 @@ MainMenu.prototype =
 		//items
 		game.load.image('box', 'assets/img/Box.png');
 		game.load.image('missile', 'assets/img/missile.png');
+		game.load.physics("missilephy", "assets/img/missile.json");
 		game.load.image('enplatform', 'assets/img/enplatform.png');
 		game.load.image('platform', 'assets/img/platform.png');
 		game.load.image('vplatform', 'assets/img/vplatform.png');
@@ -2230,6 +2231,18 @@ angerboss.prototype =
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		
+		this.cannon1 = new cannon(game, 'box', 0, 1232, 300)
+		game.add.existing(this.cannon1);
+		this.missile1 = undefined;
+		
+		this.cannon2 = new cannon(game, 'box', 0, 1232, 500)
+		game.add.existing(this.cannon2);
+		this.missile2 = undefined;
+		
+		this.cannon3 = new cannon(game, 'box', 0, 1232, 700)
+		game.add.existing(this.cannon3);
+		this.missile3 = undefined;
+		
 		//create boss
 		this.boss = new boss(game, 'boss', 0, 1232, 112, this.reds, this.blues, this.yellows);
 		game.add.existing(this.boss);
@@ -2305,6 +2318,61 @@ angerboss.prototype =
 			}
 		}
 		
+		//cannon shoot missile by calling update
+		this.missile1 = this.cannon1.update(this.player);
+		if(this.missile1 != undefined)
+		{
+			//if a missile is successfully created, allow it destroy playerSS
+			game.add.existing(this.missile1);
+			//restart the stage when player gets hit
+			if(checkoverlap(this.player.sprite(), this.missile1.sprite()))
+			{
+				if(this.control)
+				{
+					this.control = false;
+					this.player.death()
+					game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
+				}
+			}
+		}
+		this.missile2 = this.cannon2.update(this.player);
+		if(this.missile2 != undefined)
+		{
+			game.add.existing(this.missile2);
+			if(checkoverlap(this.player.sprite(), this.missile2.sprite()))
+			{
+				if(this.control)
+				{
+					this.control = false;
+					this.player.death()
+					game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
+				}
+			}
+		}
+		this.missile3 = this.cannon3.update(this.player);
+		if(this.missile3 != undefined)
+		{
+			game.add.existing(this.missile3);
+			if(checkoverlap(this.player.sprite(), this.missile1.sprite()))
+			{
+				if(this.control)
+				{
+					this.control = false;
+					this.player.death()
+					game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
+				}
+			}
+		}
+		//allow player restart the stage
+		if(game.input.keyboard.isDown(Phaser.Keyboard.R) && this.control)
+		{
+			game.state.restart(true, false);
+		}
+	},
+	
+	render: function()
+	{
+		game.debug.body(this.missile1);
 	}
 }
 
