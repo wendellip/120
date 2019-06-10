@@ -105,7 +105,7 @@ Loading.prototype =
 		game.load.image('hand', 'assets/img/hand.png');
 		game.load.spritesheet('Map_Tutorial', 'assets/map/Map_Tutorial.png', 32, 32);
 		game.load.spritesheet('BigButton', 'assets/img/Start_Start.png', 427, 160);
-		game.load.spritesheet('MainMenuBack', 'assets/img/TitleScreen_Title.png',1408 ,864 );
+		game.load.spritesheet('MainMenuBack', 'assets/img/TitleScreen_Title.png',1440 ,900 );
 		game.load.spritesheet('Map_Fear', 'assets/map/Map_Fear.png', 32, 32);
 		game.load.spritesheet('Map_Joy', 'assets/map/Map_Joy.png', 32, 32);
 		game.load.spritesheet('Map_Sadness', 'assets/map/Map_Sadness.png', 32, 32);
