@@ -1,6 +1,6 @@
 hand.prototype = Object.create(Phaser.Sprite.prototype);
 hand.prototype.constructor = hand;
-function hand(game, key, frame, x, y, player)
+function hand(game, key, frame, x, y, jumpkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
 this.scale.setTo(.1);
@@ -8,6 +8,7 @@ this.pivot.x = 100;
 this.anchor.set(2);
 this.gothand = true;
 this.hand2 = undefined;
+this.soundwhoosh=game.add.audio(jumpkey);
 }
 
 
@@ -39,6 +40,7 @@ hand.prototype.newhand = function(player)
 		else
 			this.hand2.body.velocity.y = 1000 * yd / sum;	
 	}
+	this.soundwhoosh.play();
 	return this.hand2; 
 }
 

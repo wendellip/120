@@ -1,10 +1,11 @@
 enemy.prototype = Object.create(Phaser.Sprite.prototype);
 enemy.prototype.constructor = enemy;
 
-function enemy(game, key, frame, x, y, faceleft)
+function enemy(game, key, frame, x, y, faceleft, jumpkey, alarmkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
 //create animation
+this.jumpse = game.add.audio(jumpkey);
 this.animations.add('left', ['left01', 'left02'], 5, true);
 this.animations.add('right', ['righrt01', 'right02'], 5, true);
 this.animations.add('stand', ['middle01', 'middle02', 'middle03', 'middle01', 'middle04', 'middle05'], 15, true);
@@ -22,12 +23,14 @@ this.animations.play('left');
 this.working = true;
 this.found = false;
 this.body.static = false;
+this.alarmse=game.add.audio(alarmkey);
 //choosing its walking direction
 if(!faceleft)
 {
 	this.animations.play('right');
 	this.speed = -128
 }
+
 }
 
 enemy.prototype.update = function(player, box)
@@ -55,6 +58,7 @@ enemy.prototype.update = function(player, box)
 										return this.found;
 						}
 						//if all true, player is spot
+						this.alarmse.play();
 						this.speed = 0;
 						this.animations.play('alarm');
 						this.working = false;
@@ -120,8 +124,10 @@ enemy.prototype.disable = function()
 {
 	//if watcher gets hit by projectile arm, disable it for 5 seconds
 	this.working = false;
+	console.log('disabled robot, should play sound');
 	var speed = this.speed;
 	this.speed = 0;
+	this.jumpse.play();
 	game.time.events.add(Phaser.Timer.SECOND * 5, this.backtowork, this, speed);
 }
 
@@ -146,8 +152,9 @@ enemy.prototype.sprite = function()
 
 enemy.prototype.collide = function()
 {
-	//if player touch watchers, player is spot
+	//if player touch watchers, player is spotted
 	this.found = true;
+	this.alarmse.play();
 	this.animations.play('alarm');
 	this.working = false;
 	game.time.events.add(Phaser.Timer.SECOND * 2, this.alarmloop, this);

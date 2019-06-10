@@ -95,12 +95,16 @@ MainMenu.prototype =
 		game.load.audio('joymusic', 'assets/Sound/Almost New.mp3');
 		game.load.audio('LeverSound', 'assets/Sound/Button_Press_5-Marianne_Gagnon-1212299245.wav');
 		game.load.audio('sadnessMusic', 'assets/Sound/LostTime.mp3');
+		game.load.audio('enemyAlarm', 'assets/Sound/Fire_pager.mp3');
 		game.load.audio('JumpThrusters', 'assets/Sound/JumpThrusters.wav');
-		game.load.audio('FearAnger', 'assets/Sound/Obliteration.mp3');
+		game.load.audio('FearAnger', 'assets/Sound/Obliteration.wav');
 		game.load.audio('tutorialMusic', 'assets/Sound/Improbable.mp3');
 		game.load.audio('thump', 'assets/Sound/WoodThump.wav');
 		game.load.audio('whoosh', 'assets/Sound/Woosh.wav');
+		game.load.audio('explosion', 'assets/Sound/explosion.wav');
+		game.load.audio('staticSound', 'assets/Sound/static.wav');
 		game.load.audio('buttonSound', 'assets/Sound/A-Tone.mp3');
+		game.load.audio('enemydisablesound', 'assets/Sound/Dying Light Bulb.wav'); ////Sound effect used under creative commons Attribution: recored by Mike Koenig and altered for better use in game.
 		game.load.audio('jumpSound', 'assets/Sound/JumpSound.wav'); //Sound effect used under creative commons Attribution: https://freesound.org/people/PDKK/sounds/242978/, and was modified to be more applicable to the game scenario.
 
 	},
@@ -118,7 +122,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('tutorial1', true, false, this.level);
+			game.state.start('sad2', true, false, this.level);
 		}
 	}
 }
@@ -241,7 +245,7 @@ tutorial2.prototype =
 		game.physics.p2.gravity.y = 300;
 		
 		//create projectile arm station for player
-		this.handstation = new handstation(game, 'hand', 0, 320, 440);
+		this.handstation = new handstation(game, 'hand', 0, 320, 440,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		//a variable storing projectile arm
@@ -276,7 +280,8 @@ tutorial2.prototype =
 		{
 			if(this.hand == undefined)
 			{
-				this.hand = this.handstation.takearm();
+				this.hand =
+				this.handstation.takearm();
 				this.player.addChild(game.add.existing(this.hand));
 			}
 		}
@@ -423,27 +428,27 @@ tutorial4.prototype =
 		game.add.existing(this.enwall2);
 		
 		//create enemy for stealth gameplay
-		this.enemy = new enemy(game, 'enemy', 0, 800, 672, true);
+		this.enemy = new enemy(game, 'enemy', 0, 800, 672, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy);
 		
 		this.door = new exitdoor(game, 'door', 0, 1184, 420);
 		game.add.existing(this.door);
 		
-		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'enemy', 0, -100, 900,'explosion');
 
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0,'explosion');
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0,'explosion');
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900,'explosion');
 		game.add.existing(this.superenemy4);
 		
 		//enable projectile arm
-		this.handstation = new handstation(game, 'hand', 0, 96, 800);
+		this.handstation = new handstation(game, 'hand', 0, 96, 800,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		this.hand = undefined;		
@@ -597,7 +602,7 @@ joy1.prototype =
 		game.add.existing(this.switch1);
 		
 		//create a projectile arm station for player to pick up and shoot
-		this.handstation = new handstation(game, 'hand', 0, 448, 768);
+		this.handstation = new handstation(game, 'hand', 0, 448, 768,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		this.hand = undefined;
@@ -988,7 +993,7 @@ fear1.prototype =
 		this.enwall2 = new platform(game, 'enplatform', 0, 720, 768, 0);
 		game.add.existing(this.enwall2);
 		
-		this.enemy1 = new enemy(game, 'enemy', 0, 640, 800, false);
+		this.enemy1 = new enemy(game, 'enemy', 0, 640, 800, false, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy1);
 		
 		this.enwall3 = new platform(game, 'enplatform', 0, 880, 448, 0);
@@ -997,7 +1002,7 @@ fear1.prototype =
 		this.enwall4 = new platform(game, 'enplatform', 0, 1264, 448, 0);
 		game.add.existing(this.enwall4);
 		
-		this.enemy2 = new enemy(game, 'enemy', 0, 992, 544, true);
+		this.enemy2 = new enemy(game, 'enemy', 0, 992, 544, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy2);
 
 		this.enwall5 = new platform(game, 'enplatform', 0, 368, 320, 0);
@@ -1006,20 +1011,20 @@ fear1.prototype =
 		this.enwall6 = new platform(game, 'enplatform', 0, 752, 320, 0);
 		game.add.existing(this.enwall6);
 
-		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false);
+		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy3);
 		
 		//create missiles to destroy player
-		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900,'explosion');
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0,'explosion');
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0,'explosion');
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900,'explosion');
 		game.add.existing(this.superenemy4);
 		
 		//create box for player to push
@@ -1185,7 +1190,7 @@ fear2.prototype =
 		this.enwall2 = new platform(game, 'enplatform', 0, 720, 896, 0);
 		game.add.existing(this.enwall2);
 		
-		this.enemy1 = new enemy(game, 'enemy', 0, 288, 832, true);
+		this.enemy1 = new enemy(game, 'enemy', 0, 288, 832, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy1);
 		
 		this.enwall3 = new platform(game, 'enplatform', 0, 912, 896, 0);
@@ -1194,7 +1199,7 @@ fear2.prototype =
 		this.enwall4 = new platform(game, 'enplatform', 0, 1424, 896, 0);
 		game.add.existing(this.enwall4);
 		
-		this.enemy2 = new enemy(game, 'enemy', 0, 1024, 832, true);
+		this.enemy2 = new enemy(game, 'enemy', 0, 1024, 832, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy2);
 		
 		this.enwall5 = new platform(game, 'enplatform', 0, 272, 544, 0);
@@ -1203,7 +1208,7 @@ fear2.prototype =
 		this.enwall6 = new platform(game, 'enplatform', 0, 1040, 544, 0);
 		game.add.existing(this.enwall6);
 		
-		this.enemy3 = new enemy(game, 'enemy', 0, 448, 480, true);
+		this.enemy3 = new enemy(game, 'enemy', 0, 448, 480, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy3);
 		
 		this.enwall7 = new platform(game, 'enplatform', 0, 16, 256, 0);
@@ -1212,20 +1217,20 @@ fear2.prototype =
 		this.enwall8 = new platform(game, 'enplatform', 0, 560, 256, 0);
 		game.add.existing(this.enwall8);
 		
-		this.enemy4 = new enemy(game, 'enemy', 0, 160, 352, true);
+		this.enemy4 = new enemy(game, 'enemy', 0, 160, 352, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy4);
 		
 		//create missiles 
-		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900,'explosion');
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0,'explosion');
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0,'explosion');
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900,'explosion');
 		game.add.existing(this.superenemy4);
 		
 
@@ -1390,7 +1395,7 @@ fear3.prototype =
 		game.add.existing(this.door);
 
 		//allow player to use projectile arm
-		this.handstation = new handstation(game, 'hand', 0, 544, 800);
+		this.handstation = new handstation(game, 'hand', 0, 544, 800,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		//create watchers and invisible walls
@@ -1400,7 +1405,7 @@ fear3.prototype =
 		this.enwall2 = new platform(game, 'enplatform', 0, 1232, 896, 0);
 		game.add.existing(this.enwall2);
 		
-		this.enemy1 = new enemy(game, 'enemy', 0, 704, 832, true);
+		this.enemy1 = new enemy(game, 'enemy', 0, 704, 832, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy1);
 		
 		this.enwall3 = new platform(game, 'enplatform', 0, 224, 768, 0);
@@ -1409,7 +1414,7 @@ fear3.prototype =
 		this.enwall4 = new platform(game, 'enplatform', 0, 976, 608, 0);
 		game.add.existing(this.enwall4);
 		
-		this.enemy2 = new enemy(game, 'enemy', 0, 384, 704, true);
+		this.enemy2 = new enemy(game, 'enemy', 0, 384, 704, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy2);
 		
 		this.enwall5 = new platform(game, 'enplatform', 0, 16, 480, 0);
@@ -1418,20 +1423,20 @@ fear3.prototype =
 		this.enwall6 = new platform(game, 'enplatform', 0, 672, 480, 0);
 		game.add.existing(this.enwall6);
 		
-		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false);
+		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy3);
 		
 		//create missiles
-		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900,'explosion');
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0,'explosion');
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0,'explosion');
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900,'explosion');
 		game.add.existing(this.superenemy4);
 		
 		this.hand = undefined;
@@ -1627,7 +1632,7 @@ sad1.prototype =
 		game.add.existing(this.switch1);
 		
 		//enable projectile arm
-		this.handstation = new handstation(game, 'hand', 0, 448, 768);
+		this.handstation = new handstation(game, 'hand', 0, 448, 768,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		this.hand = undefined;
@@ -1728,7 +1733,7 @@ sad2.prototype =
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
 		//create player character
-		this.player = new player(game, 'player', 0, 90, 672, 'jump');
+		this.player = new player(game, 'player', 0, 90, 672, 'jumpSound');
 		game.add.existing(this.player);
 		
 		//create watchers and invisible walls
@@ -1738,7 +1743,7 @@ sad2.prototype =
 		this.enwall2 = new platform(game, 'enplatform', 0, 752, 768, 0);
 		game.add.existing(this.enwall2);
 		
-		this.enemy1 = new enemy(game, 'enemy', 0, 640, 800, false);
+		this.enemy1 = new enemy(game, 'enemy', 0, 640, 800, false, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy1);
 		
 		this.enwall3 = new platform(game, 'enplatform', 0, 880, 448, 0);
@@ -1747,7 +1752,7 @@ sad2.prototype =
 		this.enwall4 = new platform(game, 'enplatform', 0, 1264, 448, 0);
 		game.add.existing(this.enwall4);
 		
-		this.enemy2 = new enemy(game, 'enemy', 0, 992, 544, true);
+		this.enemy2 = new enemy(game, 'enemy', 0, 992, 544, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy2);
 
 		this.enwall5 = new platform(game, 'enplatform', 0, 368, 320, 0);
@@ -1756,20 +1761,20 @@ sad2.prototype =
 		this.enwall6 = new platform(game, 'enplatform', 0, 752, 320, 0);
 		game.add.existing(this.enwall6);
 
-		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false);
+		this.enemy3 = new enemy(game, 'enemy', 0, 480, 416, false, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy3);
 		
 		//create missiles
-		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900,'explosion');
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0,'explosion');
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0,'explosion');
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900,'explosion');
 		game.add.existing(this.superenemy4);
 		
 		//create switches and their interaction with the platforms
@@ -1789,7 +1794,7 @@ sad2.prototype =
 		game.add.existing(this.door);
 		
 		//allow projectile arm
-		this.handstation = new handstation(game, 'hand', 0, 112, 784);
+		this.handstation = new handstation(game, 'hand', 0, 112, 784,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		this.hand = undefined;
@@ -1965,7 +1970,7 @@ sad3.prototype =
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
 		//create player character
-		this.player = new player(game, 'player', 0, 90, 832, 'jump');
+		this.player = new player(game, 'player', 0, 90, 832, 'jumpSound');
 		game.add.existing(this.player);
 		
 		//creates switches and interaction with the platforms
@@ -1979,7 +1984,7 @@ sad3.prototype =
 		game.add.existing(this.door);
 
 		//allow projectile arm
-		this.handstation = new handstation(game, 'hand', 0, 544, 800);
+		this.handstation = new handstation(game, 'hand', 0, 544, 800,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		//create watches and invisible walls
@@ -1989,7 +1994,7 @@ sad3.prototype =
 		this.enwall2 = new platform(game, 'enplatform', 0, 1232, 896, 0);
 		game.add.existing(this.enwall2);
 		
-		this.enemy1 = new enemy(game, 'enemy', 0, 704, 832, true);
+		this.enemy1 = new enemy(game, 'enemy', 0, 704, 832, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy1);
 		
 		this.enwall3 = new platform(game, 'enplatform', 0, 224, 768, 0);
@@ -1998,7 +2003,7 @@ sad3.prototype =
 		this.enwall4 = new platform(game, 'enplatform', 0, 976, 608, 0);
 		game.add.existing(this.enwall4);
 		
-		this.enemy2 = new enemy(game, 'enemy', 0, 384, 704, true);
+		this.enemy2 = new enemy(game, 'enemy', 0, 384, 704, true, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy2);
 		
 		this.enwall5 = new platform(game, 'enplatform', 0, 16, 480, 0);
@@ -2007,20 +2012,20 @@ sad3.prototype =
 		this.enwall6 = new platform(game, 'enplatform', 0, 672, 480, 0);
 		game.add.existing(this.enwall6);
 		
-		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false);
+		this.enemy3 = new enemy(game, 'enemy', 0, 384, 576, false, 'enemydisablesound', 'enemyAlarm');
 		game.add.existing(this.enemy3);
 		
 		//create missiles
-		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900);
+		this.superenemy1 = new superenemy(game, 'missile', 0, -100, 900,'explosion');
 		game.add.existing(this.superenemy1);
 		
-		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0);
+		this.superenemy2 = new superenemy(game, 'missile', 0, 1440, 0,'explosion');
 		game.add.existing(this.superenemy2);
 		
-		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0);
+		this.superenemy3 = new superenemy(game, 'missile', 0, -100, 0,'explosion');
 		game.add.existing(this.superenemy3);
 		
-		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900);
+		this.superenemy4 = new superenemy(game, 'missile', 0, 1440, 900,'explosion');
 		game.add.existing(this.superenemy4);
 		
 		this.hand = undefined;
@@ -2203,7 +2208,7 @@ angerboss.prototype =
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
 		//create player character
-		this.player = new player(game, 'player', 0, 90, 600, 'jump');
+		this.player = new player(game, 'player', 0, 90, 600, 'jumpSound');
 		game.add.existing(this.player);
 		
 		//create levers and platform interaction
@@ -2217,7 +2222,7 @@ angerboss.prototype =
 		game.add.existing(this.yellows);
 		
 		//enable projectile arm
-		this.handstation = new handstation(game, 'hand', 0, 944, 816);
+		this.handstation = new handstation(game, 'hand', 0, 944, 816,'whoosh', 'staticSound');
 		game.add.existing(this.handstation);
 		
 		this.hand = undefined;

@@ -1,7 +1,7 @@
 superenemy.prototype = Object.create(Phaser.Sprite.prototype);
 superenemy.prototype.constructor = superenemy;
 
-function superenemy(game, key, frame, x, y)
+function superenemy(game, key, frame, x, y, jumpkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
 game.physics.enable(this);
@@ -10,6 +10,8 @@ this.body.setCircle(32);
 this.body.CollideWorldBounds = true;
 //default player is not found
 this.found = false;
+this.explosionsound=game.add.audio(jumpkey);
+this.hasplayed=false;
 }
 
 superenemy.prototype.update = function(player)
@@ -52,4 +54,8 @@ superenemy.prototype.invisible = function()
 {
 	//player gets hit, missile disappear
 	this.alpha = 0;
+	if(this.hasplayed==false){
+		this.hasplayed=true;
+		this.explosionsound.play();
+	}
 }
