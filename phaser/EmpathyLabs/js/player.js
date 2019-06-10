@@ -4,10 +4,11 @@ player.prototype.constructor = player;
 function player(game, key, frame, x, y, jumpkey)
 {
 Phaser.Sprite.call(this, game, x, y, key, frame);
-this.animations.add('left', ['Player01', 'Player02'], 15, true);
-this.animations.add('right', ['Player08', 'Player09'], 15, true);
-this.animations.add('stand', ['Player03', 'Player02', 'Player04', 'Player05', 'Player06', 'Player07', 'Player08'
-, 'Player07', 'Player06', 'Player05', 'Player04', 'Player02'], 15, true);
+this.animations.add('left', ['left01', 'left02'], 5, true);
+this.animations.add('right', ['right01', 'right02'], 5, true);
+this.animations.add('stand', ['player01', 'player02'], 5, true);
+this.animations.add('jump', ['jump01', 'jump02'], 5, true);
+this.animations.add('dead', ['playerdead'], 5, true);
 game.physics.p2.enable(this);
 this.body.enable = true;
 this.body.setCircle(32);
@@ -33,6 +34,7 @@ player.prototype.update = function(control)
 			if(this.jumpb.isDown)
 			{
 				this.jumpse.play();
+				this.animations.play('jump');
 				this.body.moveUp(300);
 				this.body.force = 0;
 				this.jumpTimer = game.time.now + 750;
@@ -69,7 +71,6 @@ player.prototype.update = function(control)
 	else
 	{
 		this.body.velocity.x = 0;
-		this.animations.play('stand');
 	}
 
 
@@ -105,7 +106,7 @@ player.prototype.collexception = function(body1, body2)
 //create player death animation
 player.prototype.death = function()
 {
-	console.log("death");
+	this.animations.play('dead');
 }
 
 player.prototype.invisible = function()
