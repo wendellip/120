@@ -1987,6 +1987,7 @@ sad2.prototype =
 		{
 			if(this.control)
 			{
+				
 				this.control = false;
 				this.player.invisible();
 				this.door.teleport();
@@ -2233,6 +2234,9 @@ sad3.prototype =
 		{
 			if(this.control)
 			{
+				this.enemy1.stopsound();
+				this.enemy2.stopsound();
+				this.enemy3.stopsound();
 				this.control = false;
 				this.player.invisible();
 				this.door.teleport();
