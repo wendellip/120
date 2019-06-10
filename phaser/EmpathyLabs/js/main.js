@@ -162,7 +162,7 @@ Mainmenu.prototype =
 		game.add.sprite(0, 0, 'MainMenuBack');
 		
 		//instructions
-		game.add.text(20, 20, "A or D for moving, W for jumping\n" + 
+		game.add.text(20, 420, "A or D for moving, W for jumping\n" + 
 		"mouse for aiming and shooting arm\n" + "Press E to interact with lever\n", style);
 		this.MainMenuButton = game.add.button(125,600,'BigButton', ChangeStateTotut1, this, 3,1,2,0);
 	},
