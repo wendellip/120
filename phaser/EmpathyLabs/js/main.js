@@ -131,7 +131,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('sad3', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 
 		}
 	}
@@ -2265,8 +2265,7 @@ sad3.prototype =
 				this.control = false;
 				this.player.invisible();
 				this.door.teleport();
-				game.state.start('sad3', true, false, this.level);
-				//game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
+				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
 			}
 		}
 	}
