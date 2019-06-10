@@ -7,9 +7,6 @@ var restart = function(statename)
 	game.state.start(statename);
 }
 
-var ChangeStateTotut1 = function(){
-	game.state.start('tutorial1', true, false, this.level);
-}
 var music;
 var mutemusic= function(){
 		game.sound.mute=true;
@@ -73,7 +70,18 @@ Loading.prototype =
 		game.load.image('Background_Sadness', 'assets/img/Background_Sadness.png');
 		game.load.image('Background_Joy', 'assets/img/Background_Joy.png');
 		game.load.image('Background_Fear', 'assets/img/Background_Fear.png');
+		game.load.atlas('mainmenu', 'assets/img/mainmenu.png', 'assets/img/mainmenu.json');
+		game.load.image('mainmenu', 'assets/img/mainmenu.png');
 		
+		
+		//instruction
+		game.load.image('Keys_Mouse', 'assets/img/Keys_Mouse.png');
+		game.load.image('Keys_R', 'assets/img/Keys_R.png');
+		game.load.image('Keys_WASD', 'assets/img/Keys_WASD.png');
+		game.load.image('Keys_Arrow', 'assets/img/Keys_Arrow.png');
+		game.load.image('Keys_E', 'assets/img/Keys_E.png');
+		game.load.image('PressSpace', 'assets/img/PressSpace.png');
+
 		//items
 		game.load.image('box', 'assets/img/Box.png');
 		game.load.image('missile', 'assets/img/missile.png');
@@ -95,17 +103,9 @@ Loading.prototype =
 		game.load.image('door', 'assets/img/door.png');
 		game.load.atlas('mutebutton', 'assets/img/mutebutton.png', 'assets/img/mutebutton.json');
 		game.load.image('mutebutton', 'assets/img/mutebutton.png');
-		
-		game.load.image('Etut', 'assets/img/Keys_E.png');
-		game.load.image('Mousetut', 'assets/img/Keys_Mouse.png');
-		game.load.image('Rtut', 'assets/img/Keys_R.png');
-		game.load.image('WASDtut', 'assets/img/Keys_WASD.png');
-		
 		game.load.image('menubutton', 'assets/img/MenuButton.png');
 		game.load.image('hand', 'assets/img/hand.png');
 		game.load.spritesheet('Map_Tutorial', 'assets/map/Map_Tutorial.png', 32, 32);
-		game.load.spritesheet('BigButton', 'assets/img/Start_Start.png', 427, 160);
-		game.load.spritesheet('MainMenuBack', 'assets/img/TitleScreen_Title.png',1408 ,864 );
 		game.load.spritesheet('Map_Fear', 'assets/map/Map_Fear.png', 32, 32);
 		game.load.spritesheet('Map_Joy', 'assets/map/Map_Joy.png', 32, 32);
 		game.load.spritesheet('Map_Sadness', 'assets/map/Map_Sadness.png', 32, 32);
@@ -158,22 +158,30 @@ Mainmenu.prototype =
 	create: function()
 	{
 		
+		this.mainmenuan = game.add.sprite(0, 0, 'mainmenu');
+		this.mainmenuan.animations.add('sleep', ['sleep01', 'sleep02', 'sleep03'], 5, true);
+		this.mainmenuan.animations.add('awake', ['awake01', 'awake02', 'awake03'], 5, false);
+		this.space = game.add.sprite(720, 576, 'PressSpace');
+		this.space.anchor.setTo(0.5);
 		if(music!=undefined){
 		music.destroy();
 		}	
 		music=game.add.audio('tutorialMusic');
 		music.loop=true;
 		music.play();
-		game.stage.setBackgroundColor('#9ebeff');
-		game.add.sprite(0, 0, 'MainMenuBack');
-		
+		this.mainmenuan.animations.play('sleep');
+		/*game.stage.setBackgroundColor('#9ebeff');
 		//instructions
-		this.MainMenuButton = game.add.button(125,600,'BigButton', ChangeStateTotut1, this, 3,1,2,0);
+		game.add.text(20, 20, "A or D for moving, W for jumping\n" + 
+		"mouse for aiming and shooting arm\n" + "Press E to interact with lever\n" + "Press Spacebar to start", style);*/
 	},
 	update: function()
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
+			this.mainmenuan.animations.play('awake');
+			game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'tutorial1');
+
 		}
 	}
 }
@@ -192,6 +200,7 @@ tutorial1.prototype =
 	},
 	create: function()
 	{
+		
 		//start P2 physics
 		game.add.sprite(0, 0, 'Background_Tutorial');
 		
@@ -207,7 +216,8 @@ tutorial1.prototype =
 		this.mapLayer.resizeWorld();
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
-		game.add.sprite(100, 300, 'WASDtut');
+
+		game.add.sprite(544, 96, 'Keys_WASD');
 		//make a player character
 		this.player = new player(game, 'player', 0, 100, 600, 'jumpSound');
 		game.add.existing(this.player);
@@ -222,7 +232,6 @@ tutorial1.prototype =
 		
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
-		
 	},
 
 	update: function()
@@ -289,11 +298,12 @@ tutorial2.prototype =
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
 		
+		game.add.sprite(608, 288, 'Keys_Mouse');
+		game.add.sprite(640, 704, 'Keys_R');
+		
 		this.switch1 = new onswitch(game, 'switches', 0, 1184, 448, 0, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
-		game.add.sprite(720, 700, 'Rtut');
-		game.add.sprite(100, 300, 'Mousetut');
 		
 		this.player = new player(game, 'player', 0, 150, 450, 'jumpSound');
 		//create player character
@@ -324,8 +334,6 @@ tutorial2.prototype =
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
-		
-
 
 	},
 
@@ -826,7 +834,10 @@ joy2.prototype =
 		this.mapLayer.resizeWorld();
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
-		game.add.sprite(1350, 150, 'Etut');
+		
+		game.add.sprite(1280, 32, 'Keys_Arrow');
+		game.add.sprite(1288, 96, 'Keys_E');
+		
 		this.player = new player(game, 'player', 0, 120, 450, 'jumpSound');
 		//create a player character
 		game.add.existing(this.player);
