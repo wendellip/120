@@ -122,7 +122,7 @@ Loading.prototype =
 	update: function()
 	{
 
-		game.state.start('Mainmenu', true, false, this.level);
+		game.state.start('fear1', true, false, this.level);
 
 	}
 }
@@ -1034,8 +1034,9 @@ fear1.prototype =
 
 	create: function()
 	{
-
+		if(music!=undefined){
 		music.destroy();
+		}
 		music=game.add.audio('FearAnger');
 		music.loop=true;
 		music.play();
@@ -1194,7 +1195,6 @@ fear1.prototype =
 			this.enemy1.stopsound();
 			this.enemy2.stopsound();
 			this.enemy3.stopsound();
-			this.enemy4.stopsound();
 			game.state.restart(true, false);
 		}
 		
@@ -1214,7 +1214,6 @@ fear1.prototype =
 				this.enemy1.stopsound();
 				this.enemy2.stopsound();
 				this.enemy3.stopsound();
-				this.enemy4.stopsound();
 				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'fear1');
 			}
 		}
