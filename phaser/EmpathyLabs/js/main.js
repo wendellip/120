@@ -116,6 +116,9 @@ MainMenu.prototype =
 	},
 	create: function()
 	{
+		if(music!=undefined){
+		music.destroy();
+		}	
 		music=game.add.audio('tutorialMusic');
 		music.loop=true;
 		music.play();
