@@ -17,12 +17,10 @@ var unmutemusic = function(){
 var MeunuButtonFunction = function(){
 	game.state.start('Mainmenu', true, false, this.level);
 }
-var decidetomute = function(mute){
+var decidetomute = function(){
 	if(game.sound.mute==true){
-		mute.setFrames(0, 1, 0, 0);
 	unmutemusic();}
 	else if (game.sound.mute!=true){
-		mute.setFrames(1, 0, 1, 1);
 		mutemusic();
 	}
 }			
@@ -205,7 +203,7 @@ tutorial1.prototype =
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 	},
 
@@ -301,7 +299,7 @@ tutorial2.prototype =
 		
 		//preventing infinity calls
 		this.switch1on = true;
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 
 	},
@@ -413,7 +411,7 @@ tutorial3.prototype =
 		this.control = true;
 		game.physics.p2.gravity.y = 300;
 		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 	},
 
@@ -511,7 +509,7 @@ tutorial4.prototype =
 		
 		// collision exception player and arm, player and invisible wall
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 		//now allow player to touch the watcher
 		this.enemy.body.createBodyCallback(this.player, this.enemy.collide, this.enemy);
@@ -627,7 +625,7 @@ joy1.prototype =
 	create: function()
 	{
 
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 
 		//enable P2 physics and tilemap
@@ -820,7 +818,7 @@ joy2.prototype =
 		
 		//collision exception
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 	},
 
@@ -966,7 +964,7 @@ joy3.prototype =
 		this.blueon = true;
 		this.yellowon = true;
 		this.redon = true;
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 	},
 
@@ -1138,7 +1136,7 @@ fear1.prototype =
 		
 		//boolean preventing the repeating destroy call
 		this.switch1on = true;
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 
 	},
@@ -1352,7 +1350,7 @@ fear2.prototype =
 		//allow player interact with the switch
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 		
 		//not allow player to touch the watchers
@@ -1569,7 +1567,7 @@ fear3.prototype =
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
 
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 
 		
@@ -1778,7 +1776,7 @@ sad1.prototype =
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch1on = true;
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 	},
 
@@ -1957,7 +1955,7 @@ sad2.prototype =
 		this.switch3on = true;
 		this.switch4on = true;
 		
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 
 	},
@@ -2191,7 +2189,7 @@ sad3.prototype =
 		game.physics.p2.gravity.y = 300;
 		
 		
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 		
 		
@@ -2342,7 +2340,8 @@ sad3.prototype =
 				this.control = false;
 				this.player.invisible();
 				this.door.teleport();
-				game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
+				game.state.start('sad3', true, false, this.level);
+				//game.time.events.add(Phaser.Timer.SECOND * 1, restart, this, 'angerboss');
 			}
 		}
 	}
@@ -2426,7 +2425,7 @@ angerboss.prototype =
 		game.add.existing(this.boss);
 
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0, this.mutebutton);
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
 	},
 
