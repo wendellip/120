@@ -7,7 +7,7 @@ Phaser.Sprite.call(this, game, x, y, key, frame);
 //create animation
 this.jumpse = game.add.audio(jumpkey);
 this.animations.add('left', ['left01', 'left02'], 5, true);
-this.animations.add('right', ['righrt01', 'right02'], 5, true);
+this.animations.add('right', ['right01', 'right02'], 5, true);
 this.animations.add('stand', ['middle01', 'middle02', 'middle03', 'middle01', 'middle04', 'middle05'], 15, true);
 this.animations.add('alarm', ['alarm01', 'alarm02', 'alarm03'], 15, false);
 this.animations.add('alarmloop', ['alarmloop01', 'alarmloop02', 'alarmloop03', 'alarmloop04', 'alarmloop05'], 15, true);
