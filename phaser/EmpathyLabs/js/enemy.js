@@ -24,6 +24,8 @@ this.working = true;
 this.found = false;
 this.body.static = false;
 this.alarmse=game.add.audio(alarmkey);
+this.alarmed=false;
+
 //choosing its walking direction
 if(!faceleft)
 {
@@ -58,7 +60,10 @@ enemy.prototype.update = function(player, box)
 										return this.found;
 						}
 						//if all true, player is spot
+						if(this.alarmed==false){
+							this.alarmed=true;
 						this.alarmse.play();
+						}
 						this.speed = 0;
 						this.animations.play('alarm');
 						this.working = false;
@@ -160,8 +165,10 @@ enemy.prototype.collide = function()
 	//if player touch watchers, player is spotted
 	this.found = true;
 	this.alarmse.loop=true;
+	if(this.alarmed==false){
+		this.alarmed=true;
 	this.alarmse.play();
-
+	}
 	this.animations.play('alarm');
 	this.working = false;
 	game.time.events.add(Phaser.Timer.SECOND * 2, this.alarmloop, this);
