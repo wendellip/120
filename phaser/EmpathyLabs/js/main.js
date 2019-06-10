@@ -8,6 +8,10 @@ var restart = function(statename)
 }
 
 var music;
+var returntomain = function(){
+	music.destroy();
+	game.state.start('MainMenu', true, false, this.level);
+}
 var mutemusic= function(){
 		game.sound.mute=true;
 		}
@@ -85,6 +89,7 @@ MainMenu.prototype =
 		game.load.image('door', 'assets/img/door.png');
 		game.load.image('mutebutton', 'assets/img/mutebutton.png');
 		game.load.image('hand', 'assets/img/HandPlaceholder.jpg');
+		game.load.image('menubutton', 'assets/img/MenuButton.png');
 		game.load.spritesheet('test', 'assets/map/test.png', 32, 32);
 		game.load.spritesheet('joy', 'assets/map/joy.png', 32, 32);
 		game.load.atlas('switches', 'assets/img/switches.png', 'assets/img/switches.json');
@@ -123,7 +128,7 @@ MainMenu.prototype =
 	{
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
 		{
-			game.state.start('sad2', true, false, this.level);
+			game.state.start('tutorial1', true, false, this.level);
 		}
 	}
 }
@@ -171,6 +176,7 @@ tutorial1.prototype =
 		game.physics.p2.gravity.y = 300;
 		
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -261,6 +267,7 @@ tutorial2.prototype =
 		//preventing infinity calls
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 
 	},
 
@@ -367,6 +374,7 @@ tutorial3.prototype =
 		game.physics.p2.gravity.y = 300;
 		game.physics.p2.world.defaultContactMaterial.friction = 0.3;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -459,7 +467,8 @@ tutorial4.prototype =
 		
 		// collision exception player and arm, player and invisible wall
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
-		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);	
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 		//now allow player to touch the watcher
 		this.enemy.body.createBodyCallback(this.player, this.enemy.collide, this.enemy);
 
@@ -620,6 +629,8 @@ joy1.prototype =
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		//boolean preventing repeating calls
 		this.switch1on = true;
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -754,6 +765,7 @@ joy2.prototype =
 		//collision exception
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -894,6 +906,7 @@ joy3.prototype =
 		this.yellowon = true;
 		this.redon = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -1060,6 +1073,7 @@ fear1.prototype =
 		//boolean preventing the repeating destroy call
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 
 	},
 
@@ -1256,6 +1270,7 @@ fear2.prototype =
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 		
 		//not allow player to touch the watchers
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
@@ -1455,6 +1470,8 @@ fear3.prototype =
 		this.switch2.body.createBodyCallback(this.player, this.switch2.hitted, this.switch2);
 
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
+		
 
 		
 		//not allow player touch the watchers
@@ -1649,6 +1666,7 @@ sad1.prototype =
 		this.switch1.body.createBodyCallback(this.player, this.switch1.hitted, this.switch1);
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -1820,6 +1838,9 @@ sad2.prototype =
 		this.switch2on = true;
 		this.switch3on = true;
 		this.switch4on = true;
+		
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 
 	},
 
@@ -2046,7 +2067,8 @@ sad3.prototype =
 		this.enemy1.body.createBodyCallback(this.player, this.enemy1.collide, this.enemy1);
 		this.enemy2.body.createBodyCallback(this.player, this.enemy2.collide, this.enemy2);
 		this.enemy3.body.createBodyCallback(this.player, this.enemy3.collide, this.enemy3);
-
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
@@ -2248,6 +2270,9 @@ angerboss.prototype =
 		game.add.existing(this.boss);
 
 		game.physics.p2.setPostBroadphaseCallback(this.player.collexception, this);
+		
+		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 2,1,1,0);
+		this.restartbutton = game.add.button(100,100,'menubutton', returntomain, this, 2,1,1,0);
 	},
 
 	update: function()
