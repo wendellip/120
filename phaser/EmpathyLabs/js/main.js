@@ -95,6 +95,12 @@ Loading.prototype =
 		game.load.image('door', 'assets/img/door.png');
 		game.load.atlas('mutebutton', 'assets/img/mutebutton.png', 'assets/img/mutebutton.json');
 		game.load.image('mutebutton', 'assets/img/mutebutton.png');
+		
+		game.load.image('Etut', 'assets/img/Keys_E.png');
+		game.load.image('Mousetut', 'assets/img/Keys_Mouse.png');
+		game.load.image('Rtut', 'assets/img/Keys_R.png');
+		game.load.image('WASDtut', 'assets/img/Keys_WASD.png');
+		
 		game.load.image('menubutton', 'assets/img/MenuButton.png');
 		game.load.image('hand', 'assets/img/hand.png');
 		game.load.spritesheet('Map_Tutorial', 'assets/map/Map_Tutorial.png', 32, 32);
@@ -162,8 +168,6 @@ Mainmenu.prototype =
 		game.add.sprite(0, 0, 'MainMenuBack');
 		
 		//instructions
-		game.add.text(20, 420, "A or D for moving, W for jumping\n" + 
-		"mouse for aiming and shooting arm\n" + "Press E to interact with lever\n", style);
 		this.MainMenuButton = game.add.button(125,600,'BigButton', ChangeStateTotut1, this, 3,1,2,0);
 	},
 	update: function()
@@ -203,7 +207,7 @@ tutorial1.prototype =
 		this.mapLayer.resizeWorld();
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
-
+		game.add.sprite(100, 300, 'WASDtut');
 		//make a player character
 		this.player = new player(game, 'player', 0, 100, 600, 'jumpSound');
 		game.add.existing(this.player);
@@ -218,6 +222,7 @@ tutorial1.prototype =
 		
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
+		
 	},
 
 	update: function()
@@ -287,6 +292,8 @@ tutorial2.prototype =
 		this.switch1 = new onswitch(game, 'switches', 0, 1184, 448, 0, false, 'buttonSound');
 		game.add.existing(this.switch1);
 		
+		game.add.sprite(720, 700, 'Rtut');
+		game.add.sprite(100, 300, 'Mousetut');
 		
 		this.player = new player(game, 'player', 0, 150, 450, 'jumpSound');
 		//create player character
@@ -317,6 +324,8 @@ tutorial2.prototype =
 		this.switch1on = true;
 		this.mutebutton = game.add.button(50,50,'mutebutton', decidetomute, this, 0, 1, 0, 0);
 		this.menubutton = game.add.button(1350,850,'menubutton', MeunuButtonFunction, this, 2,1,1,0);
+		
+
 
 	},
 
@@ -817,7 +826,7 @@ joy2.prototype =
 		this.mapLayer.resizeWorld();
 		
 		game.physics.p2.convertTilemap(this.map, this.maplayer);
-		
+		game.add.sprite(1350, 150, 'Etut');
 		this.player = new player(game, 'player', 0, 120, 450, 'jumpSound');
 		//create a player character
 		game.add.existing(this.player);
